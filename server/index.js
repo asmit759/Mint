@@ -5,13 +5,13 @@ require("dotenv").config();
 const main = require("./config/db");
 
 
-const AuthRouter = require("./routes/AuthRouter");
+const studentAuthRouter = require("./routes/studentAuthRouter");
 
 app.use(express.json());
 app.use(cookieParser);
 
 // Routes
-app.use("/user",AuthRouter)
+app.use("/student",studentAuthRouter)
 
 
 const initCon = async ()=>{
