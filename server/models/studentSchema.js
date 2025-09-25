@@ -92,6 +92,10 @@ const studentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "mentor",
         unique: true
+    },
+    parent:{
+        type:Schema.Types.ObjectId,
+        ref:"parent",
     }
 }, { timestamps: true });
 

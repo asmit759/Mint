@@ -42,12 +42,30 @@ const HostelSchema = new Schema ({
     ],
     hostelContact:{
         type:Number,
-        minLength:9,
+        minLength:10,
         maxLength:10,
     },
     hostelEmail:{
-        type:String,
-        minLength:7,
+        type: String,
+        required: true,
+        trim: true,
+        unique: true,
+        lowercase: true,
+        immutable: true
+    },
+    messContact:{
+        type:Number,
+        minLength:10,
+        maxLength:10
+    },
+    messService: {
+        type: String,
+        minLength:10,
         maxLength:20
     }
-},{timestamps:true})
+
+},{timestamps:true});
+
+const Hostel = mongoose.model('hostel',HostelSchema);
+module.exports = Hostel
+
