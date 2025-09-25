@@ -6,22 +6,26 @@ const main = require("./config/db");
 
 
 const studentAuthRouter = require("./routes/studentAuthRouter");
+const mentorAuthRouter = require("./routes/mentorAuthRouter");
 
 app.use(express.json());
-app.use(cookieParser);
+app.use(cookieParser());
 
 // Routes
 app.use("/student",studentAuthRouter)
-
+app.use("/mentor",mentorAuthRouter)
 
 const initCon = async ()=>{
     try{
+        console.log("Mongo URI:", process.env.MONGO_CONNECT);
+
         await main();
 
-        console.log("Mongo DB Connected");
+        console.log("MongoDB Connected");
 
-        app.listen(process.env.PORT,()=>{
-            console.log(`Server Running At Port : ${process.env.PORT} `)
+        const PORT = process.env.PORT || 4000;
+        app.listen(PORT,()=>{
+            console.log(`Server Running At Port : ${PORT} `)
         })
 
     }catch(error){
