@@ -45,9 +45,17 @@ const mentorSchema = new mongoose.Schema(
             campus:{
                 type:String
             }
-        }  
+        }  ,
+        
+        parent:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"parent"
+        },
+
+        
         
     },
+
     { timestamps: true }
 );
 
