@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 const studentSchema = new Schema({
     roll_no: {
         type: Number,
-        required: true,
         minLength: 7,
-        maxLength: 9
+        maxLength: 9,
+        default: null
     },
     name: {
         type: String,
@@ -29,38 +29,44 @@ const studentSchema = new Schema({
     age: {
         type: Number,
         min: 18, 
-        max: 99
+        max: 99,
+        default: null
     },
     dob: {
         type: Date,
-        required: true
+        default: null
     },
     address: [
         {
             street: {
                 type: String,
                 minLength: 5,
-                maxLength: 40
+                maxLength: 40,
+                default: ""
             },
             city: {
                 type: String,
                 minLength: 5,
-                maxLength: 10
+                maxLength: 10,
+                default: ""
             },
             pincode: {
                 type: Number,
                 min: 100000, 
-                max: 999999
+                max: 999999,
+                default: null
             },
             state: {
                 type: String,
                 minLength: 3,
-                maxLength: 20
+                maxLength: 20,
+                default: ""
             },
             country: {
                 type: String,
                 minLength: 5,
-                maxLength: 30
+                maxLength: 30,
+                default: ""
             }
         }
     ],
@@ -80,22 +86,27 @@ const studentSchema = new Schema({
     },
     hostel: {
         type: Schema.Types.ObjectId,
-        ref:'Hostel',
+        ref: 'Hostel',
+        default: null
     },
     room_no: {
         type: String,
         minLength: 3,
         maxLength: 6,
         unique: true,
+        default: null
     },
+
     mentor: {
         type: Schema.Types.ObjectId,
         ref: "mentor",
-        unique: true
+        unique: true,
+        default: null
     },
-    parent:{
-        type:Schema.Types.ObjectId,
-        ref:"parent",
+    parent: {
+        type: Schema.Types.ObjectId,
+        ref: "parent",
+        default: null
     }
 }, { timestamps: true });
 
