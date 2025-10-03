@@ -17,8 +17,8 @@ const studentSchema = new Schema({
     email_id: {
         type: String,
         required: true,
+        unique:true,
         trim: true,
-        unique: true,
         lowercase: true,
         immutable: true
     },
@@ -28,7 +28,7 @@ const studentSchema = new Schema({
     },
     age: {
         type: Number,
-        min: 18, 
+        min: 18,
         max: 99,
         default: null
     },
@@ -38,115 +38,36 @@ const studentSchema = new Schema({
     },
     address: [
         {
-            street: {
-                type: String,
-                minLength: 5,
-                maxLength: 40,
-                default: ""
-            },
-            city: {
-                type: String,
-                minLength: 5,
-                maxLength: 10,
-                default: ""
-            },
-            pincode: {
-                type: Number,
-                min: 100000, 
-                max: 999999,
-                default: null
-            },
-            state: {
-                type: String,
-                minLength: 3,
-                maxLength: 20,
-                default: ""
-            },
-            country: {
-                type: String,
-                minLength: 5,
-                maxLength: 30,
-                default: ""
-            }
+            street: { type: String, minLength: 5, maxLength: 40, default: "" },
+            city: { type: String, minLength: 5, maxLength: 10, default: "" },
+            pincode: { type: Number, min: 100000, max: 999999, default: null },
+            state: { type: String, minLength: 3, maxLength: 20, default: "" },
+            country: { type: String, minLength: 5, maxLength: 30, default: "" }
         }
     ],
-    profilePhotoUrl: {
-        type: String,
-        default: ""
-    },
-    semester: {
-        type: Number,
-        enum: [1, 2, 3, 4, 5, 6, 7, 8],
-        default: 1
-    },
-    branch: {
-        type: String,
-        enum: ['CSE', 'ME'],
-        default: 'CSE'
-    },
-    hostel: {
-        type: Schema.Types.ObjectId,
-        ref: 'Hostel',
-        default: null
-    },
-    room_no: {
-        type: String,
-        minLength: 3,
-        maxLength: 6,
-        unique: true,
-        default: null
-    },
-
-    mentor: {
-        type: Schema.Types.ObjectId,
-        ref: "mentor",
-        unique: true,
-        default: null
-    },
-    fatherName:{
-        type:String,
-        minLength:5,
-        maxLength:20
-    },
-    fatherContact:{
-        type:Number,
-        Length:10,
-    },
-    motherName:{
-        type:String,
-        minLength:5,
-        maxLength:20
-    },
-    motherContact:{
-        type:Number,
-        Length:10,
-    },
-    parentEmail:{
-        type: String,
-        trim: true,
-        unique: true,
-        lowercase: true,
-    }
+    profilePhotoUrl: { type: String, default: "" },
+    semester: { type: Number, enum: [1,2,3,4,5,6,7,8], default: 1 },
+    branch: { type: String, enum: ['CSE','ME'], default: 'CSE' },
+    hostel: { type: Schema.Types.ObjectId, ref: 'Hostel', default: null },
+    room_no: { type: String, minLength: 3, maxLength: 6, default: null },
+    mentor: { type: Schema.Types.ObjectId, ref: "mentor", default: null },
+    fatherName: { type: String, minLength: 5, maxLength: 20 },
+    fatherContact: { type: Number, min: 1000000000, max: 9999999999 },
+    motherName: { type: String, minLength: 5, maxLength: 20 },
+    motherContact: { type: Number, min: 1000000000, max: 9999999999 },
+    parentEmail: { type: String, trim: true, lowercase: true }
 }, { timestamps: true });
 
-
 studentSchema.pre('findOneAndUpdate', async function(next) {
-  const update = this.getUpdate();
-
-  if (update.parentEmail) {
-    // Get the current document
-    const docToUpdate = await this.model.findOne(this.getQuery());
-
-    if (docToUpdate.parentEmail) {
-      // Already set once, block changes
-      const err = new Error("parentEmail cannot be changed once it is set.");
-      return next(err);
+    const update = this.getUpdate();
+    if (update.parentEmail) {
+        const docToUpdate = await this.model.findOne(this.getQuery());
+        if (docToUpdate.parentEmail) {
+            return next(new Error("parentEmail cannot be changed once it is set."));
+        }
     }
-  }
-  next();
+    next();
 });
-
-
 
 const Student = mongoose.model('studentModel', studentSchema);
 module.exports = Student;
