@@ -14,6 +14,7 @@ const studentRegister = async (req,res)=>{
         const token = jwt.sign({_id:student._id,email_id:email_id,},process.env.JWT_SERVER_KEY,{expiresIn:60*60})
         res.cookie('token',token,{maxAge:60*60*1000})
         const reply = {
+            id:student._id,
             name:student.name,
             email_id:student.email_id,
             roll_no:student.roll_no,
@@ -48,6 +49,7 @@ const studentLogin = async (req,res)=>{
         res.cookie('token',token,{maxAge:60*60*1000})
 
         const reply = {
+            id:student._id,
             name:student.name,
             email_id:student.email_id,
             roll_no:student.roll_no,

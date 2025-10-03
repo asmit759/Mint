@@ -6,6 +6,7 @@ const main = require("./config/db");
 
 
 const studentAuthRouter = require("./routes/studentAuthRouter");
+const studRouter = require("./routes/studentRouter");
 const mentorAuthRouter = require("./routes/mentorAuthRouter");
 const mentorRoutes = require("./routes/mentorRoutes");
 
@@ -16,7 +17,7 @@ app.use(cookieParser());
 app.use("/student",studentAuthRouter)
 app.use("/mentor",mentorAuthRouter)
 
-
+app.use("/studentDetails",studRouter);
 app.use("/mentorRoutes",mentorRoutes);
 
 const initCon = async ()=>{

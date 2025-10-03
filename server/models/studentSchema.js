@@ -103,12 +103,50 @@ const studentSchema = new Schema({
         unique: true,
         default: null
     },
-    parent: {
-        type: Schema.Types.ObjectId,
-        ref: "parent",
-        default: null
+    fatherName:{
+        type:String,
+        minLength:5,
+        maxLength:20
+    },
+    fatherContact:{
+        type:Number,
+        Length:10,
+    },
+    motherName:{
+        type:String,
+        minLength:5,
+        maxLength:20
+    },
+    motherContact:{
+        type:Number,
+        Length:10,
+    },
+    parentEmail:{
+        type: String,
+        trim: true,
+        unique: true,
+        lowercase: true,
     }
 }, { timestamps: true });
+
+
+studentSchema.pre('findOneAndUpdate', async function(next) {
+  const update = this.getUpdate();
+
+  if (update.parentEmail) {
+    // Get the current document
+    const docToUpdate = await this.model.findOne(this.getQuery());
+
+    if (docToUpdate.parentEmail) {
+      // Already set once, block changes
+      const err = new Error("parentEmail cannot be changed once it is set.");
+      return next(err);
+    }
+  }
+  next();
+});
+
+
 
 const Student = mongoose.model('studentModel', studentSchema);
 module.exports = Student;
