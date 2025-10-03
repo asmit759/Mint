@@ -7,6 +7,9 @@ const {getStud,getMentor,getParent,studUpdate} = require("../controllers/student
 const {callSage,callKIITBandhu} = require("../controllers/studentChatbots")
 
 
+const {sendSMS} = require("../controllers/studentParentCnf");
+
+
 // general CRUD Operations
 studRouter.get("/studDetails",studMid,getStud);
 studRouter.get("/studMentor/:id",getMentor);
@@ -21,7 +24,7 @@ studRouter.post("/studentGuide",studMid,callKIITBandhu);
 // StudentMentor functionalties
 // Grievance
 // Leave Approval
-
+studRouter.post("/parent-confirm",sendSMS);
 // Mess Rating using GeoLocation
 // Rate an item
 // Grievance for hostel rating
