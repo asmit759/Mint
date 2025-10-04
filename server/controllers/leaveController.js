@@ -4,18 +4,17 @@ const Leave = require("../models/leaveSchema");
 const SMS_sender = require("../utils/SMS_sender");
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-       host: process.env.MAIL_HOST,
-      auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS,
-      }
-});
-
-
 const requestLeave = async(req,res)=>{
 
     try{  
+
+        const transporter = nodemailer.createTransport({
+        host: process.env.MAIL_HOST,
+        auth: {
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASS,
+              }
+        });
         const id = req.result.id;
 
         const student = await Student.findById(id);
@@ -38,25 +37,12 @@ const requestLeave = async(req,res)=>{
 
         // sms 
         const parentNumber = `+91${student.fatherContact}`;
-        
-                const msgData = SMS_sender(student,leave,parentNumber);
-        
-                if(msgData){
-                    return res.status(200).json({
-                        success:true,
-                        message:"SMS sent success",
-                        msgData
-                    })
-                }
+        const msgData = SMS_sender(student,leave,parentNumber);
         // mail
+        console.log(msgData);
+        console.log(student.parentEmail);
 
-        await transporter.sendMail({
-            from : process.env.MAIL_USER, 
-            to:student.parentEmail,
-            subject: `Leave Request for ${student.name}`,
-        })
-
-        const formLink = `http://localhost:5000/leave/parent-form?leaveId=${leave._id}`;
+        const formLink = `http://localhost:4000/leave/parent-form?leaveId=${leave._id}`;
 
         await transporter.sendMail({
         from: process.env.MAIL_USER,
