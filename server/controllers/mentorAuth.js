@@ -97,7 +97,7 @@ exports.mentorLogin = async(req,res)=>{
             
         }
 
-        res.cookie("token-cookie", token , options).status(200).json({
+        res.cookie("token", token , options).status(200).json({
             success:true,
             token,
             findMentor,

@@ -9,7 +9,7 @@ const studentModel = require("../models/studentSchema");
 exports.alertStudent = async(req,res) =>{
     try {
         
-        const mentorData = await mentor.findById(req.body.mentorId); // omm miidleware se mentor id save karna hai req.user._id mai
+        const mentorData = await mentor.findById(req.user.id);
         
         //mentor data validation  
         if (!mentorData) {
