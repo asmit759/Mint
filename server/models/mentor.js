@@ -27,7 +27,8 @@ const mentorSchema = new mongoose.Schema(
         },
         accountType:{
             type:String,
-            required:true
+            required:true,
+            default:"Mentor"
         },
         mentees:[
             {
