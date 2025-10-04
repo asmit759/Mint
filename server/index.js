@@ -9,6 +9,8 @@ const studentAuthRouter = require("./routes/studentAuthRouter");
 const studRouter = require("./routes/studentRouter");
 const mentorAuthRouter = require("./routes/mentorAuthRouter");
 const mentorRoutes = require("./routes/mentorRoutes");
+const leaveRouter= require('./routes/leaveRouter');
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -19,6 +21,10 @@ app.use("/mentor",mentorAuthRouter)
 
 app.use("/studentDetails",studRouter);
 app.use("/mentorRoutes",mentorRoutes);
+
+// Leave
+app.use("/leave",leaveRouter);
+
 
 const initCon = async ()=>{
     try{

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const leaveSchema = new Schema({
-  student: { 
+  studentId: { 
     type: Schema.Types.ObjectId, 
     ref: "studentModel", 
     required: true
@@ -37,12 +37,14 @@ const leaveSchema = new Schema({
     enum: ["Pending", "Approved", "Rejected"], 
     default: "Pending" 
     },
-    passotp: {
-    type: Number,
-    min: 100000,
-    max: 999999,
-    default: 100000
+  passotp: {
+    type: String,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: 60 * 60
     }
+  }
 
 }, { timestamps: true });
 

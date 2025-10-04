@@ -50,7 +50,7 @@ const studentSchema = new Schema({
     branch: { type: String, enum: ['CSE','ME'], default: 'CSE' },
     hostel: { type: Schema.Types.ObjectId, ref: 'Hostel', default: null },
     room_no: { type: String, minLength: 3, maxLength: 6, default: null },
-    mentor: { type: Schema.Types.ObjectId, ref: "mentor", default: null },
+    mentor: { type: Schema.Types.ObjectId, ref: "mentor" },
     fatherName: { type: String, minLength: 5, maxLength: 20 },
     fatherContact: { type: Number, min: 1000000000, max: 9999999999 },
     motherName: { type: String, minLength: 5, maxLength: 20 },

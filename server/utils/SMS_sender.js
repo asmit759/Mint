@@ -1,22 +1,21 @@
 require("dotenv").config();
 const otpGenerator = require("otp-generator")
-const SMS_sender = (to,studentName,studentRoll)=>{
+const SMS_sender = (student,leave,parentNumber)=>{
     try {    
-
-
         const otp = otpGenerator.generate(6, { 
                         upperCaseAlphabets: true,
                         lowerCaseAlphabets:true
                     });
+        leave.passotp = otp
 
         const body = `Dear Parent,
-            Your ward ${studentName} (${studentRoll}) has applied for leave on {leaveDate we add later}.
+        Your ward ${student.name} (${student.roll_no}) has applied for leave from ${leave.fromDate} to ${leave.toDate}.
 
-            * To approve this request, kindly reply with the code: ${otp}.
-            * To deny, you may ignore this message.
+        * To approve this request, kindly reply with the code: ${otp}.
+        * To deny, you may ignore this message.
 
-            Thank you,
-            School of Computer Engineering, KIIT Deemed to be University`;
+        Thank you,
+        School of Computer Engineering, KIIT Deemed to be University`;
     
         const accountSid = process.env.TWILIO_SID;
         const authToken = process.env.TWILIO_TOKEN;
@@ -27,7 +26,7 @@ const SMS_sender = (to,studentName,studentRoll)=>{
         .create({
 
             from: process.env.TWILIO_PHONENO,
-            to: to,
+            to: parentNumber,
             body: body,
 
         })
