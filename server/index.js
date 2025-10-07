@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const main = require("./config/db");
+const cors = require("cors");
 
 
 const studentAuthRouter = require("./routes/studentAuthRouter");
@@ -10,10 +11,14 @@ const studRouter = require("./routes/studentRouter");
 const mentorAuthRouter = require("./routes/mentorAuthRouter");
 const mentorRoutes = require("./routes/mentorRoutes");
 const leaveRouter= require('./routes/leaveRouter');
+const locationRoutes = require("./routes/locationRoutes");
 
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(cors());
+
 
 // Routes
 app.use("/student",studentAuthRouter)
@@ -25,6 +30,8 @@ app.use("/mentorRoutes",mentorRoutes);
 // Leave
 app.use("/leave",leaveRouter);
 
+//location
+app.use("/location", locationRoutes);
 
 const initCon = async ()=>{
     try{

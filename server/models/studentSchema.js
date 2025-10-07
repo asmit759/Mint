@@ -55,7 +55,21 @@ const studentSchema = new Schema({
     fatherContact: { type: Number, min: 1000000000, max: 9999999999 },
     motherName: { type: String, minLength: 5, maxLength: 20 },
     motherContact: { type: Number, min: 1000000000, max: 9999999999 },
-    parentEmail: { type: String, trim: true, lowercase: true }
+    parentEmail: { type: String, trim: true, lowercase: true },
+
+
+    lastKnownLocation: {
+        latitude: { type: Number },
+        longitude: { type: Number },
+        timestamp: { 
+            type: Date, 
+            default: Date.now, 
+            expires: 7200 
+        },
+},
+
+
+
 }, { timestamps: true });
 
 studentSchema.pre('findOneAndUpdate', async function(next) {
