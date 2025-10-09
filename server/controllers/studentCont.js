@@ -1,6 +1,7 @@
 
 const Student = require("../models/studentSchema");
 const mentor = require("../models/mentor");
+const Hostel = require("../models/hostelSchema")
 
 const getStud = async(req,res)=>{
 
@@ -16,7 +17,7 @@ const getStud = async(req,res)=>{
         }) 
     }catch(err){
 
-        re.status(500).send("Error fetching Student Data");
+        res.status(500).send("Error fetching Student Data");
 
     }
 
@@ -98,5 +99,31 @@ const studUpdate = async (req, res) => {
 
 // Hostel Details
 
+const hostelDetails = async(req,res)=>{
+    try{
+        const id = req.result.id;
+        if(!id)
+        {
+            throw new Error("Student ID is unavailable")
+        }
 
-module.exports = {getStud,getMentor,getParent,studUpdate};
+        const student = await Student.findById(id);
+        const hostelId = student.hostel;
+
+        if(!hostelId){
+            throw new Error("Student Hostel Details Not Available");
+        }
+
+        const hostel = await Hostel.findById(hostelId);
+        res.status(400).json({
+            message:"Student hostel Fetched Successully",
+            hostel:hostel
+        })
+
+    }catch(err){
+        res.status(500).send("Error fetching Student Data");
+    }
+}
+
+
+module.exports = {getStud,getMentor,getParent,studUpdate,hostelDetails};

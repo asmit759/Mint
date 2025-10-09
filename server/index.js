@@ -25,7 +25,7 @@ app.use(cors());
 app.use("/student",studentAuthRouter)
 app.use("/mentor",mentorAuthRouter)
 
-app.use("/studentDetails",studRouter);
+app.use("/studentFacility",studRouter);
 app.use("/mentorRoutes",mentorRoutes);
 
 app.use("/admin",adminRouter)

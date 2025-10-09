@@ -2,9 +2,10 @@ const express = require("express");
 const studRouter = express.Router();
 
 const {studMid} = require("../middleware/studentMiddleware")
-const {getStud,getMentor,getParent,studUpdate} = require("../controllers/studentCont")
+const {getStud,getMentor,getParent,studUpdate,hostelDetails} = require("../controllers/studentCont")
 const {grievances,createGeoGrievance} = require("../controllers/grievanceController")
-const {callSage,callKIITBandhu} = require("../controllers/studentChatbots")
+const {callSage,callKIITBandhu} = require("../controllers/studentChatbots");
+const  mentorMid  = require("../middleware/mentorMid");
 
 
 // general CRUD Operations
@@ -12,6 +13,8 @@ studRouter.get("/studDetails",studMid,getStud);
 studRouter.get("/studMentor/:id",getMentor);
 studRouter.get("/studParent/:id",getParent);
 studRouter.put("/studUpdateDetails",studMid,studUpdate);
+studRouter.get("/studentHostel",studMid,hostelDetails);
+
 // delete wala authority dena hai ki nhi discuss
 
 // Chatbot Functionalities
