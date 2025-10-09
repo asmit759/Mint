@@ -14,6 +14,11 @@ const grievanceSchema = new Schema({
         ref:'mentor',
         required:true
     },
+    hostel: { 
+        type: Schema.Types.ObjectId, 
+        ref: "hostel", 
+        required: true 
+    },
     message: {
         type: String,
         required: true,

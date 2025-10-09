@@ -12,6 +12,7 @@ const mentorAuthRouter = require("./routes/mentorAuthRouter");
 const mentorRoutes = require("./routes/mentorRoutes");
 const leaveRouter= require('./routes/leaveRouter');
 const locationRoutes = require("./routes/locationRoutes");
+const adminRouter = require("./routes/adminRoutes");
 
 
 app.use(express.json());
@@ -26,6 +27,8 @@ app.use("/mentor",mentorAuthRouter)
 
 app.use("/studentDetails",studRouter);
 app.use("/mentorRoutes",mentorRoutes);
+
+app.use("/admin",adminRouter)
 
 // Leave
 app.use("/leave",leaveRouter);

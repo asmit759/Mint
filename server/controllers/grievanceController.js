@@ -52,7 +52,6 @@ const getMenteeGrievances = async(req,res)=>{
     }
 }
 
-
 const resolveGrievance= async(req,res)=>{
     try{
         const { grievanceId, response } = req.body;
@@ -71,8 +70,69 @@ const resolveGrievance= async(req,res)=>{
     }
 }
 
-// Based on Geolocation
+// Haversine formula
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+const createGeoGrievance = async (req, res) => {
+  try {
+    const studentId = req.user?._id || req.result?.id;
+    const { message,currentLat, currentLong } = req.body;
+
+    if (!message || !currentLat || !currentLong) {
+      return res.status(400).json({ error: "Message and location required" });
+    }
+
+    console.log("studentId:", studentId);
+    const student = await Student.findById(studentId);
+    if (!student) return res.status(404).json({ error: "Student not found" });
+
+    if (!student.hostel) return res.status(400).json({ error: "Hostel not assigned" });
+    
+    const hostel = await Hostel.findById(student.hostel);
+    if (!hostel) return res.status(404).json({ error: "Hostel not found" });
+    const { latitude, longitude } = hostel.hostelAddress[0];
+    if (!latitude || !longitude)
+      return res.status(400).json({ error: "Hostel location not set" });
+    const distance = calculateDistance(currentLat, currentLong, latitude, longitude);
+    console.log(`Distance from hostel: ${distance} km`);
+     
+    const allowedRadius = 0.4;//200 meters of stud location
+    if (distance > allowedRadius) {
+      return res.status(403).json({
+        error: "You are not near your hostel. Grievance submission denied."
+      });
+    }
+    const grievance = await Grievance.create({
+      student: student._id,
+      mentor: student.mentor,
+      hostel: student.hostel,
+      message
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "grievance submitted successfully",
+      grievance
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: "failed to submit grievance" });
+  }
+};
 
 
 
-module.exports = {grievances,getMenteeGrievances,resolveGrievance};
+
+module.exports = {grievances,getMenteeGrievances,resolveGrievance,createGeoGrievance};

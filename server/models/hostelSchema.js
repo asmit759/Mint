@@ -6,37 +6,38 @@ const HostelSchema = new Schema ({
             type:Schema.Types.ObjectId,
             ref:'mentor'
     },
+    hostelAccess:{
+        type:String,
+        Length:6,
+        required:true
+    },
     hostelName:{
         type:String,
         minLength:3,
-        maxLength:10  
+        maxLength:30  
     },
     hostelAddress:[
         {
             street: {
                 type: String,
                 minLength: 5,
-                maxLength: 40
+                maxLength: 70
             },
             city: {
                 type: String,
-                minLength: 5,
-                maxLength: 10
+                default: "India",
+                trim: true,
             },
             pincode: {
                 type: Number,
                 min: 100000, 
                 max: 999999
             },
-            state: {
-                type: String,
-                minLength: 3,
-                maxLength: 20
+            latitude:{
+                type:Number,
             },
-            country: {
-                type: String,
-                minLength: 5,
-                maxLength: 30
+            longitude:{
+                type:Number
             }
         }
     ],
@@ -60,7 +61,7 @@ const HostelSchema = new Schema ({
     },
     messService: {
         type: String,
-        minLength:10,
+        minLength:5,
         maxLength:20
     }
 

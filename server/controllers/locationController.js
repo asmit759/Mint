@@ -1,10 +1,7 @@
 const Student  = require("../models/studentSchema")
 
-
-
 exports.shareLocation = async (req, res) => {
     try {
-
         const { studentId, latitude, longitude } = req.body;
 
         if (!studentId || !latitude || !longitude) {

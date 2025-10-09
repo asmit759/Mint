@@ -3,7 +3,7 @@ const studRouter = express.Router();
 
 const {studMid} = require("../middleware/studentMiddleware")
 const {getStud,getMentor,getParent,studUpdate} = require("../controllers/studentCont")
-const {grievances} = require("../controllers/grievanceController")
+const {grievances,createGeoGrievance} = require("../controllers/grievanceController")
 const {callSage,callKIITBandhu} = require("../controllers/studentChatbots")
 
 
@@ -23,9 +23,7 @@ studRouter.post("/studentGuide",studMid,callKIITBandhu);
 studRouter.post("/studentGrievance",studMid,grievances);
 
 // Mess Grievance using GeoLocation
-// studRouter.post("/studentMessGrievance",studMid,messGriev);
+studRouter.post("/studentHostelGrievance",studMid,createGeoGrievance);
 
-// Grievance for hostel & room 
-// studRouter.post("/studentRoomGrievance",studMid,roomGriev);
 
 module.exports = studRouter;
