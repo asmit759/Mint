@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+// require("dotenv").config();
 const mentor = require("../models/mentor");
 
 exports.mentorMid = async(req,res,next)=>{

@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config();
 const otpGenerator = require("otp-generator")
 const SMS_sender = (student,leave,parentNumber)=>{
     try {    

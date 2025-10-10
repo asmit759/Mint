@@ -1,4 +1,4 @@
-require("dotenv").config();
+
 
 const mentorMailSender = require("../utils/mentorMailSender");
 

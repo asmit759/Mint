@@ -1,4 +1,4 @@
-require ("dotenv").config();
+
 const mentor = require("../models/mentor");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
