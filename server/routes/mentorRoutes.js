@@ -6,6 +6,7 @@ const multer = require("multer");
 const {alertStudent} = require("../controllers/mentorMail");
 const { uploadAttendance } = require("../controllers/attendanceController");
 const {getMenteeGrievances,resolveGrievance} = require("../controllers/grievanceController")
+const {mentorDetails} =require("../controllers/mentorDetails");
 
 //middlewares
 const {mentorMid, isMentor} = require("../middleware/mentorMid");
@@ -24,6 +25,9 @@ router.get('/viewAll',mentorMid,isMentor,getMenteeGrievances);
 
 // resolve a greivance
 router.post("/resolve", mentorMid,isMentor, resolveGrievance);
+
+//getmentor
+router.get("/getMentorDetails",mentorMid,isMentor, mentorDetails);
 
 
 
