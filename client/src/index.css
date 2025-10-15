@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+body {
+  height: 100%;
+  overflow: hidden; /* Let Lenis control scroll */
+}

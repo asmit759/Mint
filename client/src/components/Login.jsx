@@ -10,6 +10,9 @@ const Login = () => {
   const [formData, setFormData] = useState(null);
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
+
+
+  //this is used to set merntor and student
   const [userType, setUserType] = useState('student') // Default to student
 
   useEffect(() => {
@@ -19,7 +22,7 @@ const Login = () => {
       setServerError('')
       setLoading(true)
       
-      // Dynamic API endpoint based on userType
+
       const apiEndpoint = `http://localhost:4000/${userType}/login`
       
       try {
