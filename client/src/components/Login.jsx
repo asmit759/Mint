@@ -10,6 +10,7 @@ const Login = () => {
   const [formData, setFormData] = useState(null);
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [userType, setUserType] = useState('student') // Default to student
 
   useEffect(() => {
     if (!formData) return
@@ -17,9 +18,13 @@ const Login = () => {
     const loginUser = async () => {
       setServerError('')
       setLoading(true)
+      
+      // Dynamic API endpoint based on userType
+      const apiEndpoint = `http://localhost:4000/${userType}/login`
+      
       try {
-        const response = await axios.post('http://localhost:4000/mentor/login', formData)
-        toast.success('Login Success', {
+        const response = await axios.post(apiEndpoint, formData)
+        toast.success(`${userType.charAt(0).toUpperCase() + userType.slice(1)} Login Success`, {
           position: "top-center",
           autoClose: 3000,
           hideProgressBar: false,
@@ -39,7 +44,7 @@ const Login = () => {
     }
 
     loginUser()
-  }, [formData])
+  }, [formData, userType])
 
   const onSubmit = (data) => {
     setFormData(data)
@@ -49,10 +54,38 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 flex items-center justify-center px-4">
       <div className="bg-gray-900 rounded-2xl shadow-2xl shadow-indigo-900/50 p-8 w-full max-w-md border border-indigo-800/30">
         <h2 className="text-3xl font-bold text-indigo-400 text-center mb-8">
-            Login
+          Login
         </h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* User Type Selection */}
+          <div>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setUserType('student')}
+                className={`flex-1 py-2 px-4 rounded-lg font-medium transition duration-200 ${
+                  userType === 'student'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/50'
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-indigo-700/30'
+                }`}
+              >
+                Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setUserType('mentor')}
+                className={`flex-1 py-2 px-4 rounded-lg font-medium transition duration-200 ${
+                  userType === 'mentor'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/50'
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-indigo-700/30'
+                }`}
+              >
+                Mentor
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-indigo-300 mb-2">
               Email Address
