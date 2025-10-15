@@ -1,14 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiLogOut, FiCalendar, FiAlertTriangle, FiHome, FiMessageSquare, FiHeart } from 'react-icons/fi';
-import { Link } from 'react-router-dom'; // Using Link for chatbot navigation
+import { Link } from 'react-router-dom'; 
 
-// --- IMPORTANT ---
-// Add these new images to your 'src/assets/' folder
 import mintLogo from '../../assets/mintLogo.png'; 
 import heroImage from '../../assets/git.png';
-import kiitBandhuImage from '../../assets/kiitBandhu.png'; // Placeholder for Bandhu image
-import kiitSageImage from '../../assets/kiitSage.png';   // Placeholder for Sage image
+import kiitBandhuImage from '../../assets/kiitBandhu.png'; 
+import kiitSageImage from '../../assets/kiitSage.png';  
 
 const StudentLanding = ({ student }) => {
 
