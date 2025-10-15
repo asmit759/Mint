@@ -6,7 +6,7 @@ export default function SmoothScrolling({ children }) {
   useEffect(() => {
     const lenis = new Lenis({
       lerp: 0.1,
-      duration: 1.5,
+      duration: 1.3,
       smoothTouch: true,
     })
 

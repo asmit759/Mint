@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Logo from "../../assets/mintLogo.png"
 
+
 const MentorNavbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
 
   // Mock user data - replace with actual user data from your auth context
   const user = {
@@ -15,12 +17,14 @@ const MentorNavbar = () => {
     avatar: "https://ui-avatars.com/api/?name=John+Doe&background=6366f1&color=fff"
   }
 
+
   const navLinks = [
     { name: 'Dashboard', path: '/mentor/dashboard' },
     { name: 'Students', path: '/mentor/students' },
     { name: 'Sessions', path: '/mentor/sessions' },
     { name: 'Messages', path: '/mentor/messages' },
   ]
+
 
   const dropdownVariants = {
     hidden: { opacity: 0, y: -10, scale: 0.95 },
@@ -37,10 +41,10 @@ const MentorNavbar = () => {
       transition: { duration: 0.15 }
     }
   }
-  
+
 
   return (
-    <nav className="bg-gray-900 border-b border-indigo-800/30 shadow-lg shadow-indigo-900/20 sticky top-0 z-50">
+    <nav className="bg-gray-900/30 backdrop-blur-md border-b border-indigo-800/30 shadow-lg shadow-indigo-900/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -50,7 +54,7 @@ const MentorNavbar = () => {
               <motion.img
                 src={Logo}
                 alt="MINT Logo"
-                className="h-12 w-12 cursor-pointer scale-180"
+                className="h-10 w-10 cursor-pointer scale-180"
                 whileHover={{
                   scale: 1.05,
                   filter: "drop-shadow(0 0 15px rgba(99, 102, 241, 0.6))"
@@ -58,10 +62,11 @@ const MentorNavbar = () => {
                 transition={{ duration: 0.2 }}
               />
               <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-poppins group-hover:from-indigo-300 group-hover:to-purple-300 transition-all duration-200">
-                MINT 
+                MINT
               </span>
             </Link>
           </div>
+
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-1">
@@ -76,6 +81,7 @@ const MentorNavbar = () => {
             ))}
           </div>
 
+
           {/* User Profile & Mobile Menu Button */}
           <div className="flex items-center space-x-4">
             
@@ -83,7 +89,7 @@ const MentorNavbar = () => {
             <div className="hidden md:block relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-800 transition duration-200 border border-indigo-700/30"
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-800/50 backdrop-blur-sm transition duration-200 border border-indigo-700/30"
               >
                 <img
                   src={user.avatar}
@@ -106,6 +112,7 @@ const MentorNavbar = () => {
                 </svg>
               </button>
 
+
               {/* Dropdown Menu */}
               <AnimatePresence>
                 {isProfileOpen && (
@@ -114,7 +121,7 @@ const MentorNavbar = () => {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="absolute right-0 mt-2 w-56 bg-gray-800 border border-indigo-700/30 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden"
+                    className="absolute right-0 mt-2 w-56 bg-gray-800/80 backdrop-blur-xl border border-indigo-700/30 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden"
                   >
                     <div className="px-4 py-3 border-b border-indigo-700/30">
                       <p className="text-sm font-medium text-white">{user.name}</p>
@@ -149,6 +156,7 @@ const MentorNavbar = () => {
                         </div>
                       </Link>
 
+
                       <div className="border-t border-indigo-700/30 my-2"></div>
                       
                       <button
@@ -171,10 +179,11 @@ const MentorNavbar = () => {
               </AnimatePresence>
             </div>
 
+
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition duration-200"
+              className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm transition duration-200"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
@@ -187,6 +196,7 @@ const MentorNavbar = () => {
           </div>
         </div>
 
+
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
@@ -195,7 +205,7 @@ const MentorNavbar = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="md:hidden border-t border-indigo-800/30 py-4"
+              className="md:hidden border-t border-indigo-800/30 py-4 backdrop-blur-md"
             >
               {/* Mobile Nav Links */}
               <div className="space-y-1 mb-4">
@@ -210,6 +220,7 @@ const MentorNavbar = () => {
                   </Link>
                 ))}
               </div>
+
 
               {/* Mobile User Profile */}
               <div className="border-t border-indigo-800/30 pt-4">
@@ -258,5 +269,6 @@ const MentorNavbar = () => {
     </nav>
   )
 }
+
 
 export default MentorNavbar

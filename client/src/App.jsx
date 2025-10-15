@@ -7,7 +7,7 @@ import StudentSignup from "./components/StudentSignup";
 import StudentLanding from "./components/student/Landing";
 import MentorSignup from "./components/MentorSignup";
 import MentorNavbar from "./components/mentor/MentorNavbar";
-
+import MentorLand from './components/mentor/MentorLand';
 function App() {
   return (
     <BrowserRouter>
@@ -17,7 +17,7 @@ function App() {
         <Route path="/student/signup" element={<StudentSignup />} />
         <Route path="/student/landing" element={<StudentLanding />} />
         <Route path="/mentor/signup" element={<MentorSignup />} />
-        <Route path="/mentor-landing" element={<MentorNavbar />} />
+        <Route path="/mentor-landing" element={<><MentorLand/></>} />
       </Routes>
     </BrowserRouter>
   );
