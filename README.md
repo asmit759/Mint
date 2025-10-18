@@ -174,7 +174,7 @@ cd Mint
 Setup Backend
 cd server
 npm install
-npm run dev
+nodemon index.js
 
 Setup Frontend
 cd ../client
