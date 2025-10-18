@@ -7,6 +7,7 @@ import { logout } from '../../store/authSlice';
 import MentorNavbar from '../mentor/MentorNavbar';
 import { BiSolidMessageSquareDetail } from 'react-icons/bi';
 
+
 const displayName = (u) =>
   u?.name ||
   u?.fullName ||
@@ -14,6 +15,7 @@ const displayName = (u) =>
   u?.email ||
   u?.email_id ||
   '';
+
 
 const MentorDashboard = () => {
   const navigate = useNavigate();
@@ -154,7 +156,24 @@ const MentorDashboard = () => {
     visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } },
   };
 
-  const handleNavigation = (route) => navigate(route);
+// ✅ UPDATED: Enhanced navigation handler with debugging
+const handleNavigation = (route, event) => {
+  console.log('🚀 Navigation triggered:', {
+    from: window.location.pathname,
+    to: route,
+    authState: { isAuthenticated: user !== null, userType }
+  });
+  
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
+  navigate(route);
+  
+  console.log('✅ Navigate called for:', route);
+};
+
 
   return (
     <div className="bg-gradient-to-br from-gray-800 via-black to-indigo-700 min-h-screen">
@@ -188,7 +207,7 @@ const MentorDashboard = () => {
               key={item.id}
               variants={itemVariants}
               whileHover={{ scale: 1.02, y: -5 }}
-              onClick={() => handleNavigation(item.route)}
+              onClick={(e) => handleNavigation(item.route, e)} // ✅ FIXED: Pass event
               className={`
                 group relative cursor-pointer rounded-3xl overflow-hidden
                 ${item.size === 'large' ? 'md:col-span-2 md:row-span-2' : ''}

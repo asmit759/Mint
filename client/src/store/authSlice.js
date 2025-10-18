@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosClient from '../utils/AxiosCli';
 
-// Student
+// --- Student Actions ---
 export const studentRegister = createAsyncThunk(
   'auth/studentRegister',
   async (payload, { rejectWithValue }) => {
@@ -27,7 +27,7 @@ export const studentLogin = createAsyncThunk(
   }
 );
 
-// Mentor
+// --- Mentor Actions ---
 export const mentorRegister = createAsyncThunk(
   'auth/mentorRegister',
   async (payload, { rejectWithValue }) => {
@@ -52,7 +52,7 @@ export const mentorLogin = createAsyncThunk(
   }
 );
 
-// Logout based on current role
+// --- Logout ---
 export const logout = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue, getState }) => {
@@ -60,9 +60,6 @@ export const logout = createAsyncThunk(
       const { userType } = getState().auth;
       if (userType === 'student') {
         await axiosClient.post('/student/logout');
-      } else if (userType === 'mentor') {
-        // If you add mentor logout later, call it; else clear cookie generically if available
-        await axiosClient.post('/auth/logout').catch(() => {});
       } else {
         await axiosClient.post('/auth/logout').catch(() => {});
       }
@@ -73,58 +70,100 @@ export const logout = createAsyncThunk(
   }
 );
 
+// --- LocalStorage Persistence ---
+const loadAuthFromStorage = () => {
+  try {
+    const savedAuth = localStorage.getItem('auth');
+    if (savedAuth) {
+      return JSON.parse(savedAuth);
+    }
+  } catch (error) {
+    console.error('Error loading auth from localStorage:', error);
+  }
+  return {
+    user: null,
+    userType: null,
+    isAuthenticated: false
+  };
+};
+
+const savedAuth = loadAuthFromStorage();
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
-    userType: null,
-    isAuthenticated: false,
-    loading: false,
+    user: savedAuth.user || null,
+    userType: savedAuth.userType || null,
+    isAuthenticated: savedAuth.isAuthenticated || false,
+    loading: false, // ✅ CRITICAL: Start as false, not true
     error: null,
   },
-  reducers: {},
+  reducers: {
+    // ✅ NEW: Add action to restore auth from localStorage
+    restoreAuth: (state, action) => {
+      state.user = action.payload.user;
+      state.userType = action.payload.userType;
+      state.isAuthenticated = action.payload.isAuthenticated;
+      state.loading = false;
+    },
+    // ✅ NEW: Clear error
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     const onPending = (state) => {
       state.loading = true;
       state.error = null;
     };
+
     const onRejected = (state, action) => {
       state.loading = false;
       state.error = action.payload?.message || 'Something went wrong';
-      // Do not force-clear user on rejected register if someone is already logged in.
       if (!state.isAuthenticated) {
         state.user = null;
         state.userType = null;
       }
     };
+
     const onFulfilled = (state, action) => {
       state.loading = false;
       state.user = action.payload?.user || null;
       state.userType = action.payload?.userType || null;
       state.isAuthenticated = !!action.payload?.user;
       state.error = null;
+
+      // ✅ Save to localStorage
+      if (state.isAuthenticated) {
+        localStorage.setItem(
+          'auth',
+          JSON.stringify({
+            user: state.user,
+            userType: state.userType,
+            isAuthenticated: true,
+          })
+        );
+      }
     };
 
     builder
-      // student
+      // Student
       .addCase(studentRegister.pending, onPending)
       .addCase(studentRegister.rejected, onRejected)
       .addCase(studentRegister.fulfilled, onFulfilled)
-
       .addCase(studentLogin.pending, onPending)
       .addCase(studentLogin.rejected, onRejected)
       .addCase(studentLogin.fulfilled, onFulfilled)
 
-      // mentor
+      // Mentor
       .addCase(mentorRegister.pending, onPending)
       .addCase(mentorRegister.rejected, onRejected)
       .addCase(mentorRegister.fulfilled, onFulfilled)
-
       .addCase(mentorLogin.pending, onPending)
       .addCase(mentorLogin.rejected, onRejected)
       .addCase(mentorLogin.fulfilled, onFulfilled)
 
-      // logout
+      // Logout
       .addCase(logout.pending, onPending)
       .addCase(logout.rejected, onRejected)
       .addCase(logout.fulfilled, (state) => {
@@ -133,8 +172,10 @@ const authSlice = createSlice({
         state.userType = null;
         state.isAuthenticated = false;
         state.error = null;
+        localStorage.removeItem('auth'); 
       });
   },
 });
 
+export const { restoreAuth, clearError } = authSlice.actions;
 export default authSlice.reducer;
