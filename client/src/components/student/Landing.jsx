@@ -38,16 +38,19 @@ const StudentLanding = () => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleLogout = async () => {
-    try {
-      await dispatch(logout()).unwrap();
-    } catch (_) {
-      // Optional toast
-    } finally {
-      localStorage.removeItem('token'); // if you have token storage
-      navigate('/login', { replace: true });
-    }
-  };
+const handleLogout = async () => {
+  try {
+    await dispatch(logout()).unwrap();
+  } catch (err) {
+    console.warn("Logout API failed, forcing local clear:", err);
+  } finally {
+    // ✅ Always clear local state and redirect, even if API fails
+    localStorage.removeItem("auth");
+    navigate("/login", { replace: true });
+    window.location.reload(); // optional, ensures Redux resets fully
+  }
+};
+
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white font-poppins">
