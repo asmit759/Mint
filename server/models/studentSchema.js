@@ -36,6 +36,10 @@ const studentSchema = new Schema({
         type: Date,
         default: null
     },
+    attendance:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Attendance"
+    },
     address: [
         {
             street: { type: String, minLength: 5, maxLength: 40, default: "" },

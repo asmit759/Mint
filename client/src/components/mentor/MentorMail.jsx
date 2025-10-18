@@ -16,9 +16,10 @@ const MentorMail = () => {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [loading, setLoading] = useState(false)
+  const [fetchingData, setFetchingData] = useState(true) // Add this for initial data fetch
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
-  // ✅ FIXED: Removed token redirect - ProtectedRoute handles auth
+  // Fetch mentor details on component mount
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
@@ -26,24 +27,38 @@ const MentorMail = () => {
         
         if (!token) {
           console.warn('No token found')
+          setFetchingData(false)
           return
         }
+        console.log(token)
 
         const response = await axios.get('http://localhost:4000/mentorRoutes/getMentorDetails', {
           headers: { 'Authorization': `Bearer ${token}` },
           withCredentials: true
         })
 
+        // Debug logs to check response structure
+        console.log('Full Response:', response.data)
+        console.log('Mentor Details:', response.data.mentorDetails)
+        console.log('Mentees Array:', response.data.mentorDetails?.mentees)
+        console.log(response)
+
         if (response.data.success) {
           setMentorDetails(response.data.mentorDetails)
         }
       } catch (error) {
         console.error('Error fetching mentor details:', error)
-        // Don't navigate here - let ProtectedRoute handle auth failures
+        toast.error('Failed to load mentor details', {
+          position: "top-center",
+          theme: "dark",
+          transition: Bounce,
+        })
+      } finally {
+        setFetchingData(false)
       }
     }
     fetchMentorDetails()
-  }, []) // ✅ Empty dependencies - only run once on mount
+  }, [])
 
   const handleLogout = async () => {
     try {
@@ -131,7 +146,7 @@ const MentorMail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700">
       <MentorNavbar onLogout={handleLogout} />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -205,54 +220,73 @@ const MentorMail = () => {
                       transition={{ duration: 0.2 }}
                       className="absolute z-10 w-full mt-2 bg-gray-800 border border-indigo-700/50 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden"
                     >
-                      {/* Select All Option */}
-                      <div
-                        onClick={handleSelectAll}
-                        className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150 border-b border-indigo-700/30"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${
-                            selectedStudents.length === mentorDetails?.mentees?.length
-                              ? 'bg-indigo-600 border-indigo-600'
-                              : 'border-indigo-500'
-                          }`}>
-                            {selectedStudents.length === mentorDetails?.mentees?.length && (
-                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
+                      {/* Select All Option - Only show when there are students */}
+                      {!fetchingData && mentorDetails?.mentees && mentorDetails.mentees.length > 0 && (
+                        <div
+                          onClick={handleSelectAll}
+                          className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150 border-b border-indigo-700/30"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${
+                              selectedStudents.length === mentorDetails.mentees.length
+                                ? 'bg-indigo-600 border-indigo-600'
+                                : 'border-indigo-500'
+                            }`}>
+                              {selectedStudents.length === mentorDetails.mentees.length && (
+                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            <span className="text-white font-medium">Select All</span>
                           </div>
-                          <span className="text-white font-medium">Select All</span>
                         </div>
-                      </div>
+                      )}
 
                       {/* Student List */}
                       <div className="max-h-64 overflow-y-auto">
-                        {mentorDetails?.mentees?.map((student) => (
-                          <div
-                            key={student._id}
-                            onClick={() => handleStudentToggle(student.email)}
-                            className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${
-                                selectedStudents.includes(student.email)
-                                  ? 'bg-indigo-600 border-indigo-600'
-                                  : 'border-indigo-500'
-                              }`}>
-                                {selectedStudents.includes(student.email) && (
-                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                )}
-                              </div>
-                              <div className="flex-1">
-                                <p className="text-white font-medium">{student.name}</p>
-                                <p className="text-gray-400 text-sm">{student.email}</p>
+                        {fetchingData ? (
+                          <div className="px-4 py-8 text-gray-400 text-center">
+                            <svg className="animate-spin h-6 w-6 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Loading students...
+                          </div>
+                        ) : !mentorDetails?.mentees || mentorDetails.mentees.length === 0 ? (
+                          <div className="px-4 py-8 text-gray-400 text-center">
+                            <svg className="w-12 h-12 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            No students found
+                          </div>
+                        ) : (
+                          mentorDetails.mentees.map((student) => (
+                            <div
+                              key={student._id}
+                              onClick={() => handleStudentToggle(student.email)}
+                              className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${
+                                  selectedStudents.includes(student.email)
+                                    ? 'bg-indigo-600 border-indigo-600'
+                                    : 'border-indigo-500'
+                                }`}>
+                                  {selectedStudents.includes(student.email) && (
+                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-white font-medium">{student.name}</p>
+                                  <p className="text-gray-400 text-sm">{student.email}</p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))
+                        )}
                       </div>
                     </motion.div>
                   )}

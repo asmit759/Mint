@@ -52,6 +52,16 @@ const mentorSchema = new mongoose.Schema(
             type:mongoose.Schema.Types.ObjectId,
             ref:"parent"
         },
+        menteeLocation:[
+            {
+                menteeName:{
+                    type:String
+                },
+                location:{
+                    type:String
+                }
+            }
+        ]
 
         
         
