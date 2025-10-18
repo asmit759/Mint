@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { motion } from 'framer-motion'
-import axios from 'axios'
+import axiosClient from '../utils/AxiosCli'
 import { Link } from 'react-router-dom'
 import Logo from "../assets/mintLogo.png"
 
@@ -20,10 +20,9 @@ const Login = () => {
     const loginUser = async () => {
       setServerError('')
       setLoading(true)
-      const apiEndpoint = `http://localhost:4000/${userType}/login`
       
       try {
-        const response = await axios.post(apiEndpoint, formData)
+        const response = await axiosClient.post(`/${userType}/login`, formData)
         toast.success(`${userType.charAt(0).toUpperCase() + userType.slice(1)} Login Success`, {
           position: "top-center",
           autoClose: 3000,

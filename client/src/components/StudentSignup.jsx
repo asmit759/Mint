@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { Link } from 'react-router-dom'
 import { ToastContainer, toast, Bounce } from 'react-toastify';
-import axios from 'axios'
+import axiosClient from '../utils/AxiosCli';
 
 const StudentSignup = () => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
@@ -21,7 +21,7 @@ const StudentSignup = () => {
       setServerError('')
       setLoading(true)
       try {
-        const response = await axios.post('http://localhost:4000/student/register', formData)
+        const response = await axiosClient.post('/student/register', formData)
         toast.success('Registration Successful!', {
           position: "top-center",
           autoClose: 3000,
