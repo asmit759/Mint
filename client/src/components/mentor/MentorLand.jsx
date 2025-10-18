@@ -140,8 +140,9 @@ const MentorDashboard = () => {
       description: 'Resolve mentee grievances',
       icon: <BiSolidMessageSquareDetail className="h-14 w-14" />,
       route: '/mentor/grievances',
-      gradient: 'from-violet-500 via-purple-500 to-fuchsia-500',
-      glowColor: 'rgba(168, 85, 247, 0.3)',
+      gradient: 'from-violet-800 via-indigo-800 to-blue-900',
+      glowColor: 'rgba(79, 70, 229, 0.35)',
+
       size: 'small',
     },
   ];

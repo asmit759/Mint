@@ -1,5 +1,6 @@
 const Attendance = require("../models/attendance");
 const parseAttendanceExcel = require("../utils/attendanceParser");
+const Student = require("../models/studentSchema");
 
 exports.uploadAttendance = async (req, res) => {
   try {
@@ -20,6 +21,8 @@ exports.uploadAttendance = async (req, res) => {
 
 
     });
+  
+    
 
     return res.status(201).json({ 
 

@@ -1,4 +1,5 @@
 const Student  = require("../models/studentSchema")
+const mentor = require("../models/mentor")
 
 exports.shareLocation = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ exports.shareLocation = async (req, res) => {
         }
 
         //location updated in student database
-        await Student.findByIdAndUpdate(studentId,
+        const student = await Student.findByIdAndUpdate(studentId,
             {
                 lastKnownLocation: { latitude, longitude, timestamp: new Date() }
             },
@@ -21,10 +22,18 @@ exports.shareLocation = async (req, res) => {
 
         const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
+        const mentorId = Student.mentor;
+
+        const mentorDetails = await mentor.findById(mentorId);
+
+        mentorDetails.menteeLocation.menteeName = student.name;
+        mentorDetails.menteeLocation.location = mapUrl;
+
         return res.status(200).json({
             success: true,
             message: "Location shared successfully",
-            mapUrl
+            mapUrl,
+            mentorDetails
         });
 
 

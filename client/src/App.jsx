@@ -12,6 +12,8 @@ import MentorSignup from './components/MentorSignup';
 import MentorLand from './components/mentor/MentorLand';
 import MentorMail from './components/mentor/MentorMail';
 import ProtectedRoute from './components/routing/ProtectedRoute';
+import AttendanceDashboard from './components/mentor/AttendanceDashboard';
+import MentorStudentLocation from './components/mentor/MentorStudentLocation';
 
 import SageChat from './components/student/SageChat';
 import BandhuChat from './components/student/BandhuChat';
@@ -141,7 +143,7 @@ function App() {
         element={
           <ProtectedRoute allow="mentor">
             <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
-              <h1 className="text-3xl font-bold">Attendance Page - Coming Soon</h1>
+              <AttendanceDashboard/>
             </div>
           </ProtectedRoute>
         }
@@ -161,7 +163,7 @@ function App() {
         element={
           <ProtectedRoute allow="mentor">
             <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
-              <h1 className="text-3xl font-bold">Student Location - Coming Soon</h1>
+              <MentorStudentLocation/>
             </div>
           </ProtectedRoute>
         }
