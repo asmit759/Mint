@@ -1,20 +1,24 @@
+// src/App.jsx
 import './App.css';
-import { Routes, Route, Navigate } from 'react-router-dom'; // ✅ REMOVED: BrowserRouter
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
 import Login from './components/Login';
 import StudentSignup from './components/StudentSignup';
 import StudentLanding from './components/student/Landing';
+
 import MentorSignup from './components/MentorSignup';
 import MentorLand from './components/mentor/MentorLand';
 import MentorMail from './components/mentor/MentorMail';
 import ProtectedRoute from './components/routing/ProtectedRoute';
 
+import SageChat from './components/student/SageChat';
+import BandhuChat from './components/student/BandhuChat';
+
 function App() {
   const { isAuthenticated, userType, loading } = useSelector((s) => s.auth);
 
-  // ✅ Debug logging
   useEffect(() => {
     console.log('🔍 App Auth State:', {
       isAuthenticated,
@@ -25,7 +29,6 @@ function App() {
   }, [isAuthenticated, userType, loading]);
 
   return (
-    // ✅ REMOVED: <BrowserRouter> wrapper
     <Routes>
       {/* Root redirect logic */}
       <Route
@@ -97,6 +100,24 @@ function App() {
         }
       />
 
+      {/* NEW: Student Chatbots */}
+      <Route
+        path="/kiit-sage"
+        element={
+          <ProtectedRoute allow="student">
+            <SageChat />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/kiit-bandhu"
+        element={
+          <ProtectedRoute allow="student">
+            <BandhuChat />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Protected Mentor Routes */}
       <Route
         path="/mentor-landing"
@@ -106,7 +127,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-      
       <Route
         path="/mentor/send-email"
         element={
