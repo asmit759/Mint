@@ -65,6 +65,14 @@ Mint integrates browser geolocation APIs and server-side mapping utilities to pr
   
 ---
 
+## ⚠️ Academic Integrity Notice
+
+This repository, "Mint", is part of a college project developed by Asmit Sahu and Omm Tripathi under the supervision of KIIT University for B.Tech CSE. 
+
+It is shared publicly for **evaluation purposes only**.  
+Any unauthorized use, reproduction, distribution, or claim of authorship is strictly prohibited.
+
+
 ## 🏗️ Folder Structure
 
 ```
@@ -180,7 +188,6 @@ Setup Frontend
 cd ../client
 npm install
 npm run dev
-
 
 💬 Team
 
