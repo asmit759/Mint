@@ -1,88 +1,188 @@
-// src/App.jsx
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom'; // ✅ REMOVED: BrowserRouter
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
-// Pages/Components
 import Login from './components/Login';
 import StudentSignup from './components/StudentSignup';
 import StudentLanding from './components/student/Landing';
 import MentorSignup from './components/MentorSignup';
-import MentorNavbar from './components/mentor/MentorNavbar';
 import MentorLand from './components/mentor/MentorLand';
-import ProtectedRoute from './components/routing/ProtectedRoute';
 import MentorMail from './components/mentor/MentorMail';
+import ProtectedRoute from './components/routing/ProtectedRoute';
 
 function App() {
-  const { isAuthenticated, userType } = useSelector((s) => s.auth);
+  const { isAuthenticated, userType, loading } = useSelector((s) => s.auth);
+
+  // ✅ Debug logging
+  useEffect(() => {
+    console.log('🔍 App Auth State:', {
+      isAuthenticated,
+      userType,
+      loading,
+      currentPath: window.location.pathname
+    });
+  }, [isAuthenticated, userType, loading]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isAuthenticated
-              ? (userType === 'student' ? <Navigate to="/student/landing" /> : <Navigate to="/mentor-landing" />)
-              : <Login />
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            isAuthenticated
-              ? (userType === 'student' ? <Navigate to="/student/landing" /> : <Navigate to="/mentor-landing" />)
-              : <Login />
-          }
-        />
-        <Route
-          path="/student/signup"
-          element={isAuthenticated ? <Navigate to="/student/landing" /> : <StudentSignup />}
-        />
-        <Route
-          path="/mentor/signup"
-          element={isAuthenticated ? <Navigate to="/mentor-landing" /> : <MentorSignup />}
-        />
+    // ✅ REMOVED: <BrowserRouter> wrapper
+    <Routes>
+      {/* Root redirect logic */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated ? (
+            userType === 'student' ? (
+              <Navigate to="/student/landing" replace />
+            ) : (
+              <Navigate to="/mentor-landing" replace />
+            )
+          ) : (
+            <Login />
+          )
+        }
+      />
 
-        {/* Protected: Student */}
-        <Route
-          path="/student/landing"
-          element={
-            <ProtectedRoute allow="student">
-              <StudentLanding />
-            </ProtectedRoute>
-          }
-        />
+      {/* Auth Routes */}
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? (
+            userType === 'student' ? (
+              <Navigate to="/student/landing" replace />
+            ) : (
+              <Navigate to="/mentor-landing" replace />
+            )
+          ) : (
+            <Login />
+          )
+        }
+      />
+      <Route
+        path="/student/signup"
+        element={
+          isAuthenticated ? (
+            userType === 'student' ? (
+              <Navigate to="/student/landing" replace />
+            ) : (
+              <Navigate to="/mentor-landing" replace />
+            )
+          ) : (
+            <StudentSignup />
+          )
+        }
+      />
+      <Route
+        path="/mentor/signup"
+        element={
+          isAuthenticated ? (
+            userType === 'mentor' ? (
+              <Navigate to="/mentor-landing" replace />
+            ) : (
+              <Navigate to="/student/landing" replace />
+            )
+          ) : (
+            <MentorSignup />
+          )
+        }
+      />
 
-        {/* Protected: Mentor */}
-        <Route
-          path="/mentor-landing"
-          element={
-            <ProtectedRoute allow="mentor">
-              <>
-                {/* <MentorNavbar /> */}
-                <MentorLand />
-              </>
-            </ProtectedRoute>
-          }
-        />
+      {/* Protected Student Routes */}
+      <Route
+        path="/student/landing"
+        element={
+          <ProtectedRoute allow="student">
+            <StudentLanding />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/mentor/send-email"
-          element={
-            <ProtectedRoute allow="mentor">
-              <>
-                <MentorNavbar />
-                <MentorMail />
-              </>
-            </ProtectedRoute>
-          }
-        />
+      {/* Protected Mentor Routes */}
+      <Route
+        path="/mentor-landing"
+        element={
+          <ProtectedRoute allow="mentor">
+            <MentorLand />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/mentor/send-email"
+        element={
+          <ProtectedRoute allow="mentor">
+            <MentorMail />
+          </ProtectedRoute>
+        }
+      />
 
+      <Route
+        path="/mentor/attendance"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Attendance Page - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentor/leave-applications"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Leave Applications - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentor/student-location"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Student Location - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentor/chat"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Messages - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentor/grievances"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Student Grievances - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </BrowserRouter>
+      {/* Fallback */}
+      <Route 
+        path="*" 
+        element={
+          isAuthenticated ? (
+            userType === 'student' ? (
+              <Navigate to="/student/landing" replace />
+            ) : (
+              <Navigate to="/mentor-landing" replace />
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        } 
+      />
+    </Routes>
   );
 }
 

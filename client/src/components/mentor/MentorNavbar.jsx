@@ -22,7 +22,7 @@ const MentorNavbar = ({ onLogout }) => {
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;
 
   const navLinks = [
-    { name: 'Dashboard', path: '/mentor/dashboard' },
+    { name: 'Dashboard', path: '/mentor-landing' }, // ✅ Changed to match your App.js route
     { name: 'Students', path: '/mentor/students' },
     { name: 'Sessions', path: '/mentor/sessions' },
     { name: 'Messages', path: '/mentor/messages' },
@@ -47,7 +47,7 @@ const MentorNavbar = ({ onLogout }) => {
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
           <div className="flex items-center space-x-3">
-            <Link to="/mentor/dashboard" className="flex items-center space-x-3 group">
+            <Link to="/mentor-landing" className="flex items-center space-x-3 group"> {/* ✅ Fixed path */}
               <motion.img
                 src={Logo}
                 alt="MINT Logo"
@@ -79,6 +79,7 @@ const MentorNavbar = ({ onLogout }) => {
             {/* Desktop profile */}
             <div className="hidden md:block relative">
               <button
+                type="button" // ✅ FIXED: Explicit button type
                 onClick={() => setIsProfileOpen((v) => !v)}
                 className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-800/50 backdrop-blur-sm transition duration-200 border border-indigo-700/30"
               >
@@ -137,6 +138,7 @@ const MentorNavbar = ({ onLogout }) => {
                       <div className="border-t border-indigo-700/30 my-2"></div>
 
                       <button
+                        type="button" // ✅ FIXED: Explicit button type
                         className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition duration-150"
                         onClick={handleLogoutClick}
                       >
@@ -155,6 +157,7 @@ const MentorNavbar = ({ onLogout }) => {
 
             {/* Mobile menu button */}
             <button
+              type="button" // ✅ FIXED: Explicit button type
               onClick={() => setIsMobileMenuOpen((v) => !v)}
               className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm transition duration-200"
             >
@@ -218,6 +221,7 @@ const MentorNavbar = ({ onLogout }) => {
                 </Link>
 
                 <button
+                  type="button" // ✅ FIXED: Explicit button type
                   className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition duration-150"
                   onClick={async () => {
                     setIsMobileMenuOpen(false);

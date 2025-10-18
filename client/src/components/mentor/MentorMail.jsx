@@ -3,11 +3,14 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { toast, ToastContainer, Bounce } from 'react-toastify'
+import { logout } from '../../store/authSlice'
 import MentorNavbar from './MentorNavbar'
 
 const MentorMail = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [mentorDetails, setMentorDetails] = useState(null)
   const [selectedStudents, setSelectedStudents] = useState([])
   const [title, setTitle] = useState('')
@@ -15,12 +18,14 @@ const MentorMail = () => {
   const [loading, setLoading] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
+  // ✅ FIXED: Removed token redirect - ProtectedRoute handles auth
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
-        const token = localStorage.getItem('authToken')
+        const token = localStorage.getItem('token')
+        
         if (!token) {
-          navigate('/login')
+          console.warn('No token found')
           return
         }
 
@@ -34,14 +39,22 @@ const MentorMail = () => {
         }
       } catch (error) {
         console.error('Error fetching mentor details:', error)
-        if (error.response?.status === 401) {
-          localStorage.removeItem('authToken')
-          navigate('/login')
-        }
+        // Don't navigate here - let ProtectedRoute handle auth failures
       }
     }
     fetchMentorDetails()
-  }, [navigate])
+  }, []) // ✅ Empty dependencies - only run once on mount
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap()
+    } catch (_) {
+      // optional toast
+    } finally {
+      localStorage.removeItem('token')
+      navigate('/login', { replace: true })
+    }
+  }
 
   const handleStudentToggle = (email) => {
     setSelectedStudents(prev => 
@@ -82,7 +95,7 @@ const MentorMail = () => {
 
     setLoading(true)
     try {
-      const token = localStorage.getItem('authToken')
+      const token = localStorage.getItem('token')
       const response = await axios.post(
         'http://localhost:4000/mentorRoutes/sendMailToStudent',
         {
@@ -119,7 +132,7 @@ const MentorMail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
-      <MentorNavbar />
+      <MentorNavbar onLogout={handleLogout} />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
@@ -131,13 +144,14 @@ const MentorMail = () => {
           className="mb-8"
         >
           <button
-            onClick={() => navigate(-1)}
+            type="button"
+            onClick={() => navigate('/mentor-landing')}
             className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 mb-4 transition duration-200"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            Back to Dashboard
           </button>
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">
             Send Email to Students
