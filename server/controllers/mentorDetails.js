@@ -6,8 +6,7 @@ exports.mentorDetails = async (req,res)=>{
     try {
         
         const mentorMail = req.user.mentorMail
-        const mentorDetails = await mentor.findOne(mentorMail);
-        console.log(mentorDetails);
+        const mentorDetails = await mentor.findOne(mentorMail).populate('mentees', 'name email contactNumber accountType createdAt');
 
         if(mentorDetails){
             return res.status(200).json({

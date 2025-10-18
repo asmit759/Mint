@@ -47,7 +47,7 @@ const MentorDashboard = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
-      route: '/mentor/mail-mentees',
+      route: '/mentor/send-email',
       gradient: 'from-purple-500 via-pink-500 to-rose-500',
       glowColor: 'rgba(236, 72, 153, 0.3)',
       size: 'large', // bento style: large tile

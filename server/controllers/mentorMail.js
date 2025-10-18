@@ -9,7 +9,7 @@ const studentModel = require("../models/studentSchema");
 exports.alertStudent = async(req,res) =>{
     try {
         
-        const mentorData = await mentor.findById(req.user.id);
+        const mentorData = await mentor.findById(req.user.id).populate();
         
         //mentor data validation  
         if (!mentorData) {

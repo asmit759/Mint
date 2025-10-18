@@ -11,6 +11,7 @@ import MentorSignup from './components/MentorSignup';
 import MentorNavbar from './components/mentor/MentorNavbar';
 import MentorLand from './components/mentor/MentorLand';
 import ProtectedRoute from './components/routing/ProtectedRoute';
+import MentorMail from './components/mentor/MentorMail';
 
 function App() {
   const { isAuthenticated, userType } = useSelector((s) => s.auth);
@@ -59,12 +60,24 @@ function App() {
           element={
             <ProtectedRoute allow="mentor">
               <>
-                <MentorNavbar />
                 <MentorLand />
               </>
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/mentor/send-email"
+          element={
+            <ProtectedRoute allow="mentor">
+              <>
+                <MentorNavbar />
+                <MentorMail />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
