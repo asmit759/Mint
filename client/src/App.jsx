@@ -59,7 +59,7 @@ function App() {
           element={
             <ProtectedRoute allow="mentor">
               <>
-                <MentorNavbar />
+                {/* <MentorNavbar /> */}
                 <MentorLand />
               </>
             </ProtectedRoute>
