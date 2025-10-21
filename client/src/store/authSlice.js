@@ -95,18 +95,17 @@ const authSlice = createSlice({
     user: savedAuth.user || null,
     userType: savedAuth.userType || null,
     isAuthenticated: savedAuth.isAuthenticated || false,
-    loading: false, // ✅ CRITICAL: Start as false, not true
+    loading: false,
     error: null,
   },
   reducers: {
-    // ✅ NEW: Add action to restore auth from localStorage
     restoreAuth: (state, action) => {
       state.user = action.payload.user;
       state.userType = action.payload.userType;
       state.isAuthenticated = action.payload.isAuthenticated;
       state.loading = false;
     },
-    // ✅ NEW: Clear error
+    
     clearError: (state) => {
       state.error = null;
     },
@@ -133,7 +132,6 @@ const authSlice = createSlice({
       state.isAuthenticated = !!action.payload?.user;
       state.error = null;
 
-      // ✅ Save to localStorage
       if (state.isAuthenticated) {
         localStorage.setItem(
           'auth',
