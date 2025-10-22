@@ -1,47 +1,40 @@
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Navigate, useLocation } from "react-router-dom";
 
-const ProtectedRoute = ({ children, allow = "any", redirectTo = "/login" }) => {
-  const { isAuthenticated, userType, loading } = useSelector((s) => s.auth);
+/**
+ * ProtectedRoute Component
+ * @param {string} allow - "student" or "mentor"
+ * @param {ReactNode} children - The component to render if allowed
+ */
+const ProtectedRoute = ({ allow, children }) => {
+  const { isAuthenticated, role, loading } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  // ✅ NEW: Debug logging
-  console.log('🛡️ ProtectedRoute Check:', {
-    path: location.pathname,
-    isAuthenticated,
-    userType,
-    loading,
-    allow
-  });
-
-  // 🚧 Prevent premature redirect during auth load
+  // Show loading screen while verifying auth
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700">
-        <div className="text-center text-white p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Checking access...</p>
-        </div>
+      <div className="flex items-center justify-center h-screen bg-black text-white text-lg">
+        Checking authentication...
       </div>
     );
   }
 
-  // 🚫 Not logged in
+  // If not authenticated → redirect to login
   if (!isAuthenticated) {
-    console.log('❌ Not authenticated, redirecting to:', redirectTo);
-    return <Navigate to={redirectTo} replace state={{ from: location }} />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // ✅ User role allowed
-  if (allow === "any" || allow === userType) {
-    console.log('✅ Access granted');
-    return children;
+  // If authenticated but wrong role → redirect to respective dashboard
+  if (allow && role !== allow) {
+    return role === "student" ? (
+      <Navigate to="/student/landing" replace />
+    ) : (
+      <Navigate to="/mentor-landing" replace />
+    );
   }
 
-  // 🚷 Role mismatch
-  console.log('⚠️ Role mismatch, redirecting');
-  return <Navigate to={redirectTo} replace />;
+  // ✅ Authenticated and correct role → render content
+  return children;
 };
 
 export default ProtectedRoute;

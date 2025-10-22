@@ -3,121 +3,90 @@ const mentor = require("../models/mentor");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 
-exports.mentorRegister = async (req,res) =>{
-    try {
-        
-        const {
-            name,
-            email,
-            contactNumber,
-            password,
-            confirmPassword,
-            accountType,
-            //otp
-        } = req.body;
+// controllers/mentorAuth.js
+exports.mentorRegister = async (req, res) => {
+  try {
+    const { name, email, contactNumber, password, confirmPassword, accountType } = req.body;
 
-        if(password !== confirmPassword){
-            return res.status(400).json({
-                success:false,
-                message:"Password and ConfirmPassword dont match"
-            })
-        }
-
-        //check for existing user
-        const existingUser = await mentor.findOne({email});
-
-        if(existingUser){
-            return res.status(400).json({
-                success:false,
-                message:"User already exist LOGIN"
-            })
-        }
-
-        //otp bad mai dalenge
-
-        
-
-        const hashedPassword = await bcrypt.hash(password,10);
-
-        const registerMentor = await mentor.create({
-            name,
-            email,
-            contactNumber,
-            password:hashedPassword,
-            accountType:accountType,
-        })
-
-        return res.status(200).json({
-            success:true,
-            registerMentor,
-            message:"Mentor register Success"
-        });
-    
-    } catch (error) {
-        console.log(error);
-
-        return res.status(500).json({
-            success:false,
-            message:"User unable to register try again later",
-            error: error.message 
-        });
+    if (password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: "Password and ConfirmPassword dont match" });
     }
-}
 
-
-//LOGIN MENTOR
-exports.mentorLogin = async(req,res)=>{
-    try {
-        
-        const {email,password} = req.body;
-
-        const findMentor = await mentor.findOne({email});
-
-        if(!findMentor){
-            return res.status(400).json({
-                success:false,
-                message:"mentor not found try signup first"
-            });
-        }
-
-        if(await bcrypt.compare(password,findMentor.password)){
-            const token = jwt.sign(
-                {email:findMentor.email, id:findMentor._id, accountType:findMentor.accountType},
-                process.env.JWT_SERVER_KEY,
-                { expiresIn: "48h" }
-            );
-
-            findMentor.token = token;
-        findMentor.password = undefined;
-
-
-        //cookie
-        const options = {
-            expires: new Date(Date.now() + 3*24*60*60*1000),
-            
-        }
-
-        res.cookie("token", token , options).status(200).json({
-            success:true,
-            token,
-            findMentor,
-            message:"Mentor Login Success"
-        });
-        
-        }else{
-            return res.status(401).json({
-                success:false,
-                message:"password is incorrect try again"
-            })
-        }
-        
-
-    } catch (error) {
-        console.log(error);
-
-        return res.status(500).json({
-            success:false,
-            message:"Login failed try again later"
-        })
+    const existingUser = await mentor.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "User already exist LOGIN" });
     }
-}
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const m = await mentor.create({
+      name,
+      email,
+      contactNumber,
+      password: hashedPassword,
+      accountType,
+    });
+
+    // DO NOT set cookie here; let login set it
+    const user = {
+      id: m._id,
+      name: m.name,
+      email: m.email,
+      contactNumber: m.contactNumber,
+      accountType: m.accountType,
+    };
+
+    return res.status(200).json({
+      success: true,
+      user,                    // unified key
+      message: "Mentor register Success",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "User unable to register try again later",
+      error: error.message,
+    });
+  }
+};
+
+
+
+
+
+exports.mentorLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const m = await mentor.findOne({ email }).select("+password");
+    if (!m) return res.status(401).json({ success: false, message: "Invalid credentials" });
+
+    const ok = await bcrypt.compare(password, m.password);
+    if (!ok) return res.status(401).json({ success: false, message: "Invalid credentials" });
+
+    const token = jwt.sign(
+      { email: m.email, id: m._id, accountType: m.accountType },
+      process.env.JWT_SERVER_KEY,
+      { expiresIn: "48h" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    });
+
+    const user = {
+      id: m._id,
+      name: m.name,
+      email: m.email,
+      contactNumber: m.contactNumber,
+      accountType: m.accountType,
+    };
+
+    return res.status(200).json({ success: true, user, message: "Mentor Login Success" });
+  } catch (e) {
+    return res.status(500).json({ success: false, message: e.message || "Login failed" });
+  }
+};

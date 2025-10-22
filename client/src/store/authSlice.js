@@ -1,179 +1,434 @@
-// src/store/authSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosClient from '../utils/AxiosCli';
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import axiosClient from "../utils/AxiosCli";
 
-// --- Student Actions ---
-export const studentRegister = createAsyncThunk(
-  'auth/studentRegister',
-  async (payload, { rejectWithValue }) => {
+
+// export const studRegister = createAsyncThunk(
+//   "auth/studentRegister",
+//   async (userData, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axiosClient.post("/student/register", userData);
+//       return { user: data.user, role: "student" };
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const studLogin = createAsyncThunk(
+//   "auth/studentLogin",
+//   async (credentials, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axiosClient.post("/student/login", credentials);
+//       return { user: data.user, role: "student" };
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const studCheckAuth = createAsyncThunk(
+//   "auth/studentCheck",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axiosClient.get("/student/check");
+//       return { user: data.user, role: "student" };
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const studLogout = createAsyncThunk(
+//   "auth/studentLogout",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       await axiosClient.post("/student/logout");
+//       return null;
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const mentorRegister = createAsyncThunk(
+//   "auth/mentorRegister",
+//   async (userData, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axiosClient.post("/mentor/register", userData);
+//       return { user: data.user, role: "mentor" };
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const mentorLogin = createAsyncThunk(
+//   "auth/mentorLogin",
+//   async (credentials, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axiosClient.post("/mentor/login", credentials);
+//       return { user: data.user, role: "mentor" };
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const mentorCheckAuth = createAsyncThunk(
+//   "auth/mentorCheck",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axiosClient.get("/mentor/check");
+//       return { user: data.user, role: "mentor" };
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// export const mentorLogout = createAsyncThunk(
+//   "auth/mentorLogout",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       await axiosClient.post("/mentor/logout");
+//       return null;
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data?.message || err.message);
+//     }
+//   }
+// );
+
+// const authSlice = createSlice({
+//   name: "auth",
+//   initialState: {
+//     user: null,
+//     role: null, // "student" | "mentor"
+//     loading: false,
+//     isAuthenticated: false,
+//     error: null,
+//   },
+//   reducers: {
+//     clearError: (state) => {
+//       state.error = null;
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(studRegister.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(studRegister.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.isAuthenticated = true;
+//         state.user = action.payload.user;
+//         state.role = action.payload.role;
+//       })
+//       .addCase(studRegister.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload;
+//       })
+
+//       .addCase(studLogin.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(studLogin.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.isAuthenticated = true;
+//         state.user = action.payload.user;
+//         state.role = action.payload.role;
+//       })
+//       .addCase(studLogin.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload;
+//       })
+
+//       .addCase(studCheckAuth.fulfilled, (state, action) => {
+//         state.isAuthenticated = true;
+//         state.user = action.payload.user;
+//         state.role = action.payload.role;
+//         state.loading = false;
+//       })
+//       .addCase(studCheckAuth.rejected, (state) => {
+//         state.isAuthenticated = false;
+//         state.user = null;
+//         state.role = null;
+//       })
+
+//       .addCase(studLogout.fulfilled, (state) => {
+//         state.user = null;
+//         state.role = null;
+//         state.isAuthenticated = false;
+//         state.loading = false;
+//       })
+//       .addCase(mentorRegister.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(mentorRegister.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.isAuthenticated = true;
+//         state.user = action.payload.user;
+//         state.role = action.payload.role;
+//       })
+//       .addCase(mentorRegister.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload;
+//       })
+
+//       .addCase(mentorLogin.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(mentorLogin.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.isAuthenticated = true;
+//         state.user = action.payload.user;
+//         state.role = action.payload.role;
+//       })
+//       .addCase(mentorLogin.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload;
+//       })
+
+//       .addCase(mentorCheckAuth.fulfilled, (state, action) => {
+//         state.isAuthenticated = true;
+//         state.user = action.payload.user;
+//         state.role = action.payload.role;
+//       })
+//       .addCase(mentorCheckAuth.rejected, (state) => {
+//         state.isAuthenticated = false;
+//         state.user = null;
+//         state.role = null;
+//       })
+
+//       .addCase(mentorLogout.fulfilled, (state) => {
+//         state.user = null;
+//         state.role = null;
+//         state.isAuthenticated = false;
+//       });
+//   },
+// });
+
+// export const { clearError } = authSlice.actions;
+// export default authSlice.reducer;
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosClient from "../utils/AxiosCli";
+
+// === STUDENT THUNKS ===
+export const studRegister = createAsyncThunk(
+  "auth/studentRegister",
+  async (userData, { rejectWithValue }) => {
     try {
-      const { data } = await axiosClient.post('/student/register', payload);
-      return { userType: 'student', user: data.student };
+      const { data } = await axiosClient.post("/student/register", userData);
+      return { user: data.user || data.student, role: "student" }; // tolerate legacy
     } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
 
-export const studentLogin = createAsyncThunk(
-  'auth/studentLogin',
-  async (payload, { rejectWithValue }) => {
+export const studLogin = createAsyncThunk(
+  "auth/studentLogin",
+  async (credentials, { rejectWithValue }) => {
     try {
-      const { data } = await axiosClient.post('/student/login', payload);
-      return { userType: 'student', user: data.student };
+      const { data } = await axiosClient.post("/student/login", credentials);
+      return { user: data.user, role: "student" };
     } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
 
-// --- Mentor Actions ---
-export const mentorRegister = createAsyncThunk(
-  'auth/mentorRegister',
-  async (payload, { rejectWithValue }) => {
+export const studCheckAuth = createAsyncThunk(
+  "auth/studentCheck",
+  async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axiosClient.post('/mentor/register', payload);
-      return { userType: 'mentor', user: data.registerMentor };
+      const { data } = await axiosClient.get("/student/check");
+      return { user: data.user, role: "student" };
     } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
 
-export const mentorLogin = createAsyncThunk(
-  'auth/mentorLogin',
-  async (payload, { rejectWithValue }) => {
+export const studLogout = createAsyncThunk(
+  "auth/studentLogout",
+  async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axiosClient.post('/mentor/login', payload);
-      return { userType: 'mentor', user: data.findMentor };
-    } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
-    }
-  }
-);
-
-// --- Logout ---
-export const logout = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue, getState }) => {
-    try {
-      const { userType } = getState().auth;
-      if (userType === 'student') {
-        await axiosClient.post('/student/logout');
-      } else {
-        await axiosClient.post('/auth/logout').catch(() => {});
-      }
+      await axiosClient.post("/student/logout");
       return null;
     } catch (err) {
-      return rejectWithValue(err.response?.data || { message: err.message });
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
 
-// --- LocalStorage Persistence ---
-const loadAuthFromStorage = () => {
-  try {
-    const savedAuth = localStorage.getItem('auth');
-    if (savedAuth) {
-      return JSON.parse(savedAuth);
+// === MENTOR THUNKS ===
+export const mentorRegister = createAsyncThunk(
+  "auth/mentorRegister",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosClient.post("/mentor/register", userData);
+      return { user: data.user || data.registerMentor, role: "mentor" }; // tolerate legacy
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
-  } catch (error) {
-    console.error('Error loading auth from localStorage:', error);
   }
-  return {
-    user: null,
-    userType: null,
-    isAuthenticated: false
-  };
-};
+);
 
-const savedAuth = loadAuthFromStorage();
+// store/authSlice.js
+export const mentorLogin = createAsyncThunk(
+  "auth/mentorLogin",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosClient.post("/mentor/login", credentials);
+      return { user: data.user || data.findMentor, role: "mentor" }; // tolerate old shape
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 
+
+
+export const mentorCheckAuth = createAsyncThunk(
+  "auth/mentorCheck",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosClient.get("/mentor/check");
+      return { user: data.user, role: "mentor" };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+
+export const mentorLogout = createAsyncThunk(
+  "auth/mentorLogout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axiosClient.post("/mentor/logout");
+      return null;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+// === AUTH SLICE ===
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: {
-    user: savedAuth.user || null,
-    userType: savedAuth.userType || null,
-    isAuthenticated: savedAuth.isAuthenticated || false,
+    user: null,
+    role: null, // "student" | "mentor"
     loading: false,
+    isAuthenticated: false,
     error: null,
   },
   reducers: {
-    restoreAuth: (state, action) => {
-      state.user = action.payload.user;
-      state.userType = action.payload.userType;
-      state.isAuthenticated = action.payload.isAuthenticated;
-      state.loading = false;
-    },
-    
     clearError: (state) => {
+      state.error = null;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.role = null;
+      state.isAuthenticated = false;
+      state.loading = false;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
-    const onPending = (state) => {
-      state.loading = true;
-      state.error = null;
-    };
-
-    const onRejected = (state, action) => {
-      state.loading = false;
-      state.error = action.payload?.message || 'Something went wrong';
-      if (!state.isAuthenticated) {
-        state.user = null;
-        state.userType = null;
-      }
-    };
-
-    const onFulfilled = (state, action) => {
-      state.loading = false;
-      state.user = action.payload?.user || null;
-      state.userType = action.payload?.userType || null;
-      state.isAuthenticated = !!action.payload?.user;
-      state.error = null;
-
-      if (state.isAuthenticated) {
-        localStorage.setItem(
-          'auth',
-          JSON.stringify({
-            user: state.user,
-            userType: state.userType,
-            isAuthenticated: true,
-          })
-        );
-      }
-    };
-
     builder
-      // Student
-      .addCase(studentRegister.pending, onPending)
-      .addCase(studentRegister.rejected, onRejected)
-      .addCase(studentRegister.fulfilled, onFulfilled)
-      .addCase(studentLogin.pending, onPending)
-      .addCase(studentLogin.rejected, onRejected)
-      .addCase(studentLogin.fulfilled, onFulfilled)
-
-      // Mentor
-      .addCase(mentorRegister.pending, onPending)
-      .addCase(mentorRegister.rejected, onRejected)
-      .addCase(mentorRegister.fulfilled, onFulfilled)
-      .addCase(mentorLogin.pending, onPending)
-      .addCase(mentorLogin.rejected, onRejected)
-      .addCase(mentorLogin.fulfilled, onFulfilled)
-
-      // Logout
-      .addCase(logout.pending, onPending)
-      .addCase(logout.rejected, onRejected)
-      .addCase(logout.fulfilled, (state) => {
-        state.loading = false;
-        state.user = null;
-        state.userType = null;
-        state.isAuthenticated = false;
+      // --- STUDENT ---
+      .addCase(studRegister.pending, (state) => {
+        state.loading = true;
         state.error = null;
-        localStorage.removeItem('auth'); 
+      })
+      .addCase(studRegister.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(studRegister.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(studLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(studLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+      })
+      .addCase(studLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(studCheckAuth.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+        state.loading = false;
+      })
+      .addCase(studCheckAuth.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.role = null;
+      })
+      .addCase(studLogout.fulfilled, (state) => {
+        state.user = null;
+        state.role = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+      })
+
+      // --- MENTOR ---
+      .addCase(mentorRegister.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(mentorRegister.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(mentorRegister.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(mentorLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(mentorLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+      })
+      .addCase(mentorLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(mentorCheckAuth.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+      })
+      .addCase(mentorCheckAuth.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.role = null;
+      })
+      .addCase(mentorLogout.fulfilled, (state) => {
+        state.user = null;
+        state.role = null;
+        state.isAuthenticated = false;
       });
   },
 });
 
-export const { restoreAuth, clearError } = authSlice.actions;
+export const { clearError, logout } = authSlice.actions;
 export default authSlice.reducer;

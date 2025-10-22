@@ -1,28 +1,36 @@
 // src/components/student/StudentLanding.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiLogOut, FiCalendar, FiAlertTriangle, FiHome, FiMessageSquare, FiHeart } from 'react-icons/fi';
+import {
+  FiLogOut,
+  FiCalendar,
+  FiAlertTriangle,
+  FiHome,
+  FiMessageSquare,
+  FiHeart,
+} from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../store/authSlice';
+import { studLogout, logout } from '../../store/authSlice';
 
 import mintLogo from '../../assets/mintLogo.png';
 import heroImage from '../../assets/git.png';
 import kiitBandhuImage from '../../assets/kiitBandhu.png';
 import kiitSageImage from '../../assets/kiitSage.png';
 
-const displayName = (u) =>
-  u?.name ||
-  u?.fullName ||
-  [u?.firstName, u?.lastName].filter(Boolean).join(' ') ||
-  u?.email ||
-  u?.email_id ||
-  '';
+// Helper to get display name
+const displayName = (user) =>
+  user?.name ||
+  user?.fullName ||
+  [user?.firstName, user?.lastName].filter(Boolean).join(' ') ||
+  user?.email ||
+  user?.email_id ||
+  'User';
 
 const StudentLanding = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, userType } = useSelector((s) => s.auth);
+  const { user } = useSelector((state) => state.auth); // read user from Redux
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -34,23 +42,20 @@ const StudentLanding = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
   };
 
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
+  const handleLogout = async () => {
+    try {
+      // Backend logout; unwrap throws on rejection
+      await dispatch(studLogout()).unwrap();
+      // On success, slice clears auth in extraReducers; just navigate
+      navigate('/login', { replace: true });
+    } catch (err) {
+      // Network/backend failure → ensure local sign-out
+      dispatch(logout());
+      navigate('/login', { replace: true });
+    }
   };
-
-const handleLogout = async () => {
-  try {
-    await dispatch(logout()).unwrap();
-  } catch (err) {
-    console.warn("Logout API failed, forcing local clear:", err);
-  } finally {
-    // ✅ Always clear local state and redirect, even if API fails
-    localStorage.removeItem("auth");
-    navigate("/login", { replace: true });
-    window.location.reload(); // optional, ensures Redux resets fully
-  }
-};
-
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white font-poppins">
@@ -65,6 +70,7 @@ const handleLogout = async () => {
             <img src={mintLogo} alt="Mint Logo" className="w-16 h-16" />
             <span className="text-3xl font-bold text-indigo-400">MINT</span>
           </motion.div>
+
           <motion.button
             variants={itemVariants}
             onClick={handleLogout}
@@ -84,12 +90,14 @@ const handleLogout = async () => {
           >
             <motion.div variants={itemVariants} id="actions" className="text-center lg:text-left">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
-                Welcome to Mint,{` `}
+                Welcome to Mint,{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-500">
-                  {userType === 'student' ? displayName(user) || 'User' : 'User'}
+                  {displayName(user)}
                 </span>
               </h1>
-              <p className="mt-4 text-lg md:text-xl text-indigo-200 font-light">What would you like to do today?</p>
+              <p className="mt-4 text-lg md:text-xl text-indigo-200 font-light">
+                What would you like to do today?
+              </p>
 
               <div className="mt-10 space-y-6">
                 <motion.button
@@ -99,7 +107,9 @@ const handleLogout = async () => {
                   <FiCalendar className="text-3xl text-white flex-shrink-0" />
                   <div>
                     <h3 className="text-lg font-semibold text-white">Apply for Leave</h3>
-                    <p className="text-sm text-indigo-200">Submit a leave request to your mentor for approval.</p>
+                    <p className="text-sm text-indigo-200">
+                      Submit a leave request to your mentor for approval.
+                    </p>
                   </div>
                 </motion.button>
 
@@ -139,10 +149,14 @@ const handleLogout = async () => {
                 className="w-full h-auto rounded-xl overflow-hidden mb-6 shadow-lg shadow-black/30"
                 whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
               >
-                <img src={heroImage} alt="Illustration of mentorship" className="w-full h-full object-cover max-h-[350px]" />
+                <img
+                  src={heroImage}
+                  alt="Illustration of mentorship"
+                  className="w-full h-full object-cover max-h-[350px]"
+                />
               </motion.div>
               <p className="text-gray-400 leading-relaxed">
-                Mint is your dedicated partner in navigating university life. We connect you with experienced mentors and provide a suite of tools for academic support, grievance resolution, and personal well-being to ensure your journey is smooth and successful.
+                Mint is your dedicated partner in navigating university life. We connect you with experienced mentors and provide a suite of tools for academic support, grievance resolution, and personal well-being.
               </p>
             </motion.div>
           </motion.main>
@@ -158,8 +172,12 @@ const handleLogout = async () => {
           transition={{ duration: 0.8 }}
         >
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Meet Your AI Companions</h2>
-            <p className="mt-3 text-lg text-indigo-200 font-light">Get instant help and support, anytime you need it.</p>
+            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+              Meet Your AI Companions
+            </h2>
+            <p className="mt-3 text-lg text-indigo-200 font-light">
+              Get instant help and support, anytime you need it.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -171,10 +189,11 @@ const handleLogout = async () => {
                 <img src={kiitBandhuImage} alt="KIIT Bandhu" className="w-24 h-24 flex-shrink-0" />
                 <div>
                   <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                    Kiit Bandhu
-                    <FiMessageSquare className="text-indigo-400" />
+                    Kiit Bandhu <FiMessageSquare className="text-indigo-400" />
                   </h3>
-                  <p className="mt-2 text-gray-400">Your go-to guide for all university rules, academic queries, and campus information.</p>
+                  <p className="mt-2 text-gray-400">
+                    Your go-to guide for university rules, academic queries, and campus info.
+                  </p>
                 </div>
               </motion.div>
             </Link>
@@ -189,7 +208,9 @@ const handleLogout = async () => {
                   <h3 className="text-2xl font-bold text-white flex items-center gap-2">
                     Kiit Sage <FiHeart className="text-pink-400" />
                   </h3>
-                  <p className="mt-2 text-gray-400">A compassionate companion for mental wellness and confidential support.</p>
+                  <p className="mt-2 text-gray-400">
+                    A compassionate companion for mental wellness and confidential support.
+                  </p>
                 </div>
               </motion.div>
             </Link>
@@ -201,13 +222,22 @@ const handleLogout = async () => {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm">Made with ❤️ by Asmit And Omm</p>
           <nav className="flex gap-4 sm:gap-6">
-            <button onClick={() => scrollTo('welcome')} className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
+            <button
+              onClick={() => scrollTo('welcome')}
+              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
+            >
               Welcome
             </button>
-            <button onClick={() => scrollTo('actions')} className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
+            <button
+              onClick={() => scrollTo('actions')}
+              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
+            >
               Actions
             </button>
-            <button onClick={() => scrollTo('chatbots')} className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
+            <button
+              onClick={() => scrollTo('chatbots')}
+              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
+            >
               Chatbots
             </button>
           </nav>

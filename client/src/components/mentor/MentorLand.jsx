@@ -1,63 +1,60 @@
+// src/components/mentor/MentorLand.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../store/authSlice';
 import MentorNavbar from '../mentor/MentorNavbar';
 import { BiSolidMessageSquareDetail } from 'react-icons/bi';
+import { mentorLogout, logout } from '../../store/authSlice'; // async + local fallback [uses unwrap]
+import axios from 'axios'; // keep if you fetch extra dashboard fields
 
-
-const displayName = (u) =>
-  u?.name ||
-  u?.fullName ||
-  [u?.firstName, u?.lastName].filter(Boolean).join(' ') ||
-  u?.email ||
-  u?.email_id ||
-  '';
-
+// Prefer name fields; if missing, show email local-part for readability
+const getMentorName = (u, m) => {
+  const name =
+    u?.name ||
+    m?.name ||
+    u?.fullName ||
+    [u?.firstName, u?.lastName].filter(Boolean).join(' ');
+  if (name && name.trim()) return name;
+  const em = u?.email || u?.email_id || m?.email || '';
+  return em ? em.split('@')[0] : 'Mentor';
+};
 
 const MentorDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, userType } = useSelector((s) => s.auth);
+  // Read role from slice; not "userType"
+  const { user, role } = useSelector((s) => s.auth);
 
-  const [mentorDetails, setMentorDetails] = useState(null);
+  // Use Redux as source of truth; optionally enrich with a one-off fetch
+  const [mentorDetails, setMentorDetails] = useState(user || null);
 
   useEffect(() => {
-    // Prefer Redux user to avoid extra requests
-    if (userType === 'mentor' && user) {
-      setMentorDetails(user);
-      return;
-    }
-    // If you still need more fields, fetch them
+    setMentorDetails(user || null);
+  }, [user]);
+
+  // Optional: fetch extra fields only if needed and authenticated as mentor
+  useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(
+        const { data } = await axios.get(
           'http://localhost:4000/mentorRoutes/getMentorDetails',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-        if (response.data?.success) {
-          setMentorDetails(response.data.mentorDetails);
-        }
-      } catch (error) {
-        // optional toast/log
+        if (data?.success) setMentorDetails(data.mentorDetails);
+      } catch {
+        /* optional toast/log */
       }
     };
-    if (userType === 'mentor') fetchDashboardData();
-  }, [userType, user]);
+    if (role === 'mentor' && user && !user?.contactNumber) fetchDashboardData();
+  }, [role, user]);
 
   const handleLogout = async () => {
     try {
-      await dispatch(logout()).unwrap();
-    } catch (_) {
-      // optional toast
-    } finally {
-      localStorage.removeItem('token'); // if you store tokens
+      await dispatch(mentorLogout()).unwrap(); // backend logout + throw on reject
+      navigate('/login', { replace: true });
+    } catch {
+      dispatch(logout()); // local fallback if network/backend fails
       navigate('/login', { replace: true });
     }
   };
@@ -142,7 +139,6 @@ const MentorDashboard = () => {
       route: '/mentor/grievances',
       gradient: 'from-violet-800 via-indigo-800 to-blue-900',
       glowColor: 'rgba(79, 70, 229, 0.35)',
-
       size: 'small',
     },
   ];
@@ -157,28 +153,18 @@ const MentorDashboard = () => {
     visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } },
   };
 
-// ✅ UPDATED: Enhanced navigation handler with debugging
-const handleNavigation = (route, event) => {
-  console.log('🚀 Navigation triggered:', {
-    from: window.location.pathname,
-    to: route,
-    authState: { isAuthenticated: user !== null, userType }
-  });
-  
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  
-  navigate(route);
-  
-  console.log('✅ Navigate called for:', route);
-};
+  const handleNavigation = (route, event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    navigate(route);
+  };
 
+  const nameToShow = getMentorName(user, mentorDetails);
 
   return (
     <div className="bg-gradient-to-br from-gray-800 via-black to-indigo-700 min-h-screen">
-      {/* Page-owned navbar */}
       <MentorNavbar onLogout={handleLogout} />
 
       <div className="bg-gradient-to-br p-6 md:p-10">
@@ -191,10 +177,12 @@ const handleNavigation = (route, event) => {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
             Welcome back,{' '}
             <span className="text-transparent bg-clip-text bg-purple-400">
-              {displayName(mentorDetails) || 'Mentor'}
+              {nameToShow}
             </span>
           </h1>
-          <p className="text-gray-300 text-lg">Manage your mentees and track their progress</p>
+          <p className="text-gray-300 text-lg">
+            Manage your mentees and track their progress
+          </p>
         </motion.div>
 
         <motion.div
@@ -208,7 +196,7 @@ const handleNavigation = (route, event) => {
               key={item.id}
               variants={itemVariants}
               whileHover={{ scale: 1.02, y: -5 }}
-              onClick={(e) => handleNavigation(item.route, e)} // ✅ FIXED: Pass event
+              onClick={(e) => handleNavigation(item.route, e)}
               className={`
                 group relative cursor-pointer rounded-3xl overflow-hidden
                 ${item.size === 'large' ? 'md:col-span-2 md:row-span-2' : ''}
@@ -216,7 +204,9 @@ const handleNavigation = (route, event) => {
                 ${item.size === 'small' ? 'md:col-span-1 md:row-span-1' : ''}
               `}
               style={{
-                minHeight: item.size === 'large' ? '400px' : item.size === 'medium' ? '400px' : '190px',
+                minHeight:
+                  item.size === 'large' ? '400px' :
+                  item.size === 'medium' ? '400px' : '190px',
               }}
             >
               <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20">
@@ -233,7 +223,7 @@ const handleNavigation = (route, event) => {
                 <div>
                   <div
                     className={`
-                      w-16 h-16 mb-6 text-white/80 group-hover:text-white 
+                      w-16 h-16 mb-6 text-white/80 group-hover:text-white
                       transition-all duration-300 group-hover:scale-110
                       ${item.size === 'large' ? 'md:w-24 md:h-24' : ''}
                     `}
@@ -245,7 +235,9 @@ const handleNavigation = (route, event) => {
                     {item.title}
                   </h3>
 
-                  <p className="text-gray-300 text-sm md:text-base leading-relaxed">{item.description}</p>
+                  <p className="text-gray-300 text-sm md:text-base leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between mt-6">

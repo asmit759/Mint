@@ -1,32 +1,40 @@
+// src/components/mentor/MentorNavbar.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import Logo from '../../assets/mintLogo.png';
 
-const displayName = (u) =>
-  u?.name ||
-  u?.fullName ||
-  [u?.firstName, u?.lastName].filter(Boolean).join(' ') ||
-  u?.email ||
-  u?.email_id ||
-  'Mentor';
+// Prefer name, then fullName, then first+last; finally show email local-part
+const getDisplayName = (u) => {
+  if (!u) return 'Mentor';
+  if (u.name && u.name.trim()) return u.name;
+  if (u.fullName && u.fullName.trim()) return u.fullName;
+  const composite = [u.firstName, u.lastName].filter(Boolean).join(' ').trim();
+  if (composite) return composite;
+  const em = u.email || u.email_id || '';
+  return em ? em.split('@')[0] : 'Mentor';
+};
 
 const MentorNavbar = ({ onLogout }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { user } = useSelector((s) => s.auth);
-  const name = displayName(user);
+  // Read user from Redux; component will re-render when auth state changes
+  const { user } = useSelector((s) => s.auth); // uses React-Redux hooks best practices
+  const name = getDisplayName(user);
   const email = user?.email || user?.email_id || '';
-  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;
+  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    name
+  )}&background=6366f1&color=fff`;
 
   const navLinks = [
-    { name: 'Dashboard', path: '/mentor-landing' }, // ✅ Changed to match your App.js route
-    { name: 'Students', path: '/mentor/students' },
-    { name: 'Sessions', path: '/mentor/sessions' },
-    { name: 'Messages', path: '/mentor/messages' },
+    { name: 'Dashboard', path: '/mentor-landing' },
+    { name: 'Students',  path: '/mentor/student-location' }, // existing route
+    { name: 'Sessions',  path: '/mentor/attendance' },       // existing route
+    { name: 'Messages',  path: '/mentor/chat' },             // existing route
   ];
+
 
   const dropdownVariants = {
     hidden: { opacity: 0, y: -10, scale: 0.95 },
@@ -47,7 +55,7 @@ const MentorNavbar = ({ onLogout }) => {
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
           <div className="flex items-center space-x-3">
-            <Link to="/mentor-landing" className="flex items-center space-x-3 group"> {/* ✅ Fixed path */}
+            <Link to="/mentor-landing" className="flex items-center space-x-3 group">
               <motion.img
                 src={Logo}
                 alt="MINT Logo"
@@ -79,7 +87,7 @@ const MentorNavbar = ({ onLogout }) => {
             {/* Desktop profile */}
             <div className="hidden md:block relative">
               <button
-                type="button" // ✅ FIXED: Explicit button type
+                type="button"
                 onClick={() => setIsProfileOpen((v) => !v)}
                 className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-800/50 backdrop-blur-sm transition duration-200 border border-indigo-700/30"
               >
@@ -88,7 +96,12 @@ const MentorNavbar = ({ onLogout }) => {
                   <p className="text-sm font-medium text-white">{name}</p>
                   <p className="text-xs text-gray-400">Mentor</p>
                 </div>
-                <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
@@ -128,7 +141,7 @@ const MentorNavbar = ({ onLogout }) => {
                       >
                         <div className="flex items-center space-x-2">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0..." />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0M19.428 15.341a8 8 0 10-14.856 0" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
                           <span>Settings</span>
@@ -138,7 +151,7 @@ const MentorNavbar = ({ onLogout }) => {
                       <div className="border-t border-indigo-700/30 my-2"></div>
 
                       <button
-                        type="button" // ✅ FIXED: Explicit button type
+                        type="button"
                         className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition duration-150"
                         onClick={handleLogoutClick}
                       >
@@ -157,7 +170,7 @@ const MentorNavbar = ({ onLogout }) => {
 
             {/* Mobile menu button */}
             <button
-              type="button" // ✅ FIXED: Explicit button type
+              type="button"
               onClick={() => setIsMobileMenuOpen((v) => !v)}
               className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm transition duration-200"
             >
@@ -221,7 +234,7 @@ const MentorNavbar = ({ onLogout }) => {
                 </Link>
 
                 <button
-                  type="button" // ✅ FIXED: Explicit button type
+                  type="button"
                   className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition duration-150"
                   onClick={async () => {
                     setIsMobileMenuOpen(false);

@@ -30,5 +30,4 @@ router.post("/resolve", mentorMid,isMentor, resolveGrievance);
 router.get("/getMentorDetails",mentorMid,isMentor, mentorDetails);
 
 
-
 module.exports = router;

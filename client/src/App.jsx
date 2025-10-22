@@ -1,11 +1,12 @@
 // src/App.jsx
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 
 import Login from './components/Login';
 import StudentSignup from './components/StudentSignup';
+// IMPORTANT: ensure this import points to the real file
 import StudentLanding from './components/student/Landing';
 
 import MentorSignup from './components/MentorSignup';
@@ -18,26 +19,46 @@ import MentorStudentLocation from './components/mentor/MentorStudentLocation';
 import SageChat from './components/student/SageChat';
 import BandhuChat from './components/student/BandhuChat';
 
-function App() {
-  const { isAuthenticated, userType, loading } = useSelector((s) => s.auth);
+// Auth checks
+import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
 
+function App() {
+  const dispatch = useDispatch();
+  const { isAuthenticated, role, loading } = useSelector((s) => s.auth);
+
+  // Sequential auth check to prevent role race conditions
+  useEffect(() => {
+    (async () => {
+      try {
+        await dispatch(mentorCheckAuth()).unwrap();
+      } catch {
+        try {
+          await dispatch(studCheckAuth()).unwrap();
+        } catch {
+          // both failed → remain unauthenticated
+        }
+      }
+    })();
+  }, [dispatch]);
+
+  // Optional debug
   useEffect(() => {
     console.log('🔍 App Auth State:', {
       isAuthenticated,
-      userType,
+      role,
       loading,
-      currentPath: window.location.pathname
+      currentPath: window.location.pathname,
     });
-  }, [isAuthenticated, userType, loading]);
+  }, [isAuthenticated, role, loading]);
 
   return (
     <Routes>
-      {/* Root redirect logic */}
+      {/* Root redirect logic stays role-based */}
       <Route
         path="/"
         element={
           isAuthenticated ? (
-            userType === 'student' ? (
+            role === 'student' ? (
               <Navigate to="/student/landing" replace />
             ) : (
               <Navigate to="/mentor-landing" replace />
@@ -48,49 +69,10 @@ function App() {
         }
       />
 
-      {/* Auth Routes */}
-      <Route
-        path="/login"
-        element={
-          isAuthenticated ? (
-            userType === 'student' ? (
-              <Navigate to="/student/landing" replace />
-            ) : (
-              <Navigate to="/mentor-landing" replace />
-            )
-          ) : (
-            <Login />
-          )
-        }
-      />
-      <Route
-        path="/student/signup"
-        element={
-          isAuthenticated ? (
-            userType === 'student' ? (
-              <Navigate to="/student/landing" replace />
-            ) : (
-              <Navigate to="/mentor-landing" replace />
-            )
-          ) : (
-            <StudentSignup />
-          )
-        }
-      />
-      <Route
-        path="/mentor/signup"
-        element={
-          isAuthenticated ? (
-            userType === 'mentor' ? (
-              <Navigate to="/mentor-landing" replace />
-            ) : (
-              <Navigate to="/student/landing" replace />
-            )
-          ) : (
-            <MentorSignup />
-          )
-        }
-      />
+      {/* Auth Routes: ALWAYS render these, even if already authenticated */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/student/signup" element={<StudentSignup />} />
+      <Route path="/mentor/signup" element={<MentorSignup />} />
 
       {/* Protected Student Routes */}
       <Route
@@ -102,7 +84,7 @@ function App() {
         }
       />
 
-      {/* NEW: Student Chatbots */}
+      {/* Student Chatbots */}
       <Route
         path="/kiit-sage"
         element={
@@ -137,13 +119,12 @@ function App() {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/mentor/attendance"
         element={
           <ProtectedRoute allow="mentor">
             <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
-              <AttendanceDashboard/>
+              <AttendanceDashboard />
             </div>
           </ProtectedRoute>
         }
@@ -163,7 +144,7 @@ function App() {
         element={
           <ProtectedRoute allow="mentor">
             <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
-              <MentorStudentLocation/>
+              <MentorStudentLocation />
             </div>
           </ProtectedRoute>
         }
@@ -189,12 +170,42 @@ function App() {
         }
       />
 
+      {/* Extra mentor links */}
+      <Route
+        path="/mentor/students"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Students - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentor/sessions"
+        element={
+          <ProtectedRoute allow="mentor">
+            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white p-8">
+              <h1 className="text-3xl font-bold">Sessions - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentor/messages"
+        element={
+          <ProtectedRoute allow="mentor">
+            <Navigate to="/mentor/chat" replace />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Fallback */}
-      <Route 
-        path="*" 
+      <Route
+        path="*"
         element={
           isAuthenticated ? (
-            userType === 'student' ? (
+            role === 'student' ? (
               <Navigate to="/student/landing" replace />
             ) : (
               <Navigate to="/mentor-landing" replace />
@@ -202,7 +213,7 @@ function App() {
           ) : (
             <Navigate to="/login" replace />
           )
-        } 
+        }
       />
     </Routes>
   );
