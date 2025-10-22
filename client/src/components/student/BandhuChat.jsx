@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import axiosClient from '../../utils/AxiosCli';
 import bandhuAvatar from '../../assets/KiitBandhu.png';
 
+const BANDHU_ENDPOINT = '/studentFacility/studentGuide'; // ensure this matches your server route
+
 const BandhuChat = () => {
   const [messages, setMessages] = useState([
     { role: 'model', text: 'Hello! Ask me anything about campus, rules, or academics.' },
@@ -25,18 +27,21 @@ const BandhuChat = () => {
     setLoading(true);
 
     try {
+      // If you still keep a token somewhere, attach it conditionally; cookies will work without this
       const token = localStorage.getItem('token') || undefined;
+
       const res = await axiosClient.post(
-        '/studentFacility/studentGuide',
+        BANDHU_ENDPOINT,
         { message: msg },
-        {
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
-          }
-        }
+        { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
       );
 
-      const reply = res?.data?.message ?? String(res?.data ?? 'No response');
+      const raw = res?.data;
+      const reply =
+        typeof raw?.reply === 'string' ? raw.reply :
+        typeof raw?.message === 'string' ? raw.message :
+        JSON.stringify(raw ?? 'No response', null, 2);
+
       setMessages((prev) => [...prev, { role: 'model', text: reply }]);
     } catch (err) {
       console.error('Bandhu API error:', err);
@@ -52,13 +57,11 @@ const BandhuChat = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white">
       <div className="max-w-[1400px] mx-auto px-6 py-10 grid grid-cols-1 xl:grid-cols-12 gap-10">
-        {/* Left: Bigger avatar + paragraph */}
+        {/* Left: Avatar & intro */}
         <aside className="xl:col-span-5 bg-gray-900/60 border border-indigo-800/30 rounded-3xl p-10 shadow-2xl shadow-indigo-900/40 flex items-center">
           <div className="w-full flex flex-col items-center">
             <div className="relative w-[22rem] h-[22rem] max-w-full">
-              {/* Bigger glow */}
               <div className="absolute inset-0 rounded-full blur-3xl bg-indigo-600/30 animate-pulse"></div>
-              {/* Bigger circular avatar */}
               <div className="relative w-full h-full rounded-full border-4 border-indigo-500 overflow-hidden shadow-[0_0_55px_#4f46e5]">
                 <img src={bandhuAvatar} alt="KIIT Bandhu" className="w-full h-full object-cover object-center" />
               </div>
@@ -91,10 +94,11 @@ const BandhuChat = () => {
             {loading && (
               <div className="flex justify-start">
                 <div className="px-4 py-3 rounded-2xl bg-gray-800 text-indigo-100 border border-indigo-800/40 inline-flex items-center gap-3">
-                  <svg className="w-5 h-5 animate-spin text-indigo-400" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6H4z"/>
-                  </svg>
+<svg className="w-5 h-5 animate-spin text-indigo-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6H4z" />
+</svg>
+
                   <span>Typing...</span>
                 </div>
               </div>
