@@ -2,9 +2,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiLogOut, FiCalendar, FiAlertTriangle, FiHome, FiMessageSquare, FiHeart } from 'react-icons/fi';
+import { MdShareLocation } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { studLogout, logout } from '../../store/authSlice';
+import { toast, ToastContainer, Bounce } from 'react-toastify';
+import axiosClient from '../../utils/AxiosCli';
+import 'react-toastify/dist/ReactToastify.css';
+
 import mintLogo from '../../assets/mintLogo.png';
 import heroImage from '../../assets/git.png';
 import kiitBandhuImage from '../../assets/kiitBandhu.png';
@@ -20,8 +25,10 @@ const displayName = (user) =>
 
 const StudentLanding = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // useNavigate for programmatic routing
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+
+  const [sharingLoc, setSharingLoc] = React.useState(false);
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } } };
   const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } };
@@ -37,10 +44,49 @@ const StudentLanding = () => {
     }
   };
 
-  // NEW: navigation handlers for tiles
-  const goToLeaveApply = () => navigate('/leave/apply');      // e.g. student leave form
-  const goToGrievanceCampus = () => navigate('/grievance/campus');  // campus grievance
-  const goToGrievanceHostel = () => navigate('/grievance/hostel');  // hostel/mess grievance
+  // Student actions
+  const goToLeaveApply = () => navigate('/leave/apply');
+  const goToGrievanceCampus = () => navigate('/grievance/campus');
+  const goToGrievanceHostel = () => navigate('/grievance/hostel');
+
+  // Share location handler
+  const shareLocation = React.useCallback(() => {
+    if (!('geolocation' in navigator)) {
+      toast.error('Geolocation not supported on this browser.', { position: 'top-center', theme: 'dark', transition: Bounce });
+      return;
+    }
+    setSharingLoc(true);
+
+    const options = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords || {};
+        try {
+          await axiosClient.post(
+            '/location/share-location',
+            { latitude, longitude },
+            { withCredentials: true }
+          );
+          toast.success('Location shared successfully.', { position: 'top-center', theme: 'dark', transition: Bounce });
+        } catch (err) {
+          const msg = err?.response?.data?.message || err?.response?.data?.error || 'Failed to share location.';
+          toast.error(msg, { position: 'top-center', theme: 'dark', transition: Bounce });
+        } finally {
+          setSharingLoc(false);
+        }
+      },
+      (error) => {
+        const map = {
+          1: 'Permission denied. Please allow location access.',
+          2: 'Position unavailable. Try again outdoors or check GPS.',
+          3: 'Location request timed out. Please try again.',
+        };
+        toast.error(map[error?.code] || error?.message || 'Unable to get location.', { position: 'top-center', theme: 'dark', transition: Bounce });
+        setSharingLoc(false);
+      },
+      options
+    );
+  }, []);
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white font-poppins">
@@ -70,12 +116,10 @@ const StudentLanding = () => {
                   {displayName(user)}
                 </span>
               </h1>
-              <p className="mt-4 text-lg md:text-xl text-indigo-200 font-light">
-                What would you like to do today?
-              </p>
+              <p className="mt-4 text-lg md:text-xl text-indigo-200 font-light">What would you like to do today?</p>
 
               <div className="mt-10 space-y-6">
-                {/* Apply for Leave tile now navigates */}
+                {/* Apply for Leave */}
                 <motion.button
                   onClick={goToLeaveApply}
                   className="w-full text-left flex items-center gap-4 p-5 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 border border-indigo-500 shadow-lg shadow-indigo-600/30 transition-all duration-300 transform hover:scale-105"
@@ -88,7 +132,7 @@ const StudentLanding = () => {
                   </div>
                 </motion.button>
 
-                {/* Grievances section: two navigable tiles */}
+                {/* Grievances + Share Location */}
                 <div className="space-y-4">
                   <p className="text-sm text-gray-400 font-semibold tracking-wider">RAISE A GRIEVANCE</p>
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -115,6 +159,28 @@ const StudentLanding = () => {
                         <p className="text-xs text-gray-400">Issues with accommodation or food.</p>
                       </div>
                     </motion.button>
+
+                    {/* Share Location button */}
+                    <motion.button
+                      onClick={shareLocation}
+                      disabled={sharingLoc}
+                      className="sm:col-span-2 w-full flex items-center gap-4 p-4 rounded-xl bg-red-600/90 hover:bg-red-600 border border-red-500/60 text-white transition-all duration-300 disabled:opacity-60 relative overflow-hidden"
+                      whileHover={{ y: -3, scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {/* subtle glow background */}
+                      <span className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-20 transition-opacity duration-300 bg-[radial-gradient(120%_80%_at_20%_20%,rgba(255,255,255,.6),transparent_60%)]" />
+                      {/* icon with gradient ring */}
+                      <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-red-400 to-orange-500 ring-2 ring-red-300/50 shadow-lg shadow-red-900/30">
+                        <MdShareLocation className="w-6 h-6 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]" />
+                      </span>
+                      <div className="text-left">
+                        <h4 className="font-semibold tracking-wide">Share location</h4>
+                        <p className="text-xs text-red-100/90">
+                          {sharingLoc ? 'Sharing current location...' : 'Update your current coordinates for your mentor.'}
+                        </p>
+                      </div>
+                    </motion.button>
                   </div>
                 </div>
               </div>
@@ -124,8 +190,9 @@ const StudentLanding = () => {
               <motion.div className="w-full h-auto rounded-xl overflow-hidden mb-6 shadow-lg shadow-black/30" whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}>
                 <img src={heroImage} alt="Illustration of mentorship" className="w-full h-full object-cover max-h-[350px]" />
               </motion.div>
+              {/* Restored original description */}
               <p className="text-gray-400 leading-relaxed">
-                Mint is your dedicated partner in navigating university life.
+                Mint is your dedicated partner in navigating university life. We connect you with experienced mentors and provide a suite of tools for academic support, grievance resolution, and personal well-being.
               </p>
             </motion.div>
           </motion.main>
@@ -180,6 +247,9 @@ const StudentLanding = () => {
           </nav>
         </div>
       </footer>
+
+      {/* Keep if not mounted globally */}
+      <ToastContainer position="top-center" autoClose={3000} theme="dark" transition={Bounce} />
     </div>
   );
 };

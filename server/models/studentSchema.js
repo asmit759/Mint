@@ -62,17 +62,11 @@ const studentSchema = new Schema({
     parentEmail: { type: String, trim: true, lowercase: true },
 
 
-    lastKnownLocation: {
-        latitude: { type: Number },
-        longitude: { type: Number },
-        timestamp: { 
-            type: Date, 
-            default: Date.now,
-        },
-},
-
-
-
+  lastKnownLocation: {
+    latitude: { type: Number },
+    longitude: { type: Number },
+    timestamp: { type: Date, default: Date.now }, 
+  }
 }, { timestamps: true });
 
 studentSchema.pre('findOneAndUpdate', async function(next) {
