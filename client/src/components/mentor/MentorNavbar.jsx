@@ -29,9 +29,9 @@ const MentorNavbar = ({ onLogout }) => {
   )}&background=6366f1&color=fff`;
 
   const navLinks = [
-    { name: 'Dashboard', path: '/mentor-landing' },
-    { name: 'Students',  path: '/mentor/student-location' }, // existing route
-    { name: 'Sessions',  path: '/mentor/attendance' },       // existing route
+    { name: 'Home', path: '/mentor-landing' },
+    { name: 'Attendance',  path: '/mentor/attendance' }, // existing route
+    { name: 'Leave',  path: '/mentor/leave-applications' },       // existing route
     { name: 'Messages',  path: '/mentor/chat' },             // existing route
   ];
 
