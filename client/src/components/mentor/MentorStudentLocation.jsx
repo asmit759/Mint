@@ -1,371 +1,326 @@
-// MentorStudentLocation.jsx
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import axios from 'axios'
-import { toast, ToastContainer, Bounce } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+// src/components/mentor/StudentLocation.jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { motion } from 'framer-motion';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { FaMapMarkerAlt, FaUser, FaExternalLinkAlt, FaSpinner } from 'react-icons/fa';
+import { HiLocationMarker } from 'react-icons/hi';
+import { BiCurrentLocation } from 'react-icons/bi';
+import MentorNavbar from './MentorNavbar';
+import { mentorLogout, logout } from '../../store/authSlice';
 
 const MentorStudentLocation = () => {
-  const [locations, setLocations] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [selectedStudent, setSelectedStudent] = useState(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [mentees, setMentees] = useState([]);
+  const [selectedEmail, setSelectedEmail] = useState('');
+  const [locationData, setLocationData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Fetch location data
-  const fetchLocations = async () => {
-    try {
-      const token = localStorage.getItem('token')
-      const response = await axios.get(
-        'http://localhost:4000/location/mentor-student',
-        {
-          headers: { 'Authorization': `Bearer ${token}` },
-          withCredentials: true
-        }
-      )
-
-      console.log('Location Data:', response.data)
-      
-      if (response.data.success) {
-        setLocations(response.data.data)
-        if (response.data.data.length > 0 && !selectedStudent) {
-          setSelectedStudent(response.data.data[0])
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching locations:', error)
-      toast.error('Failed to load location data', {
-        position: "top-center",
-        theme: "dark",
-        transition: Bounce,
-      })
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
-    }
-  }
-
+  // Fetch mentor details and mentees
   useEffect(() => {
-    fetchLocations()
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      fetchLocations()
-    }, 30000)
-    return () => clearInterval(interval)
-  }, [])
+    const fetchMentorDetails = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/mentorRoutes/getMentorDetails', {
+          withCredentials: true,
+        });
+        setMentees(res.data.mentorDetails.mentees || []);
+      } catch (err) {
+        console.error('Error fetching mentor details:', err);
+        setError('Failed to load mentees');
+      }
+    };
+    fetchMentorDetails();
+  }, []);
 
-  const handleRefresh = () => {
-    setRefreshing(true)
-    fetchLocations()
-  }
+  // Fetch student location
+  const handleFetchLocation = async () => {
+    if (!selectedEmail) return;
+    try {
+      setLoading(true);
+      setError('');
+      const res = await axios.get('http://localhost:4000/location/get-location', {
+        params: { studentEmail: selectedEmail },
+      });
+      
+      if (res.data.success) {
+        setLocationData(res.data);
+      } else {
+        setError('Location not available for this student');
+        setLocationData(null);
+      }
+    } catch (err) {
+      console.error('Error fetching location:', err);
+      setError('Failed to fetch location. Please try again.');
+      setLocationData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Convert coordinates to Google Maps embed URL
-  const getEmbedUrl = (latitude, longitude) => {
-    return `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${latitude},${longitude}&zoom=15`
-  }
+  const handleLogout = async () => {
+    try {
+      await dispatch(mentorLogout()).unwrap();
+    } catch {
+      dispatch(logout());
+    } finally {
+      navigate('/login', { replace: true });
+    }
+  };
 
-  // Get regular Google Maps URL
-  const getMapUrl = (latitude, longitude) => {
-    return `https://www.google.com/maps?q=${latitude},${longitude}`
-  }
+  // Extract coordinates from mapUrl
+  const getCoordinates = (mapUrl) => {
+    if (!mapUrl) return null;
+    const match = mapUrl.match(/q=([-\d.]+),([-\d.]+)/);
+    if (match) {
+      return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+    }
+    return null;
+  };
 
-  // Format timestamp
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp)
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  // Calculate time ago
-  const getTimeAgo = (timestamp) => {
-    const now = new Date()
-    const then = new Date(timestamp)
-    const diffMs = now - then
-    const diffMins = Math.floor(diffMs / 60000)
-    
-    if (diffMins < 1) return 'Just now'
-    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`
-    const diffHours = Math.floor(diffMins / 60)
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
-    const diffDays = Math.floor(diffHours / 24)
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 flex items-center justify-center">
-        <div className="text-center">
-          <svg className="animate-spin h-12 w-12 mx-auto mb-4 text-indigo-500" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p className="text-gray-400 text-lg">Loading location data...</p>
-        </div>
-      </div>
-    )
-  }
+  const coordinates = locationData?.mapUrl ? getCoordinates(locationData.mapUrl) : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">
-                Student Location Tracker
-              </h1>
-              <p className="text-gray-400">Real-time location monitoring for your mentees</p>
-            </div>
-            
-            {/* Refresh Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 disabled:opacity-50"
-            >
-              <svg 
-                className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`}
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Refresh
-            </motion.button>
-          </div>
-        </motion.div>
+      {/* Fixed Navbar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <MentorNavbar onLogout={handleLogout} />
+      </div>
 
-        {/* No Data Message */}
-        {locations.length === 0 ? (
+      {/* Main Content */}
+      <div className="pt-20 px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-20"></div>
+              <div className="relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-8 shadow-2xl">
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <HiLocationMarker className="text-3xl text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent">
+                      Student Location Tracker
+                    </h1>
+                    <p className="text-indigo-300/70 text-sm mt-1">Track real-time location of your mentees</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Selection Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-900 border border-indigo-800/30 rounded-xl p-12 text-center"
+            transition={{ delay: 0.1 }}
+            className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-6 shadow-2xl mb-6"
           >
-            <svg className="w-20 h-20 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <h3 className="text-xl font-bold text-gray-400 mb-2">No Location Data Available</h3>
-            <p className="text-gray-500">Students haven't shared their locations yet</p>
-          </motion.div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Students List */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-1"
-            >
-              <div className="bg-gray-900 border border-indigo-800/30 rounded-xl shadow-xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  Students ({locations.length})
-                </h2>
-                
-                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                  {locations.map((student) => (
-                    <motion.div
-                      key={student._id}
-                      whileHover={{ scale: 1.02 }}
-                      onClick={() => setSelectedStudent(student)}
-                      className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${
-                        selectedStudent?._id === student._id
-                          ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 border-2 border-indigo-500'
-                          : 'bg-gray-800 border border-indigo-700/30 hover:border-indigo-600/50'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                          {student.name?.charAt(0).toUpperCase() || 'S'}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-semibold truncate">{student.name || 'Student'}</h3>
-                          <p className="text-gray-400 text-sm truncate">{student.email}</p>
-                          <div className="flex items-center gap-1 mt-2">
-                            <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-xs text-gray-500">
-                              {getTimeAgo(student.lastKnownLocation?.timestamp)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
+            <label className="flex items-center gap-2 text-indigo-300 font-semibold mb-4 text-sm uppercase tracking-wide">
+              <FaUser className="text-indigo-400" />
+              Select Student
+            </label>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <select
+                  className="w-full bg-gray-900/50 border border-indigo-500/30 text-white rounded-xl px-4 py-3.5 
+                             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                             hover:border-indigo-400/50 transition-all duration-200 appearance-none cursor-pointer"
+                  value={selectedEmail}
+                  onChange={(e) => setSelectedEmail(e.target.value)}
+                >
+                  <option value="" className="bg-gray-900">-- Select a Mentee --</option>
+                  {mentees.map((mentee) => (
+                    <option key={mentee._id} value={mentee.email_id} className="bg-gray-900">
+                      {mentee.name} ({mentee.email_id})
+                    </option>
                   ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
+              <button
+                onClick={handleFetchLocation}
+                disabled={!selectedEmail || loading}
+                className="px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500
+                           text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/30
+                           disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none
+                           transition-all duration-200 transform hover:scale-105 active:scale-95
+                           flex items-center justify-center gap-2 whitespace-nowrap"
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner className="animate-spin" />
+                    <span>Tracking...</span>
+                  </>
+                ) : (
+                  <>
+                    <BiCurrentLocation className="text-xl" />
+                    <span>Track Location</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-4 p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-400 text-sm"
+              >
+                {error}
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Location Display */}
+          {locationData && coordinates && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-6"
+            >
+              {/* Coordinates Card */}
+              {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/30 backdrop-blur-xl border border-indigo-400/30 rounded-2xl p-6 shadow-xl">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                      <FaMapMarkerAlt className="text-indigo-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Latitude</h3>
+                  </div>
+                  <p className="text-2xl font-mono text-indigo-300">{coordinates.lat}</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-900/40 to-indigo-900/30 backdrop-blur-xl border border-purple-400/30 rounded-2xl p-6 shadow-xl">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                      <FaMapMarkerAlt className="text-purple-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Longitude</h3>
+                  </div>
+                  <p className="text-2xl font-mono text-purple-300">{coordinates.lng}</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-indigo-900/40 to-cyan-900/30 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 shadow-xl">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                      <BiCurrentLocation className="text-xl text-cyan-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Status</h3>
+                  </div>
+                  <p className="text-lg text-emerald-400 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                    Live Location
+                  </p>
+                </div>
+              </div> */}
+
+              {/* Interactive Map Card */}
+              <div className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border-b border-indigo-500/20 px-6 py-4 flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                    <h3 className="text-lg font-bold text-indigo-300 uppercase tracking-wide">
+                      Live Map View
+                    </h3>
+                  </div>
+                  <a
+                    href={locationData.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors duration-200 text-sm font-semibold"
+                  >
+                    <span>Open in Google Maps</span>
+                    <FaExternalLinkAlt />
+                  </a>
+                </div>
+
+                {/* Embedded Google Map */}
+                <div className="relative w-full h-[500px] bg-gray-900">
+                  <iframe
+    src={locationData.mapUrl.replace('https://www.google.com/maps', 'https://maps.google.com/maps') + '&output=embed'}
+    width="100%"
+    height="400"
+    style={{ border: 0, borderRadius: '10px' }}
+    allowFullScreen
+    loading="lazy"
+  ></iframe>
+                  
+                  {/* Overlay for styling */}
+                  <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm border border-indigo-500/30 rounded-lg px-4 py-2">
+                    <p className="text-white text-sm font-semibold flex items-center gap-2">
+                      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                      Student Location
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Info Card */}
+              <div className="bg-gradient-to-br from-indigo-900/30 to-purple-900/20 backdrop-blur-xl border border-indigo-400/20 rounded-2xl p-6 shadow-xl">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-indigo-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-bold mb-2">Location Information</h4>
+                    <p className="text-indigo-300 text-sm leading-relaxed">
+                      The map above shows the real-time location of the selected student. You can click on "Open in Google Maps" to view detailed directions and nearby landmarks. Location data is updated automatically.
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
+          )}
 
-            {/* Map and Details */}
+          {/* Empty State */}
+          {!loading && !locationData && selectedEmail && !error && (
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-12 text-center shadow-2xl"
             >
-              <AnimatePresence mode="wait">
-                {selectedStudent && (
-                  <motion.div
-                    key={selectedStudent._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {/* Student Info Card */}
-                    <div className="bg-gray-900 border border-indigo-800/30 rounded-xl shadow-xl p-6 mb-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                            {selectedStudent.name?.charAt(0).toUpperCase() || 'S'}
-                          </div>
-                          <div>
-                            <h2 className="text-2xl font-bold text-white">{selectedStudent.name || 'Student'}</h2>
-                            <p className="text-gray-400">{selectedStudent.email}</p>
-                          </div>
-                        </div>
-                        
-                        {/* Open in Google Maps Button */}
-                        <a
-                          href={getMapUrl(
-                            selectedStudent.lastKnownLocation?.latitude,
-                            selectedStudent.lastKnownLocation?.longitude
-                          )}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                          Open in Maps
-                        </a>
-                      </div>
-
-                      {/* Location Details */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gray-800 border border-indigo-700/30 rounded-lg p-4">
-                          <p className="text-gray-400 text-sm mb-1">Latitude</p>
-                          <p className="text-white font-mono font-semibold">
-                            {selectedStudent.lastKnownLocation?.latitude?.toFixed(6) || 'N/A'}
-                          </p>
-                        </div>
-                        <div className="bg-gray-800 border border-indigo-700/30 rounded-lg p-4">
-                          <p className="text-gray-400 text-sm mb-1">Longitude</p>
-                          <p className="text-white font-mono font-semibold">
-                            {selectedStudent.lastKnownLocation?.longitude?.toFixed(6) || 'N/A'}
-                          </p>
-                        </div>
-                        <div className="bg-gray-800 border border-indigo-700/30 rounded-lg p-4">
-                          <p className="text-gray-400 text-sm mb-1">Last Updated</p>
-                          <p className="text-white font-semibold text-sm">
-                            {formatTime(selectedStudent.lastKnownLocation?.timestamp)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Embedded Map */}
-                    <div className="bg-gray-900 border border-indigo-800/30 rounded-xl shadow-xl overflow-hidden">
-                      <div className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border-b border-indigo-700/30 px-6 py-4">
-                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                          <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                          </svg>
-                          Location Map
-                        </h3>
-                      </div>
-                      
-                      {/* Responsive Map Container */}
-                      <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                        <iframe
-                          src={`https://www.google.com/maps?q=${selectedStudent.lastKnownLocation?.latitude},${selectedStudent.lastKnownLocation?.longitude}&z=15&output=embed`}
-                          className="absolute top-0 left-0 w-full h-full border-0"
-                          allowFullScreen
-                          loading="lazy"
-                          referrerPolicy="no-referrer-when-downgrade"
-                          title="Student Location Map"
-                        />
-                      </div>
-
-                      {/* Map URL Display */}
-                      <div className="bg-gray-800 border-t border-indigo-700/30 p-4">
-                        <p className="text-gray-400 text-sm mb-2">Google Maps URL:</p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            readOnly
-                            value={getMapUrl(
-                              selectedStudent.lastKnownLocation?.latitude,
-                              selectedStudent.lastKnownLocation?.longitude
-                            )}
-                            className="flex-1 px-4 py-2 bg-gray-900 border border-indigo-700/50 rounded-lg text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                          />
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(getMapUrl(
-                                selectedStudent.lastKnownLocation?.latitude,
-                                selectedStudent.lastKnownLocation?.longitude
-                              ))
-                              toast.success('URL copied to clipboard!', {
-                                position: "top-center",
-                                theme: "dark",
-                                transition: Bounce,
-                              })
-                            }}
-                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition duration-200 flex items-center gap-2"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            Copy
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <HiLocationMarker className="text-5xl text-indigo-400" />
+              </div>
+              <h3 className="text-xl font-bold text-indigo-400 mb-2">No Location Data</h3>
+              <p className="text-indigo-300/60">Click "Track Location" to view the student's current position.</p>
             </motion.div>
-          </div>
-        )}
+          )}
+
+          {/* Initial State */}
+          {!selectedEmail && !loading && !locationData && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-12 text-center shadow-2xl"
+            >
+              <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaUser className="text-4xl text-indigo-400" />
+              </div>
+              <h3 className="text-xl font-bold text-indigo-400 mb-2">Select a Student</h3>
+              <p className="text-indigo-300/60">Choose a mentee from the dropdown above to track their location.</p>
+            </motion.div>
+          )}
+        </div>
       </div>
-
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        transition={Bounce}
-      />
     </div>
-  )
-}
+  );
+};
 
-export default MentorStudentLocation
+export default MentorStudentLocation;

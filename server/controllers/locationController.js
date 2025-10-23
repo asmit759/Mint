@@ -25,9 +25,11 @@ exports.shareLocation = async (req, res) => {
         const mentorId = student.mentor;
 
         const mentorDetails = await mentor.findById(mentorId);
+        
 
         mentorDetails.menteeLocation.menteeName = student.name;
         mentorDetails.menteeLocation.location = mapUrl;
+        
         return res.status(200).json({
             success: true,
             message: "Location shared successfully",
@@ -57,17 +59,19 @@ exports.getStudentLocation = async (req, res) => {
     try {
 
         //i want mentor comes ..select a student from the drop down and then from that student we fetch the cordinates or we directly ek sectiion hoga maps ka then koi agar share kiya ho we just populate it  from the corinates??
-        const { studentId } = req.result.id;
+        const { studentEmail } = req.query;
+        
+        const student = await Student.findOne({ email_id: studentEmail });
 
-        const student = await Student.findById(studentId);
-
-
+        
+        console.log(student)
         if (!student || !student.lastKnownLocation) {
         return res.status(404).json({
             success: false,
             message: "Location not found for this student",
         });
         }
+        
 
         const { latitude, longitude, timestamp } = student.lastKnownLocation;
 
@@ -75,7 +79,7 @@ exports.getStudentLocation = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            location: { latitude, longitude, timestamp },
+            message:"the map is displayed",
             mapUrl
         });
 

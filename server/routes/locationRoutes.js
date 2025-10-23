@@ -12,6 +12,6 @@ const { shareLocation, getStudentLocation } = require("../controllers/locationCo
 router.post("/share-location",studMid, shareLocation);
 
 // mentor fetches student’s last known location
-router.get("/get-location/:studentId", getStudentLocation);
+router.get("/get-location", getStudentLocation);
 
 module.exports = router;

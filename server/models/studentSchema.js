@@ -69,16 +69,16 @@ const studentSchema = new Schema({
   }
 }, { timestamps: true });
 
-studentSchema.pre('findOneAndUpdate', async function(next) {
-    const update = this.getUpdate();
-    if (update.parentEmail) {
-        const docToUpdate = await this.model.findOne(this.getQuery());
-        if (docToUpdate.parentEmail) {
-            return next(new Error("parentEmail cannot be changed once it is set."));
-        }
-    }
-    next();
-});
+// studentSchema.pre('findOneAndUpdate', async function(next) {
+//     const update = this.getUpdate();
+//     if (update.parentEmail) {
+//         const docToUpdate = await this.model.findOne(this.getQuery());
+//         if (docToUpdate.parentEmail) {
+//             return next(new Error("parentEmail cannot be changed once it is set."));
+//         }
+//     }
+//     next();
+// });
 
 const Student = mongoose.model('studentModel', studentSchema);
 module.exports = Student;
