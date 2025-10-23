@@ -16,10 +16,10 @@ const grievances= async(req,res)=>{
         if (!text || text.trim().length < 10) {
             return res.status(400).json({ error: "Grievance message is too short." });
         }
-
         const grievance = await Grievance.create({
-            student:student.id,
+            student:student._id,
             mentor:mentorid,
+            hostel: student.hostel,
             message:text,
             resolved:false,
         })

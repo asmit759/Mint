@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 
 import Login from './components/Login';
 import StudentSignup from './components/StudentSignup';
+
 // IMPORTANT: ensure this import points to the real file
 import StudentLanding from './components/student/Landing';
 
@@ -19,6 +20,11 @@ import MentorStudentLocation from './components/mentor/MentorStudentLocation';
 import SageChat from './components/student/SageChat';
 import BandhuChat from './components/student/BandhuChat';
 
+// NEW: student action pages (create these components)
+import StudentLeaveApply from './components/student/StudentLeaveApply';
+import CampusGrievance from './components/student/CampusGrievance';
+import HostelGrievance from './components/student/HostelGrievance';
+
 // Auth checks
 import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
 
@@ -26,7 +32,6 @@ function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, role, loading } = useSelector((s) => s.auth);
 
-  // Sequential auth check to prevent role race conditions
   useEffect(() => {
     (async () => {
       try {
@@ -69,7 +74,7 @@ function App() {
         }
       />
 
-      {/* Auth Routes: ALWAYS render these, even if already authenticated */}
+      {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/student/signup" element={<StudentSignup />} />
       <Route path="/mentor/signup" element={<MentorSignup />} />
@@ -80,6 +85,32 @@ function App() {
         element={
           <ProtectedRoute allow="student">
             <StudentLanding />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* NEW: Student action pages */}
+      <Route
+        path="/leave/apply"
+        element={
+          <ProtectedRoute allow="student">
+            <StudentLeaveApply />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/grievance/campus"
+        element={
+          <ProtectedRoute allow="student">
+            <CampusGrievance />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/grievance/hostel"
+        element={
+          <ProtectedRoute allow="student">
+            <HostelGrievance />
           </ProtectedRoute>
         }
       />
