@@ -26,7 +26,7 @@ const MentorMail = () => {
 
   useEffect(() => {
     setMentorDetails(user || null);
-  }, [user]); // keep UI in sync with store [web:12]
+  }, [user]);
 
   useEffect(() => {
     const fetchMentorDetails = async () => {
@@ -56,10 +56,10 @@ const MentorMail = () => {
 
   const handleStudentToggle = (student) => {
     const email = emailOf(student);
-    if (!email) return; // ignore bad rows [web:365]
+    if (!email) return;
     setSelectedStudents((prev) =>
       prev.includes(email) ? prev.filter((e) => e !== email) : [...prev, email]
-    ); // includes works with strings and ignores undefined previously filtered [web:361]
+    );
   };
 
   const handleSelectAll = () => {
@@ -91,7 +91,7 @@ const MentorMail = () => {
         '/mentorRoutes/sendMailToStudent',
         { studentEmailArray: uniqueEmails, title, body },
         { withCredentials: true }
-      ); // cookies carry auth; no header needed [web:116]
+      ); 
       if (data?.success) {
         toast.success('Email sent successfully!', { position: 'top-center', theme: 'dark', transition: Bounce });
         setSelectedStudents([]);
