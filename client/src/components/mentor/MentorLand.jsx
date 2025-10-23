@@ -170,7 +170,9 @@ const MentorDashboard = () => {
         <div className="absolute -bottom-8 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
       </div>
 
-      <MentorNavbar onLogout={handleLogout} />
+      <div className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <MentorNavbar onLogout={handleLogout} />
+      </div>
 
       <div className="relative z-10 p-6 md:p-10 lg:p-12">
         <motion.div
