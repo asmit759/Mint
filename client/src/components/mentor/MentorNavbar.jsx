@@ -59,7 +59,7 @@ const MentorNavbar = ({ onLogout }) => {
               <motion.img
                 src={Logo}
                 alt="MINT Logo"
-                className="h-10 w-10 cursor-pointer"
+                className="h-10 w-10 scale-150 cursor-pointer"
                 whileHover={{ scale: 1.05, filter: 'drop-shadow(0 0 15px rgba(99,102,241,.6))' }}
                 transition={{ duration: 0.2 }}
               />

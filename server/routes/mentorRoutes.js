@@ -7,6 +7,7 @@ const {alertStudent} = require("../controllers/mentorMail");
 const { uploadAttendance } = require("../controllers/attendanceController");
 const {getMenteeGrievances,resolveGrievance} = require("../controllers/grievanceController")
 const {mentorDetails} =require("../controllers/mentorDetails");
+const {getAttendance} = require("../controllers/attendanceController")
 
 //middlewares
 const {mentorMid, isMentor} = require("../middleware/mentorMid");
@@ -28,6 +29,9 @@ router.post("/resolve", mentorMid,isMentor, resolveGrievance);
 
 //getmentor
 router.get("/getMentorDetails",mentorMid,isMentor, mentorDetails);
+
+//getattendance
+router.post("/getattendance",getAttendance);
 
 
 module.exports = router;

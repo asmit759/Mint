@@ -56,6 +56,10 @@ const attendanceSchema = new mongoose.Schema({
         ref: "Student",
         required: true 
     },
+    studentEmail: { 
+        type: String,
+        required: true 
+    },
   attendance: [yearSchema],
 });
 

@@ -200,7 +200,7 @@ const MentorMail = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-indigo-300 mb-2">Email Title</label>
+              <label className="block text-sm font-medium text-indigo-300 mb-2">Email Subject</label>
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter email subject" className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200" />
             </div>
 

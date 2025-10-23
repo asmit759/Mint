@@ -67,8 +67,7 @@ const studentSchema = new Schema({
         longitude: { type: Number },
         timestamp: { 
             type: Date, 
-            default: Date.now, 
-            expires: 7200 
+            default: Date.now,
         },
 },
 
