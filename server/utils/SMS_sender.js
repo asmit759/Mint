@@ -6,7 +6,6 @@ const SMS_sender = (student,leave,parentNumber)=>{
                         upperCaseAlphabets: true,
                         lowerCaseAlphabets:true
                     });
-        leave.passotp = otp
 
         const body = `Dear Parent,
         Your ward ${student.name} (${student.roll_no}) has applied for leave from ${leave.fromDate} to ${leave.toDate}.
@@ -17,20 +16,20 @@ const SMS_sender = (student,leave,parentNumber)=>{
         Thank you,
         School of Computer Engineering, KIIT Deemed to be University`;
     
-        const accountSid = process.env.TWILIO_SID;
-        const authToken = process.env.TWILIO_TOKEN;
+        // const accountSid = process.env.TWILIO_SID;
+        // const authToken = process.env.TWILIO_TOKEN;
 
-        const client = require('twilio')(accountSid, authToken);
+        // const client = require('twilio')(accountSid, authToken);
 
-        client.messages
-        .create({
+        // client.messages
+        // .create({
 
-            from: process.env.TWILIO_PHONENO,
-            to: parentNumber,
-            body: body,
+        //     from: process.env.TWILIO_PHONENO,
+        //     to: parentNumber,
+        //     body: body,
 
-        })
-        return message.sid;
+        // })
+        return otp;
 
     } catch (error) {
         

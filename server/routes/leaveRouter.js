@@ -5,8 +5,8 @@ const {mentorMid}= require("../middleware/mentorMid")
 const {requestLeave,renderParentForm,verifyParentApproval,approveLeave} = require("../controllers/leaveController")
 
 leaveRouter.post("/createLeave",studMid,requestLeave);
-leaveRouter.get("/parentForm",renderParentForm);
-leaveRouter.post("/verifyParent",verifyParentApproval);
-leaveRouter.post("/approveLeaveMentor",mentorMid,approveLeave);
+leaveRouter.get("/parent-form",renderParentForm);
+leaveRouter.post("/verify-parent",verifyParentApproval);
+leaveRouter.post("/approve-leave-mentor",mentorMid,approveLeave);
 
 module.exports = leaveRouter

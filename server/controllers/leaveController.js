@@ -4,17 +4,17 @@ const Leave = require("../models/leaveSchema");
 const SMS_sender = require("../utils/SMS_sender");
 const nodemailer = require("nodemailer");
 
+const transporter = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    }
+});
+
 const requestLeave = async(req,res)=>{
 
     try{  
-
-        const transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        auth: {
-            user: process.env.MAIL_USER,
-            pass: process.env.MAIL_PASS,
-              }
-        });
         const id = req.result.id;
 
         const student = await Student.findById(id);
@@ -37,9 +37,11 @@ const requestLeave = async(req,res)=>{
 
         // sms 
         const parentNumber = `+91${student.fatherContact}`;
-        const msgData = SMS_sender(student,leave,parentNumber);
+        const otp = SMS_sender(student,leave,parentNumber);
+        leave.passotp = String(otp);
+        await leave.save();
         // mail
-        console.log(msgData);
+        // console.log(msgData);
         console.log(student.parentEmail);
 
         const formLink = `http://localhost:4000/leave/parent-form?leaveId=${leave._id}`;
@@ -77,12 +79,13 @@ const requestLeave = async(req,res)=>{
 const renderParentForm = async (req, res) => {
   try {
     const { leaveId } = req.query;
-    const leave = await Leave.findById(leaveId).populate("student");
+    const leave = await Leave.findById(leaveId)
+      .populate({ path: 'studentId', select: 'name roll_no' }); 
     if (!leave) return res.status(404).send("Leave not found");
 
     res.send(`
       <h2>Approve Leave Request</h2>
-      <p>Child: ${leave.student.name}</p>
+      <p>Child: ${leave.studentId.name}</p>
       <form method="POST" action="/leave/verify-parent">
         <input type="hidden" name="leaveId" value="${leaveId}" />
         <label>Enter OTP (sent via SMS):</label>
@@ -98,22 +101,22 @@ const renderParentForm = async (req, res) => {
 const verifyParentApproval = async (req, res) => {
   try {
     const { leaveId, otp } = req.body;
-    const leave = await Leave.findById(leaveId).populate("student mentor");
+    const leave = await Leave.findById(leaveId)
+      .populate({ path: 'studentId', select: 'name roll_no' })
+      .populate({ path: 'mentor', select: 'name email' });
     if (!leave) return res.status(404).send("Leave not found");
 
-    if (leave.passotp === parseInt(otp)) {
+    if (String(leave.passotp) === String(otp)) {
       leave.parentApproval = true;
       await leave.save();
 
-      const mentordoc = await mentor.findById(leave.mentor);
-      const student = leave.student;
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: mentordoc.email,
-        subject: `Leave Request Awaiting Your Decision`,
+       await transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: leave.mentor.email,
+        subject: 'Leave Request Awaiting Your Decision',
         html: `
-          <p>Dear ${mentordoc.name},</p>
-          <p>${student.name} (${student.roll_no}) has requested leave from 
+          <p>Dear ${leave.mentor.name},</p>
+          <p>${leave.studentId.name} (${leave.studentId.roll_no}) has requested leave from 
           <b>${leave.fromDate.toDateString()}</b> to <b>${leave.toDate.toDateString()}</b>.</p>
           <p>Reason: ${leave.reason}</p>
           <p>Parent has already <b>APPROVED</b> this leave.</p>
