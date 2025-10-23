@@ -13,7 +13,8 @@ mentorAuthRouter.get("/check",mentorMid,isMentor,async(req,res)=>{
         email:req.user.email,
         id:req.user._id
     }
-    res.status(201).json({
+    res.status(200).json({
+        success:true,
         user:reply,
         message:"Valid User"
     })
