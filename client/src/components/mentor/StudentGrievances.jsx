@@ -1,9 +1,10 @@
 // src/components/mentor/StudentGrievances.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { 
   BiSolidMessageSquareDetail, 
   BiUser, 
@@ -15,31 +16,78 @@ import { FaPaperPlane, FaSpinner } from 'react-icons/fa';
 import { HiExclamationCircle } from 'react-icons/hi';
 import MentorNavbar from './MentorNavbar';
 import { mentorLogout, logout } from '../../store/authSlice';
+import axiosClient from '../../utils/AxiosCli';
 
 const StudentGrievances = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user, role, isAuthenticated } = useSelector((state) => state.auth);
+  
   const [grievances, setGrievances] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedGrievance, setSelectedGrievance] = useState(null);
   const [response, setResponse] = useState('');
   const [resolving, setResolving] = useState(false);
-  const [filter, setFilter] = useState('all'); // all, resolved, unresolved
+  const [filter, setFilter] = useState('all');
+
+  // Get auth config helper
+  const getAuthConfig = () => {
+    const token = localStorage.getItem('token');
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+  };
+
+  // Check authentication on mount
+  useEffect(() => {
+    if (!isAuthenticated || role !== 'mentor') {
+      toast.error('Unauthorized access. Please login as mentor.', {
+        position: 'top-right',
+        autoClose: 3000,
+        transition: Bounce,
+      });
+      navigate('/login');
+      return;
+    }
+    fetchGrievances();
+  }, [isAuthenticated, role]);
 
   // Fetch all grievances
-  useEffect(() => {
-    fetchGrievances();
-  }, []);
-
   const fetchGrievances = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:4000/mentorRoutes/viewAll', {
-        withCredentials: true,
-      });
-      setGrievances(res.data.grievances || []);
+      const res = await axiosClient.get('/mentorRoutes/viewAll', getAuthConfig());
+      
+      if (res.data && Array.isArray(res.data.grievances)) {
+        setGrievances(res.data.grievances);
+      } else {
+        setGrievances([]);
+        toast.warning('No grievances found', {
+          position: 'top-right',
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      }
     } catch (err) {
       console.error('Error fetching grievances:', err);
+      
+      if (err.response?.status === 401) {
+        toast.error('Session expired. Please login again.', {
+          position: 'top-right',
+          autoClose: 3000,
+          transition: Bounce,
+        });
+        dispatch(mentorLogout());
+        navigate('/login');
+      } else {
+        toast.error('Failed to fetch grievances', {
+          position: 'top-right',
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -47,17 +95,24 @@ const StudentGrievances = () => {
 
   // Resolve grievance
   const handleResolve = async () => {
-    if (!selectedGrievance || !response.trim()) return;
+    if (!selectedGrievance || !response.trim()) {
+      toast.warning('Please enter a response', {
+        position: 'top-right',
+        autoClose: 3000,
+        transition: Bounce,
+      });
+      return;
+    }
     
     try {
       setResolving(true);
-      await axios.post(
-        'http://localhost:4000/mentorRoutes/resolve',
+      await axiosClient.post(
+        '/mentorRoutes/resolve',
         {
           grievanceId: selectedGrievance._id,
           response: response,
         },
-        { withCredentials: true }
+        getAuthConfig()
       );
       
       // Update local state
@@ -69,10 +124,32 @@ const StudentGrievances = () => {
         )
       );
       
+      toast.success('Grievance resolved successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        transition: Bounce,
+      });
+      
       setSelectedGrievance(null);
       setResponse('');
     } catch (err) {
       console.error('Error resolving grievance:', err);
+      
+      if (err.response?.status === 401) {
+        toast.error('Session expired. Please login again.', {
+          position: 'top-right',
+          autoClose: 3000,
+          transition: Bounce,
+        });
+        dispatch(mentorLogout());
+        navigate('/login');
+      } else {
+        toast.error('Failed to resolve grievance', {
+          position: 'top-right',
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      }
     } finally {
       setResolving(false);
     }
@@ -97,293 +174,302 @@ const StudentGrievances = () => {
 
   // Format date
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
+  if (!isAuthenticated || role !== 'mentor') {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+    <>
+      <ToastContainer />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
         <MentorNavbar onLogout={handleLogout} />
-      </div>
 
-      {/* Main Content */}
-      <div className="pt-20 px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-20"></div>
-              <div className="relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-8 shadow-2xl">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <BiSolidMessageSquareDetail className="text-3xl text-white" />
+        {/* Main Content */}
+        <div className="px-4 sm:px-6 lg:px-8 py-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-20"></div>
+                <div className="relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <BiSolidMessageSquareDetail className="text-2xl sm:text-3xl text-white" />
+                      </div>
+                      <div>
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent">
+                          Student Grievances
+                        </h1>
+                        <p className="text-indigo-300/70 text-xs sm:text-sm mt-1">
+                          Manage and resolve student concerns
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent">
-                        Student Grievances
-                      </h1>
-                      <p className="text-indigo-300/70 text-sm mt-1">
-                        Manage and resolve student concerns
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Stats */}
-                  <div className="flex gap-4">
-                    <div className="bg-indigo-500/20 backdrop-blur-sm border border-indigo-500/30 rounded-lg px-4 py-2">
-                      <p className="text-xs text-indigo-300 uppercase tracking-wide">Total</p>
-                      <p className="text-2xl font-bold text-white">{grievances.length}</p>
-                    </div>
-                    <div className="bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 rounded-lg px-4 py-2">
-                      <p className="text-xs text-amber-300 uppercase tracking-wide">Pending</p>
-                      <p className="text-2xl font-bold text-white">
-                        {grievances.filter(g => !g.resolved).length}
-                      </p>
+                    {/* Stats */}
+                    <div className="flex gap-3 sm:gap-4">
+                      <div className="bg-indigo-500/20 backdrop-blur-sm border border-indigo-500/30 rounded-lg px-3 sm:px-4 py-2">
+                        <p className="text-xs text-indigo-300 uppercase tracking-wide">Total</p>
+                        <p className="text-xl sm:text-2xl font-bold text-white">{grievances.length}</p>
+                      </div>
+                      <div className="bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 rounded-lg px-3 sm:px-4 py-2">
+                        <p className="text-xs text-amber-300 uppercase tracking-wide">Pending</p>
+                        <p className="text-xl sm:text-2xl font-bold text-white">
+                          {grievances.filter(g => !g.resolved).length}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          {/* Filter Tabs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-6 bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-xl p-2 inline-flex gap-2"
-          >
-            {['all', 'unresolved', 'resolved'].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-6 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide transition-all duration-200 ${
-                  filter === f
-                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                    : 'text-indigo-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </motion.div>
-
-          {/* Grievances Grid */}
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <FaSpinner className="text-5xl text-indigo-400 animate-spin" />
-            </div>
-          ) : filteredGrievances.length === 0 ? (
+            {/* Filter Tabs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-12 text-center"
+              transition={{ delay: 0.1 }}
+              className="mb-6 bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-xl p-2 inline-flex gap-2 overflow-x-auto"
             >
-              <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <HiExclamationCircle className="text-5xl text-indigo-400" />
-              </div>
-              <h3 className="text-xl font-bold text-indigo-400 mb-2">No Grievances Found</h3>
-              <p className="text-indigo-300/60">
-                {filter === 'all'
-                  ? 'No grievances have been submitted yet.'
-                  : `No ${filter} grievances at the moment.`}
-              </p>
-            </motion.div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredGrievances.map((grievance, index) => (
-                <motion.div
-                  key={grievance._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-indigo-400/40 transition-all duration-300"
+              {['all', 'unresolved', 'resolved'].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 sm:px-6 py-2 rounded-lg font-semibold text-xs sm:text-sm uppercase tracking-wide transition-all duration-200 whitespace-nowrap ${
+                    filter === f
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
+                      : 'text-indigo-300 hover:text-white hover:bg-white/5'
+                  }`}
                 >
-                  {/* Status Badge */}
-                  <div className="absolute top-4 right-4 z-10">
-                    {grievance.resolved ? (
-                      <div className="flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-3 py-1">
-                        <BiCheckCircle className="text-emerald-400" />
-                        <span className="text-xs font-semibold text-emerald-400 uppercase">
-                          Resolved
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 rounded-full px-3 py-1">
-                        <BiXCircle className="text-amber-400" />
-                        <span className="text-xs font-semibold text-amber-400 uppercase">
-                          Pending
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  {f}
+                </button>
+              ))}
+            </motion.div>
 
-                  <div className="p-6">
-                    {/* Student Info */}
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <BiUser className="text-2xl text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-white mb-1 truncate">
-                          {grievance.student.name}
-                        </h3>
-                        <p className="text-sm text-indigo-300 truncate">
-                          {grievance.student.email_id}
-                        </p>
-                        <p className="text-xs text-indigo-400 mt-1">
-                          Roll No: {grievance.student.roll_no}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Message */}
-                    <div className="bg-indigo-900/20 border border-indigo-500/20 rounded-xl p-4 mb-4">
-                      <p className="text-sm text-indigo-200 leading-relaxed">
-                        {grievance.message}
-                      </p>
-                    </div>
-
-                    {/* Response if resolved */}
-                    {grievance.resolved && grievance.response && (
-                      <div className="bg-emerald-900/20 border border-emerald-500/20 rounded-xl p-4 mb-4">
-                        <p className="text-xs text-emerald-400 font-semibold uppercase mb-2">
-                          Mentor Response
-                        </p>
-                        <p className="text-sm text-emerald-200 leading-relaxed">
-                          {grievance.response}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-indigo-500/10">
-                      <div className="flex items-center gap-2 text-indigo-400 text-xs">
-                        <BiTime />
-                        <span>{formatDate(grievance.createdAt)}</span>
-                      </div>
-
-                      {!grievance.resolved && (
-                        <button
-                          onClick={() => setSelectedGrievance(grievance)}
-                          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
-                        >
-                          Resolve
-                        </button>
+            {/* Grievances Grid */}
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <FaSpinner className="text-4xl sm:text-5xl text-indigo-400 animate-spin" />
+              </div>
+            ) : filteredGrievances.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-8 sm:p-12 text-center"
+              >
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <HiExclamationCircle className="text-4xl sm:text-5xl text-indigo-400" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-indigo-400 mb-2">No Grievances Found</h3>
+                <p className="text-sm sm:text-base text-indigo-300/60">
+                  {filter === 'all'
+                    ? 'No grievances have been submitted yet.'
+                    : `No ${filter} grievances at the moment.`}
+                </p>
+              </motion.div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                {filteredGrievances.map((grievance, index) => (
+                  <motion.div
+                    key={grievance._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-indigo-400/40 transition-all duration-300"
+                  >
+                    {/* Status Badge */}
+                    <div className="absolute top-3 sm:top-4 right-3 sm:right-4 z-10">
+                      {grievance.resolved ? (
+                        <div className="flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-2 sm:px-3 py-1">
+                          <BiCheckCircle className="text-emerald-400 text-sm sm:text-base" />
+                          <span className="text-xs font-semibold text-emerald-400 uppercase">
+                            Resolved
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 rounded-full px-2 sm:px-3 py-1">
+                          <BiXCircle className="text-amber-400 text-sm sm:text-base" />
+                          <span className="text-xs font-semibold text-amber-400 uppercase">
+                            Pending
+                          </span>
+                        </div>
                       )}
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+
+                    <div className="p-4 sm:p-6">
+                      {/* Student Info */}
+                      <div className="flex items-start gap-3 sm:gap-4 mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          <BiUser className="text-xl sm:text-2xl text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base sm:text-lg font-bold text-white mb-1 truncate">
+                            {grievance.student?.name || 'Unknown Student'}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-indigo-300 truncate">
+                            {grievance.student?.email_id || 'N/A'}
+                          </p>
+                          <p className="text-xs text-indigo-400 mt-1">
+                            Roll No: {grievance.student?.roll_no || 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Message */}
+                      <div className="bg-indigo-900/20 border border-indigo-500/20 rounded-xl p-3 sm:p-4 mb-4">
+                        <p className="text-xs sm:text-sm text-indigo-200 leading-relaxed">
+                          {grievance.message || 'No message provided'}
+                        </p>
+                      </div>
+
+                      {/* Response if resolved */}
+                      {grievance.resolved && grievance.response && (
+                        <div className="bg-emerald-900/20 border border-emerald-500/20 rounded-xl p-3 sm:p-4 mb-4">
+                          <p className="text-xs text-emerald-400 font-semibold uppercase mb-2">
+                            Mentor Response
+                          </p>
+                          <p className="text-xs sm:text-sm text-emerald-200 leading-relaxed">
+                            {grievance.response}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between pt-4 border-t border-indigo-500/10">
+                        <div className="flex items-center gap-2 text-indigo-400 text-xs">
+                          <BiTime />
+                          <span>{formatDate(grievance.createdAt)}</span>
+                        </div>
+
+                        {!grievance.resolved && (
+                          <button
+                            onClick={() => setSelectedGrievance(grievance)}
+                            className="px-3 sm:px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
+                          >
+                            Resolve
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Resolve Modal */}
-      <AnimatePresence>
-        {selectedGrievance && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedGrievance(null)}
-          >
+        {/* Resolve Modal */}
+        <AnimatePresence>
+          {selectedGrievance && (
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gradient-to-br from-gray-900 to-black border border-indigo-500/30 rounded-2xl p-6 max-w-2xl w-full shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setSelectedGrievance(null)}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <FaPaperPlane className="text-white" />
-                  </div>
-                  Resolve Grievance
-                </h2>
-                <button
-                  onClick={() => setSelectedGrievance(null)}
-                  className="w-10 h-10 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 flex items-center justify-center transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Student Info */}
-              <div className="bg-indigo-900/20 border border-indigo-500/20 rounded-xl p-4 mb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <BiUser className="text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">{selectedGrievance.student.name}</p>
-                    <p className="text-xs text-indigo-400">{selectedGrievance.student.email_id}</p>
-                  </div>
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gradient-to-br from-gray-900 to-black border border-indigo-500/30 rounded-2xl p-4 sm:p-6 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <FaPaperPlane className="text-white text-sm sm:text-base" />
+                    </div>
+                    Resolve Grievance
+                  </h2>
+                  <button
+                    onClick={() => setSelectedGrievance(null)}
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 flex items-center justify-center transition-colors text-lg"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <p className="text-sm text-indigo-200">{selectedGrievance.message}</p>
-              </div>
 
-              {/* Response Input */}
-              <div className="mb-6">
-                <label className="block text-indigo-300 font-semibold mb-2 text-sm uppercase tracking-wide">
-                  Your Response
-                </label>
-                <textarea
-                  value={response}
-                  onChange={(e) => setResponse(e.target.value)}
-                  placeholder="Enter your response to resolve this grievance..."
-                  rows={5}
-                  className="w-full bg-gray-900/50 border border-indigo-500/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                />
-              </div>
+                {/* Student Info */}
+                <div className="bg-indigo-900/20 border border-indigo-500/20 rounded-xl p-3 sm:p-4 mb-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                      <BiUser className="text-white text-sm sm:text-base" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-sm sm:text-base">{selectedGrievance.student?.name || 'Unknown'}</p>
+                      <p className="text-xs text-indigo-400">{selectedGrievance.student?.email_id || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs sm:text-sm text-indigo-200">{selectedGrievance.message}</p>
+                </div>
 
-              {/* Actions */}
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setSelectedGrievance(null)}
-                  className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleResolve}
-                  disabled={!response.trim() || resolving}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
-                >
-                  {resolving ? (
-                    <>
-                      <FaSpinner className="animate-spin" />
-                      <span>Resolving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaPaperPlane />
-                      <span>Send Response</span>
-                    </>
-                  )}
-                </button>
-              </div>
+                {/* Response Input */}
+                <div className="mb-4 sm:mb-6">
+                  <label className="block text-indigo-300 font-semibold mb-2 text-xs sm:text-sm uppercase tracking-wide">
+                    Your Response
+                  </label>
+                  <textarea
+                    value={response}
+                    onChange={(e) => setResponse(e.target.value)}
+                    placeholder="Enter your response to resolve this grievance..."
+                    rows={5}
+                    className="w-full bg-gray-900/50 border border-indigo-500/30 text-white text-sm sm:text-base rounded-xl px-3 sm:px-4 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => setSelectedGrievance(null)}
+                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gray-700 hover:bg-gray-600 text-white text-sm sm:text-base font-semibold rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleResolve}
+                    disabled={!response.trim() || resolving}
+                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm sm:text-base font-semibold rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+                  >
+                    {resolving ? (
+                      <>
+                        <FaSpinner className="animate-spin" />
+                        <span>Resolving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaPaperPlane />
+                        <span>Send Response</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 };
 
