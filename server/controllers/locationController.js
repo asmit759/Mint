@@ -1,108 +1,98 @@
-const Student  = require("../models/studentSchema")
-const mentor = require("../models/mentor")
+const Student = require("../models/studentSchema");
+const mentor = require("../models/mentor");
 
+// ✅ Student shares location — updates both student + mentor records
 exports.shareLocation = async (req, res) => {
     try {
         const { latitude, longitude } = req.body;
-        const studid = req.result._id
+        const studid = req.result._id;
+
         if (!studid || !latitude || !longitude) {
-        return res.status(400).json({
-            success: false,
-            message: "write all the feilds,,,,some feildss are missing",
-        });
+            return res.status(400).json({
+                success: false,
+                message: "Some fields are missing. Please provide all required data.",
+            });
         }
 
-        //location updated in student database
-        const student = await Student.findByIdAndUpdate(studid,
+        // Update student's last known location
+        const student = await Student.findByIdAndUpdate(
+            studid,
             {
-                lastKnownLocation: { latitude, longitude, timestamp: new Date() }
+                lastKnownLocation: { latitude, longitude, timestamp: new Date() },
             },
             { new: true }
         );
 
         const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
         const mentorId = student.mentor;
 
-        // const mentorDetails = await mentor.findById(mentorId);
-        
-
-        // mentorDetails.menteeLocation.menteeName = student.name;
-        // mentorDetails.menteeLocation.location = mapUrl;
-
-        // await mentorDetails.save()
-
+        // ✅ Update mentee location in mentor's document
         const mDoc = await mentor.findById(mentorId);
-        const entry = mDoc.menteeLocation.find(x => x.menteeName === student.name);
-        if (entry) {
-        entry.location = mapUrl;
-        entry.updatedAt = new Date();
-        } else {
-        mDoc.menteeLocation.push({ menteeName: student.name, location: mapUrl, updatedAt: new Date() });
+        if (!mDoc) {
+            return res.status(404).json({
+                success: false,
+                message: "Mentor not found for this student.",
+            });
         }
+
+        const entry = mDoc.menteeLocation.find(
+            (x) => x.menteeName === student.name
+        );
+
+        if (entry) {
+            entry.location = mapUrl;
+            entry.updatedAt = new Date();
+        } else {
+            mDoc.menteeLocation.push({
+                menteeName: student.name,
+                location: mapUrl,
+                updatedAt: new Date(),
+            });
+        }
+
         await mDoc.save();
 
-        
         return res.status(200).json({
             success: true,
             message: "Location shared successfully",
             mapUrl,
-            mDoc
+            mDoc,
         });
-
-
     } catch (error) {
         return res.status(500).json({
-            success:false,
-            message:"error getting the data",
-            error:error.message
-        })
+            success: false,
+            message: "Error updating location data",
+            error: error.message,
+        });
     }
 };
 
-
-
-
-//  Mentor gets last known student location as student shares the location
-//ask omm how to implement in mentor
-
+// ✅ Mentor gets student's last known shared location
 exports.getStudentLocation = async (req, res) => {
-
-
     try {
-
-        //i want mentor comes ..select a student from the drop down and then from that student we fetch the cordinates or we directly ek sectiion hoga maps ka then koi agar share kiya ho we just populate it  from the corinates??
         const { studentEmail } = req.query;
-        
         const student = await Student.findOne({ email_id: studentEmail });
 
-        
-        console.log(student)
         if (!student || !student.lastKnownLocation) {
-        return res.status(404).json({
-            success: false,
-            message: "Location not found for this student",
-        });
+            return res.status(404).json({
+                success: false,
+                message: "Location not found for this student",
+            });
         }
-        
 
-        const { latitude, longitude, timestamp } = student.lastKnownLocation;
-
+        const { latitude, longitude } = student.lastKnownLocation;
         const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
         return res.status(200).json({
             success: true,
-            message:"the map is displayed",
-            mapUrl
+            message: "Map displayed successfully",
+            mapUrl,
         });
-
-
-
     } catch (error) {
         return res.status(500).json({
-            success:false,
-            message:"error getting the data",
-            error:error.message
-        })
+            success: false,
+            message: "Error fetching student location",
+            error: error.message,
+        });
     }
 };
