@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import axiosClient from '../../utils/AxiosCli';
 import bandhuAvatar from '../../assets/KiitBandhu.png';
 
-const BANDHU_ENDPOINT = '/studentFacility/studentGuide'; // ensure this matches your server route
+const BANDHU_ENDPOINT = '/studentFacility/studentGuide'; 
 
 const BandhuChat = () => {
   const [messages, setMessages] = useState([

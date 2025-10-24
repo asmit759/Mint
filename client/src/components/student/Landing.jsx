@@ -1,4 +1,3 @@
-// src/components/student/StudentLanding.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiLogOut, FiCalendar, FiAlertTriangle, FiHome, FiMessageSquare, FiHeart } from 'react-icons/fi';
@@ -11,7 +10,6 @@ import axiosClient from '../../utils/AxiosCli';
 import 'react-toastify/dist/ReactToastify.css';
 
 import mintLogo from '../../assets/mintLogo.png';
-// Replace image with local video; update extension if different (e.g., .webm)
 import heroVideo from '../../assets/Git.mp4';
 
 import kiitBandhuImage from '../../assets/kiitBandhu.png';
