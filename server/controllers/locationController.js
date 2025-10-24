@@ -24,17 +24,30 @@ exports.shareLocation = async (req, res) => {
 
         const mentorId = student.mentor;
 
-        const mentorDetails = await mentor.findById(mentorId);
+        // const mentorDetails = await mentor.findById(mentorId);
         
 
-        mentorDetails.menteeLocation.menteeName = student.name;
-        mentorDetails.menteeLocation.location = mapUrl;
+        // mentorDetails.menteeLocation.menteeName = student.name;
+        // mentorDetails.menteeLocation.location = mapUrl;
+
+        // await mentorDetails.save()
+
+        const mDoc = await mentor.findById(mentorId);
+        const entry = mDoc.menteeLocation.find(x => x.menteeName === student.name);
+        if (entry) {
+        entry.location = mapUrl;
+        entry.updatedAt = new Date();
+        } else {
+        mDoc.menteeLocation.push({ menteeName: student.name, location: mapUrl, updatedAt: new Date() });
+        }
+        await mDoc.save();
+
         
         return res.status(200).json({
             success: true,
             message: "Location shared successfully",
             mapUrl,
-            mentorDetails
+            mDoc
         });
 
 
