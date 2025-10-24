@@ -138,10 +138,18 @@ const approveLeave = async(req,res)=>{
     const { leaveId, decision } = req.body;
 
     const leave = await Leave.findById(leaveId);
-    if (!leave) return res.status(404).json({ message: "Leave not found" });
+    if (!leave){
+      return res.status(404).json({
+        success:false,
+        message:"leave not able to fetch"
+      })
+    }
 
     if (!leave.parentApproval) {
-      return res.status(400).json({ message: "Parent approval required first" });
+      return res.status(400).json({ 
+        success:false,
+        message: "Parent approval required first" 
+      });
     }
 
     if (decision === "Approved") {
@@ -153,7 +161,10 @@ const approveLeave = async(req,res)=>{
     }
 
     await leave.save();
-    return res.status(200).json({ message: `Leave ${decision} by mentor`, leave });
+    return res.status(200).json({
+       message: `Leave ${decision} by mentor`, 
+       leave 
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error in mentor approval", error });
@@ -161,5 +172,29 @@ const approveLeave = async(req,res)=>{
 
 }
 
+const getLeaves = async (req, res) => {
+  try {
+    const leaves = await Leave.find();
 
-module.exports = {requestLeave,renderParentForm,verifyParentApproval,approveLeave}
+    const leavesWithStudent = await Promise.all(
+      leaves.map(async (leave) => {
+        const student = await Student.findById(leave.studentId);
+        return {
+          ...leave._doc,
+          studentName: student?.name || "Unknown",
+          studentEmail: student?.email_id || "N/A",
+          studentParentContact: student?.fatherContact || "N/A",
+        };
+      })
+    );
+
+    res.status(200).json(leavesWithStudent);
+
+  } catch (error) {
+    console.error("Error fetching leaves:", error);
+    res.status(500).json({ message: "Leaves not found", error });
+  }
+};
+
+
+module.exports = {requestLeave,renderParentForm,verifyParentApproval,approveLeave,getLeaves}

@@ -9,7 +9,7 @@ const adminLogin = async(req,res)=>{
         }
 
         const token = jwt.sign({email,role:"admin"},process.env.JWT_SERVER_KEY,{expiresIn:"2h"})
-        res.cookie('token',token,{maxAge:60*60*1000});
+        res.cookie('token',token,{maxAge:24*60*60*1000});
 
         res.status(200).send("Login Successfully as admin")
 

@@ -17,6 +17,7 @@ import ProtectedRoute from './components/routing/ProtectedRoute';
 import AttendanceDashboard from './components/mentor/AttendanceDashboard';
 import MentorStudentLocation from './components/mentor/MentorStudentLocation';
 import StudentGrievances from './components/mentor/StudentGrievances';
+import MentorLeaveApproval from './components/mentor/MentorLeaveApproval';
 
 import SageChat from './components/student/SageChat';
 import BandhuChat from './components/student/BandhuChat';
@@ -28,6 +29,7 @@ import HostelGrievance from './components/student/HostelGrievance';
 
 // Auth checks
 import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
+
 
 function App() {
   const dispatch = useDispatch();
@@ -165,9 +167,7 @@ function App() {
         path="/mentor/leave-applications"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
-              <h1 className="text-3xl font-bold">Leave Applications - Coming Soon</h1>
-            </div>
+            <MentorLeaveApproval/>
           </ProtectedRoute>
         }
       />

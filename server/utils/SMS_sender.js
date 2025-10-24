@@ -21,14 +21,15 @@ const SMS_sender = (student,leave,parentNumber)=>{
 
         const client = require('twilio')(accountSid, authToken);
 
-        client.messages
-        .create({
+        // client.messages
+        // .create({
 
-            from: process.env.TWILIO_PHONENO,
-            to: parentNumber,
-            body: body,
+        //     from: process.env.TWILIO_PHONENO,
+        //     to: parentNumber,
+        //     body: body,
 
-        })
+        // })
+        console.log(otp);
         return otp;
 
     } catch (error) {
