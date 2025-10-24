@@ -57,7 +57,7 @@ const studentLogin = async (req, res) => {
       process.env.JWT_SERVER_KEY,
       { expiresIn: 60 * 60 }
     );
-    res.cookie("token", token, { maxAge: 60 * 60 * 1000, httpOnly: true, sameSite: "lax" });
+    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "lax" });
 
     const reply = {
       id: student._id,
@@ -66,8 +66,7 @@ const studentLogin = async (req, res) => {
       roll_no: student.roll_no,
       address: student.address,
       profilePhotoUrl: student.profilePhotoUrl,
-      mentor: student.mentor,
-      parent: student.parent,
+      mentor: student.mentor
     };
 
     // Use a consistent key: "user"
