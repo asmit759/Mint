@@ -108,7 +108,7 @@ const createGeoGrievance = async (req, res) => {
     const distance = calculateDistance(currentLat, currentLong, latitude, longitude);
     console.log(`Distance from hostel: ${distance} km`);
      
-    const allowedRadius = 0.4;//200 meters of stud location
+    const allowedRadius = 0.2;//200 meters of stud location
     if (distance > allowedRadius) {
       return res.status(403).json({
         error: "You are not near your hostel. Grievance submission denied."
