@@ -75,39 +75,46 @@ Any unauthorized use, reproduction, distribution, or claim of authorship is stri
 
 ## 🏗️ Folder Structure
 
+
 ```
 ├── 📁 client
 │   ├── 📁 public
 │   │   └── 🖼️ vite.svg
 │   ├── 📁 src
 │   │   ├── 📁 assets
+│   │   │   ├── 🎬 Git.mp4
 │   │   │   ├── 🖼️ KiitBandhu.png
 │   │   │   ├── 🖼️ KiitSage.png
 │   │   │   ├── 🖼️ SageChatbot.png
-│   │   │   ├── 🖼️ git.png
 │   │   │   └── 🖼️ mintLogo.png
 │   │   ├── 📁 components
 │   │   │   ├── 📁 mentor
 │   │   │   │   ├── 📄 AttendanceDashboard.jsx
+│   │   │   │   ├── 📄 ErrorBoundary.jsx
 │   │   │   │   ├── 📄 MentorLand.jsx
+│   │   │   │   ├── 📄 MentorLeaveApproval.jsx
 │   │   │   │   ├── 📄 MentorMail.jsx
 │   │   │   │   ├── 📄 MentorNavbar.jsx
-│   │   │   │   └── 📄 MentorStudentLocation.jsx
+│   │   │   │   ├── 📄 MentorStudentLocation.jsx
+│   │   │   │   └── 📄 StudentGrievances.jsx
 │   │   │   ├── 📁 routing
 │   │   │   │   └── 📄 ProtectedRoute.jsx
 │   │   │   ├── 📁 smallComp
 │   │   │   │   └── 📄 Button.jsx
 │   │   │   ├── 📁 student
 │   │   │   │   ├── 📄 BandhuChat.jsx
+│   │   │   │   ├── 📄 CampusGrievance.jsx
+│   │   │   │   ├── 📄 HostelGrievance.jsx
 │   │   │   │   ├── 📄 Landing.jsx
-│   │   │   │   └── 📄 SageChat.jsx
+│   │   │   │   ├── 📄 SageChat.jsx
+│   │   │   │   └── 📄 StudentLeaveApply.jsx
 │   │   │   ├── 📄 Login.jsx
 │   │   │   ├── 📄 MentorSignup.jsx
 │   │   │   ├── 📄 SmoothScrolling.jsx
 │   │   │   └── 📄 StudentSignup.jsx
 │   │   ├── 📁 store
 │   │   │   ├── 📄 authSlice.js
-│   │   │   └── 📄 index.js
+│   │   │   └── 📄 store.js
 │   │   ├── 📁 utils
 │   │   │   └── 📄 AxiosCli.js
 │   │   ├── 🎨 App.css
@@ -122,7 +129,8 @@ Any unauthorized use, reproduction, distribution, or claim of authorship is stri
 │   └── 📄 vite.config.js
 ├── 📁 server
 │   ├── 📁 config
-│   │   └── 📄 db.js
+│   │   ├── 📄 db.js
+│   │   └── 📄 multerConfig.js
 │   ├── 📁 controllers
 │   │   ├── 📄 adminControllers.js
 │   │   ├── 📄 attendanceController.js
@@ -155,11 +163,6 @@ Any unauthorized use, reproduction, distribution, or claim of authorship is stri
 │   │   ├── 📄 mentorRoutes.js
 │   │   ├── 📄 studentAuthRouter.js
 │   │   └── 📄 studentRouter.js
-│   ├── 📁 uploads
-│   │   ├── 📄 674cb0a523b8c16d00d2d6b8032c8da5
-│   │   ├── 📄 6763048dff5290646404edb80607f4e2
-│   │   ├── 📄 7d28c5b068738c5779bcee7d734d7998
-│   │   └── 📄 cfdfdef9ad52764066779708e1b755b9
 │   ├── 📁 utils
 │   │   ├── 📄 SMS_sender.js
 │   │   ├── 📄 attendanceParser.js
@@ -167,10 +170,11 @@ Any unauthorized use, reproduction, distribution, or claim of authorship is stri
 │   │   └── 📄 validator.js
 │   ├── 📄 index.js
 │   └── ⚙️ package.json
-└── ⚙️ .gitignore
+├── ⚙️ .gitignore
+├── 📄 LICENSE
+├── 📝 README.md
+└── ⚙️ package.json
 ```
-
----
 
 ## ⚙️ Setup Instructions
 
