@@ -18,13 +18,11 @@ const adminRouter = require("./routes/adminRoutes");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use(cors({
-//     origin:"https://mint-deploy-x7nj.onrender.com",
-//     credentials:true,
-//     allowedHeaders: ['Content-Type', 'Authorization']
-// }))
-
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({
+    origin:"https://mint-deploy-x7nj.onrender.com",
+    credentials:true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
 
 // Routes
