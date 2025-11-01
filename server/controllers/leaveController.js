@@ -44,7 +44,7 @@ const requestLeave = async(req,res)=>{
         // console.log(msgData);
         console.log(student.parentEmail);
 
-        const formLink = `http://localhost:4000/leave/parent-form?leaveId=${leave._id}`;
+        const formLink = `https://mint-1zij.onrender.com/leave/parent-form?leaveId=${leave._id}`;
 
         await transporter.sendMail({
         from: process.env.MAIL_USER,
