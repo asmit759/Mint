@@ -202,13 +202,13 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.role = action.payload.role;
-        state.loading = false; // ⚠️ THIS WAS MISSING!
+        state.loading = false;
       })
       .addCase(mentorCheckAuth.rejected, (state) => {
         state.isAuthenticated = false;
         state.user = null;
         state.role = null;
-        state.loading = false; // ⚠️ THIS WAS MISSING!
+        state.loading = false; 
       })
       .addCase(mentorLogout.fulfilled, (state) => {
         state.user = null;

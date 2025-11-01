@@ -163,7 +163,7 @@ const MentorDashboard = () => {
 
   return (
     <div className="relative bg-gradient-to-br from-gray-800 via-black to-indigo-700 min-h-screen overflow-hidden">
-      {/* Animated background elements */}
+      
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
         <div className="absolute top-0 -right-1/4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />

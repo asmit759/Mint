@@ -27,7 +27,7 @@ const BandhuChat = () => {
     setLoading(true);
 
     try {
-      // If you still keep a token somewhere, attach it conditionally; cookies will work without this
+     
       const token = localStorage.getItem('token') || undefined;
 
       const res = await axiosClient.post(
@@ -57,7 +57,6 @@ const BandhuChat = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white">
       <div className="max-w-[1400px] mx-auto px-6 py-10 grid grid-cols-1 xl:grid-cols-12 gap-10">
-        {/* Left: Avatar & intro */}
         <aside className="xl:col-span-5 bg-gray-900/60 border border-indigo-800/30 rounded-3xl p-10 shadow-2xl shadow-indigo-900/40 flex items-center">
           <div className="w-full flex flex-col items-center">
             <div className="relative w-[22rem] h-[22rem] max-w-full">

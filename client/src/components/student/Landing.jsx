@@ -120,9 +120,8 @@ const StudentLanding = () => {
               </h1>
               <p className="mt-4 text-lg md:text-xl text-indigo-200 font-light">What would you like to do today?</p>
 
-              {/* Extra spacing before buttons */}
+              
               <div className="mt-6 space-y-7">
-                {/* Apply for Leave — glass + spacious padding */}
                 <motion.button
                   onClick={goToLeaveApply}
                   className="group relative w-full text-left flex items-center gap-4 p-6 rounded-2xl bg-white/8 hover:bg-white/12 border border-white/25 backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,.15)]"
@@ -136,8 +135,6 @@ const StudentLanding = () => {
                     <p className="text-sm text-indigo-200/90">Submit a leave request to your mentor for approval.</p>
                   </div>
                 </motion.button>
-
-                {/* Grievances + Share Location */}
                 <div className="space-y-5">
                   <p className="text-sm text-gray-400 font-semibold tracking-wider">RAISE A GRIEVANCE</p>
                   <div className="grid sm:grid-cols-2 gap-5">
@@ -193,7 +190,7 @@ const StudentLanding = () => {
               </div>
             </motion.div>
 
-            {/* Right column: video replaces image */}
+            
             <motion.div
               variants={itemVariants}
               className="bg-gray-900 rounded-2xl shadow-2xl shadow-indigo-900/50 p-6 w-full border border-indigo-800/30"
@@ -219,7 +216,7 @@ const StudentLanding = () => {
         </div>
       </section>
 
-      {/* Chatbots — glass with purple gradient halo, plus extra padding */}
+      
       <section id="chatbots" className="py-20 px-6 md:px-8">
         <motion.div
           className="w-full max-w-5xl mx-auto"

@@ -17,7 +17,6 @@ const Login = () => {
   const navigate = useNavigate();
   const { isAuthenticated, userType: stateUserType } = useSelector((s) => s.auth);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
       if (stateUserType === 'student') navigate('/student/landing');
@@ -25,7 +24,6 @@ const Login = () => {
     }
   }, [isAuthenticated, stateUserType, navigate]);
 
-  // Submit handler
   const onSubmit = async (data) => {
     setServerError('');
     setLoading(true);
@@ -58,7 +56,7 @@ const Login = () => {
     }
   };
 
-  // Animation variants
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.1 } },

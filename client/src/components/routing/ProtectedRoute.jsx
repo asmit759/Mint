@@ -10,7 +10,7 @@ const ProtectedRoute = ({ allow, children }) => {
   const { isAuthenticated, role, loading } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  // Show loading screen while verifying auth
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-black text-white text-lg">
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ allow, children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If authenticated but wrong role → redirect to respective dashboard
+  // If authenticated but wrong role , redirect to respective dashboard
   if (allow && role !== allow) {
     return role === "student" ? (
       <Navigate to="/student/landing" replace />
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ allow, children }) => {
     );
   }
 
-  // ✅ Authenticated and correct role → render content
+  //  Authenticated and correct role , render content
   return children;
 };
 

@@ -192,41 +192,6 @@ const MentorStudentLocation = () => {
               transition={{ delay: 0.2 }}
               className="space-y-6"
             >
-              {/* Coordinates Card */}
-              {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/30 backdrop-blur-xl border border-indigo-400/30 rounded-2xl p-6 shadow-xl">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-                      <FaMapMarkerAlt className="text-indigo-400" />
-                    </div>
-                    <h3 className="text-lg font-bold text-white">Latitude</h3>
-                  </div>
-                  <p className="text-2xl font-mono text-indigo-300">{coordinates.lat}</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-900/40 to-indigo-900/30 backdrop-blur-xl border border-purple-400/30 rounded-2xl p-6 shadow-xl">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                      <FaMapMarkerAlt className="text-purple-400" />
-                    </div>
-                    <h3 className="text-lg font-bold text-white">Longitude</h3>
-                  </div>
-                  <p className="text-2xl font-mono text-purple-300">{coordinates.lng}</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-indigo-900/40 to-cyan-900/30 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 shadow-xl">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                      <BiCurrentLocation className="text-xl text-cyan-400" />
-                    </div>
-                    <h3 className="text-lg font-bold text-white">Status</h3>
-                  </div>
-                  <p className="text-lg text-emerald-400 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                    Live Location
-                  </p>
-                </div>
-              </div> */}
 
               {/* Interactive Map Card */}
               <div className="bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl overflow-hidden shadow-2xl">

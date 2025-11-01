@@ -25,7 +25,7 @@ function CampusGrievance() {
 
     setSubmitting(true);
     try {
-      // Backend expects { text }; mentor and hostel are derived server-side from req.result
+      
       const res = await axiosClient.post(
         '/studentFacility/studentGrievance',
         { text: value },

@@ -30,9 +30,9 @@ const MentorNavbar = ({ onLogout }) => {
 
   const navLinks = [
     { name: 'Home', path: '/mentor-landing' },
-    { name: 'Attendance',  path: '/mentor/attendance' }, // existing route
-    { name: 'Leave',  path: '/mentor/leave-applications' },       // existing route
-    { name: 'Messages',  path: '/mentor/chat' },             // existing route
+    { name: 'Attendance',  path: '/mentor/attendance' }, 
+    { name: 'Leave',  path: '/mentor/leave-applications' },  
+    { name: 'Messages',  path: '/mentor/chat' },            
   ];
 
 

@@ -14,7 +14,7 @@ const AttendanceDashboard = () => {
   const [attendanceData, setAttendanceData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Fetch mentor details and mentees
+ 
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
@@ -29,7 +29,7 @@ const AttendanceDashboard = () => {
     fetchMentorDetails();
   }, []);
 
-  // 🔹 Fetch attendance when a mentee is selected
+ 
   const handleFetchAttendance = async () => {
     if (!selectedEmail) return;
     try {
@@ -61,7 +61,6 @@ const AttendanceDashboard = () => {
       <MentorNavbar onLogout={handleLogout} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
         <div className="relative mb-8">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 rounded-2xl blur opacity-20"></div>
           <div className="relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-8 shadow-2xl">

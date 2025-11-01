@@ -1,7 +1,6 @@
 const Student = require("../models/studentSchema");
 const mentor = require("../models/mentor");
 
-// ✅ Student shares location — updates both student + mentor records
 exports.shareLocation = async (req, res) => {
     try {
         const { latitude, longitude } = req.body;
@@ -26,7 +25,7 @@ exports.shareLocation = async (req, res) => {
         const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
         const mentorId = student.mentor;
 
-        // ✅ Update mentee location in mentor's document
+        // Update mentee location in mentor's document
         const mDoc = await mentor.findById(mentorId);
         if (!mDoc) {
             return res.status(404).json({
@@ -67,7 +66,7 @@ exports.shareLocation = async (req, res) => {
     }
 };
 
-// ✅ Mentor gets student's last known shared location
+
 exports.getStudentLocation = async (req, res) => {
     try {
         const { studentEmail } = req.query;

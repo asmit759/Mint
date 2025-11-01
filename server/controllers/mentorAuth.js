@@ -27,7 +27,6 @@ exports.mentorRegister = async (req, res) => {
       accountType,
     });
 
-    // DO NOT set cookie here; let login set it
     const user = {
       id: m._id,
       name: m.name,
@@ -38,7 +37,7 @@ exports.mentorRegister = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      user,                    // unified key
+      user,                
       message: "Mentor register Success",
     });
   } catch (error) {

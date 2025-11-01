@@ -9,7 +9,6 @@ function parseAttendanceExcel(filePath, academicYear) {
   workbook.SheetNames.forEach((sheetName) => {
     const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    // ✅ Extract semester name (fixing undefined issue)
     let semesterName = sheetName.includes("_")
       ? sheetName.split("_")[1] // e.g. "2025-26_Autumn" → "Autumn"
       : sheetName;

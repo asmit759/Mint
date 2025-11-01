@@ -56,10 +56,10 @@ const SageChat = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white">
       <div className="max-w-[1400px] mx-auto px-6 py-10 grid grid-cols-1 xl:grid-cols-12 gap-10">
-        {/* Left: Avatar + intro */}
+        
         <aside className="xl:col-span-5 bg-gray-900/60 border border-indigo-800/30 rounded-3xl p-10 shadow-2xl shadow-indigo-900/40 flex items-center">
           <div className="w-full flex flex-col items-center">
-            {/* Avatar block */}
+            
             <div className="relative w-[22rem] h-[22rem] max-w-full">
               <div className="absolute inset-0 rounded-full blur-3xl bg-indigo-600/30 animate-pulse"></div>
               <div className="relative w-full h-full rounded-full border-4 border-indigo-500 overflow-hidden shadow-[0_0_55px_#4f46e5]">
@@ -74,7 +74,6 @@ const SageChat = () => {
           </div>
         </aside>
 
-        {/* Right: Chat */}
         <main className="xl:col-span-7">
           <div className="h-[72vh] min-h-[480px] overflow-y-auto p-6 space-y-4 scroll-smooth bg-gray-900/60 border border-indigo-800/30 rounded-3xl">
             {messages.map((m, idx) => (
