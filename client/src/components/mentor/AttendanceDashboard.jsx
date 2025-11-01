@@ -18,7 +18,7 @@ const AttendanceDashboard = () => {
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
-        const res = await axios.get("https://mint-1zij.onrender.com/mentorRoutes/getMentorDetails", {
+        const res = await axios.get("https://localhost:4000/mentorRoutes/getMentorDetails", {
           withCredentials: true,
         });
         setMentees(res.data.mentorDetails.mentees || []);
@@ -34,7 +34,7 @@ const AttendanceDashboard = () => {
     if (!selectedEmail) return;
     try {
       setLoading(true);
-      const res = await axios.post("https://mint-1zij.onrender.com/mentorRoutes/getAttendance", {
+      const res = await axios.post("https://localhost:4000/mentorRoutes/getAttendance", {
         studentEmail: selectedEmail,
       });
       setAttendanceData(res.data.attendanceData);
