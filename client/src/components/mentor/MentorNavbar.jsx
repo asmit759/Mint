@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import Logo from '../../assets/mintLogo.png';
 
-// Prefer name, then fullName, then first+last; finally show email local-part
+
 const getDisplayName = (u) => {
   if (!u) return 'Mentor';
   if (u.name && u.name.trim()) return u.name;
@@ -20,8 +20,8 @@ const MentorNavbar = ({ onLogout }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Read user from Redux; component will re-render when auth state changes
-  const { user } = useSelector((s) => s.auth); // uses React-Redux hooks best practices
+ 
+  const { user } = useSelector((s) => s.auth); 
   const name = getDisplayName(user);
   const email = user?.email || user?.email_id || '';
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(

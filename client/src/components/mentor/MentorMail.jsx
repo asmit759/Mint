@@ -9,12 +9,12 @@ import { mentorLogout, logout } from '../../store/authSlice';
 import MentorNavbar from './MentorNavbar';
 
 const emailOf = (s) =>
-  s?.email ?? s?.email_id ?? s?.emailId ?? s?.contact?.email ?? ''; // normalize possible keys [web:365]
+  s?.email ?? s?.email_id ?? s?.emailId ?? s?.contact?.email ?? ''; 
 
 const MentorMail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, role, isAuthenticated } = useSelector((s) => s.auth); // read auth slice [web:12]
+  const { user, role, isAuthenticated } = useSelector((s) => s.auth);
 
   const [mentorDetails, setMentorDetails] = useState(user || null);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -32,7 +32,7 @@ const MentorMail = () => {
     const fetchMentorDetails = async () => {
       setFetchingData(true);
       try {
-        const { data } = await axiosClient.get('/mentorRoutes/getMentorDetails', { withCredentials: true }); // axios data under data [web:247]
+        const { data } = await axiosClient.get('/mentorRoutes/getMentorDetails', { withCredentials: true }); 
         if (data?.success) {
           setMentorDetails(data.mentorDetails || user || null);
         } else {
@@ -45,14 +45,14 @@ const MentorMail = () => {
         setFetchingData(false);
       }
     };
-    if (isAuthenticated && role === 'mentor') fetchMentorDetails(); else setFetchingData(false); // guard by role [web:12]
+    if (isAuthenticated && role === 'mentor') fetchMentorDetails(); else setFetchingData(false);
   }, [isAuthenticated, role, user]);
 
   const handleLogout = async () => {
     try { await dispatch(mentorLogout()).unwrap(); } catch { dispatch(logout()); } finally { navigate('/login', { replace: true }); } // clear session via thunk [web:115]
   };
 
-  const mentees = mentorDetails?.mentees ?? mentorDetails?.students ?? []; // tolerate alternate key [web:365]
+  const mentees = mentorDetails?.mentees ?? mentorDetails?.students ?? [];
 
   const handleStudentToggle = (student) => {
     const email = emailOf(student);
@@ -83,7 +83,7 @@ const MentorMail = () => {
       return;
     }
 
-    const uniqueEmails = [...new Set(selectedStudents)]; // dedupe before sending [web:361]
+    const uniqueEmails = [...new Set(selectedStudents)];
 
     setLoading(true);
     try {
@@ -107,7 +107,7 @@ const MentorMail = () => {
     }
   };
 
-  const fromEmail = mentorDetails?.email || user?.email || 'unknown@kiit.ac.in'; // surface sender [web:12]
+  const fromEmail = mentorDetails?.email || user?.email || 'unknown@kiit.ac.in';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700">
