@@ -12,8 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import mintLogo from '../../assets/mintLogo.png';
 import heroVideo from '../../assets/Git.mp4';
 
-import kiitBandhuImage from '../../assets/kiitBandhu.png';
-import kiitSageImage from '../../assets/kiitSage.png';
+import kiitBandhuImage from '../../assets/KiitBandhu.png';
+import kiitSageImage from '../../assets/KiitSage.png';
 
 const displayName = (user) =>
   user?.name ||
