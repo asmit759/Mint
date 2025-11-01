@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin:"https://mint-tfge.onrender.com",
+    origin:"http://mint-tfge.onrender.com",
     credentials:true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }))
