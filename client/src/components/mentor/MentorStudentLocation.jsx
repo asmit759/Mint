@@ -23,7 +23,7 @@ const MentorStudentLocation = () => {
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
-        const res = await axios.get('https://localhost:4000/mentorRoutes/getMentorDetails', {
+        const res = await axios.get('http://localhost:4000/mentorRoutes/getMentorDetails', {
           withCredentials: true,
         });
         setMentees(res.data.mentorDetails.mentees || []);
@@ -41,7 +41,7 @@ const MentorStudentLocation = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await axios.get('https://localhost:4000/location/get-location', {
+      const res = await axios.get('http://localhost:4000/location/get-location', {
         params: { studentEmail: selectedEmail },
       });
       
