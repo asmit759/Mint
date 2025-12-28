@@ -44,7 +44,7 @@ const requestLeave = async(req,res)=>{
         // console.log(msgData);
         console.log(student.parentEmail);
 
-        const formLink = `https://mint-1zij.onrender.com/leave/parent-form?leaveId=${leave._id}`;
+        const formLink = `http://localhost:4000/leave/parent-form?leaveId=${leave._id}`;
 
         await transporter.sendMail({
         from: process.env.MAIL_USER,
@@ -79,6 +79,7 @@ const requestLeave = async(req,res)=>{
 const renderParentForm = async (req, res) => {
   try {
     const { leaveId } = req.query;
+    console.log("Parent form route hit ✅", req.query);
     const leave = await Leave.findById(leaveId)
       .populate({ path: 'studentId', select: 'name roll_no' }); 
     if (!leave) return res.status(404).send("Leave not found");

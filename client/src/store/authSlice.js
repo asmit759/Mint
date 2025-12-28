@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosClient from "../utils/AxiosCli";
 
-// === STUDENT THUNKS ===
+// STUDENT THUNKS 
 export const studRegister = createAsyncThunk(
   "auth/studentRegister",
   async (userData, { rejectWithValue }) => {
@@ -51,7 +51,7 @@ export const studLogout = createAsyncThunk(
   }
 );
 
-// === MENTOR THUNKS ===
+//  MENTOR THUNKS 
 export const mentorRegister = createAsyncThunk(
   "auth/mentorRegister",
   async (userData, { rejectWithValue }) => {
@@ -64,7 +64,6 @@ export const mentorRegister = createAsyncThunk(
   }
 );
 
-// store/authSlice.js
 export const mentorLogin = createAsyncThunk(
   "auth/mentorLogin",
   async (credentials, { rejectWithValue }) => {
@@ -181,7 +180,7 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(mentorRegister.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = false; 
         state.error = action.payload;
       })
       .addCase(mentorLogin.pending, (state) => {
