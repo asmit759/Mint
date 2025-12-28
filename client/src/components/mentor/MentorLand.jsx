@@ -33,7 +33,7 @@ const MentorDashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const { data } = await axios.get(
-          'https://localhost:4000/mentorRoutes/getMentorDetails',
+          'http://localhost:4000/mentorRoutes/getMentorDetails',
           { withCredentials: true }
         );
         if (data?.success) setMentorDetails(data.mentorDetails);
