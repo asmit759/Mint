@@ -29,3 +29,44 @@ exports.mentorDetails = async (req,res)=>{
         })
     }
 }
+
+exports.updateMentorDetails = async (req,res)=>{
+
+    try {
+        
+        const mentorEmail = req.user.email;
+    
+        const mentorData = await mentor.findOne({email:mentorEmail});
+
+        if(!mentorData){
+            return res.status(400).json({
+                message:"mentor data not found"
+            })
+        }
+
+        const {name,email,contactNumber,image,room,block,campus} = req.body;
+
+        mentorData.name = name ?? mentorData.name;
+        mentorData.email = email ?? mentorData.email;
+        mentorData.contactNumber = contactNumber ?? mentorData.contactNumber;
+        mentorData.image = image ?? mentorData.image;
+
+        mentorData.officeAddress.room = room ?? mentorData.officeAddress.room;
+        mentorData.officeAddress.block = block ?? mentorData.officeAddress.block;
+        mentorData.officeAddress.campus = campus ?? mentorData.officeAddress.campus;
+
+        await mentorData.save()
+
+        return res.status(200).json({
+            message:"mentor updated success"
+        })
+
+    } catch (error) {
+        
+        return res.status(500).json({
+            error,
+            message:"some error occured during update",
+        })
+
+    }
+}
