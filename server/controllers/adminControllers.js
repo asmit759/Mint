@@ -82,4 +82,53 @@ const assign = async (req,res)=>{
     }
 }
 
-module.exports = {adminLogin,assign};
+const updateStudent = async (req, res) => {
+  try {
+    const { email_id, updates } = req.body;
+
+    if (!email_id) {
+      return res.status(400).json({
+        message: "student email_id is required"
+      });
+    }
+
+    if (!updates || Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        message: "No update data provided"
+      });
+    }
+
+    delete updates._id;
+    delete updates.email_id;
+    delete updates.password;
+
+    const updatedStudent = await student.findOneAndUpdate(
+      { email_id: email_id.toLowerCase() },
+      { $set: updates },
+      { new: true }
+    );
+
+    if (!updatedStudent) {
+      return res.status(404).json({
+        message: "Student not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Student updated successfully",
+      student: updatedStudent
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error updating student details",
+      error
+    });
+  }
+};
+
+
+
+
+module.exports = {adminLogin,assign,updateStudent};

@@ -79,23 +79,23 @@ const getParent = async (req, res) => {
 };
 
 
-const studUpdate = async (req, res) => {
-    try {
-        const id = req.result.id;
-        const updated = await Student.findByIdAndUpdate(id, req.body, { new: true });
+// const studUpdate = async (req, res) => {
+//     try {
+//         const id = req.result.id;
+//         const updated = await Student.findByIdAndUpdate(id, req.body, { new: true });
 
-        if (!updated) {
-            return res.status(404).json({ message: "Student not found" });
-        }
+//         if (!updated) {
+//             return res.status(404).json({ message: "Student not found" });
+//         }
 
-        res.status(200).json({
-            message: "Student updated successfully",
-            student: updated
-        });
-    } catch (err) {
-        res.status(500).send("Error updating Student: " + err.message);
-    }
-};
+//         res.status(200).json({
+//             message: "Student updated successfully",
+//             student: updated
+//         });
+//     } catch (err) {
+//         res.status(500).send("Error updating Student: " + err.message);
+//     }
+// };
 
 // Hostel Details
 
@@ -126,4 +126,4 @@ const hostelDetails = async(req,res)=>{
 }
 
 
-module.exports = {getStud,getMentor,getParent,studUpdate,hostelDetails};
+module.exports = {getStud,getMentor,getParent,hostelDetails};
