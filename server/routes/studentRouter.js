@@ -12,7 +12,7 @@ const  mentorMid  = require("../middleware/mentorMid");
 studRouter.get("/studDetails",studMid,getStud);
 studRouter.get("/studMentor/:id",getMentor);
 studRouter.get("/studParent/:id",getParent);
-studRouter.put("/studUpdateDetails",studMid,studUpdate);
+// studRouter.put("/studUpdateDetails",studMid,studUpdate);
 studRouter.get("/studentHostel",studMid,hostelDetails);
 
 // delete wala authority dena hai ki nhi discuss

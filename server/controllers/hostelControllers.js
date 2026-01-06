@@ -1,5 +1,6 @@
 
 const Hostel = require("../models/hostelSchema");
+const Student= require("../models/studentSchema")
 
 const generateAccessKey = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -71,4 +72,44 @@ const getHostelById = async (req, res) => {
   }
 };
 
-module.exports = {createHostel,getAllHostels,getHostelById}
+
+const studentHostel= async (req, res) => {
+  try {
+    const { hostelId, rollNumbers } = req.body;
+
+    if (!hostelId || !Array.isArray(rollNumbers) || rollNumbers.length === 0) {
+      return res.status(400).json({
+        message: "hostelId and rollNumbers array are required"
+      });
+    }
+
+    const hostelData = await Hostel.findById(hostelId);
+    if (!hostelData) {
+      return res.status(404).json({
+        message: "Hostel not found"
+      });
+    }
+
+    const result = await Student.updateMany(
+      { roll_no: { $in: rollNumbers } },
+      { $set: { hostel: hostelId } }
+    );
+
+    res.status(200).json({
+      message: "Students successfully mapped to hostel",
+      hostel: hostelData.hostelName,
+      studentsUpdated: result.modifiedCount
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error mapping students to hostel",
+      error
+    });
+  }
+};
+
+
+
+module.exports = {createHostel,getAllHostels,getHostelById,studentHostel}
