@@ -81,7 +81,7 @@ const callKIITBandhu = async (req, res) => {
     }
 
     const model = genAi.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-1.5-flash",
       systemInstruction: `
 You are an informative, professional, and friendly **KIIT School of Computer Engineering Support Chatbot**.  
 Your role is to help students understand academic rules, degree options, facilities, and conduct policies based on the **KIIT School of Computer Engineering Student Handbook**.
