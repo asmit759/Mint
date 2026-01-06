@@ -22,7 +22,7 @@ Mint is a full-stack web platform designed to bridge the gap between **students*
 ## 🌐 Links
 
 🔗 **GitHub Repository:** [https://github.com/asmit759/Mint](https://github.com/asmit759/Mint)  
-💻 **Deployed Link:** [https://mint-4fm1.onrender.com] (https://mint-4fm1.onrender.com)
+💻 **Deployed Link:** [https://mint-4fm1.onrender.com](https://mint-4fm1.onrender.com)
 
 ---
 
