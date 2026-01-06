@@ -13,8 +13,7 @@ const mentorMailSender = async (mentorEmailId, studentEmailArray, title, body) =
       },
       tls: {
         rejectUnauthorized: false,      // allows some servers
-      },
-      connectionTimeout: 10000,          // 10s timeout
+      }
     });
 
     // Optional: verify transporter
