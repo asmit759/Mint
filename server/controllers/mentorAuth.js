@@ -71,8 +71,8 @@ exports.mentorLogin = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: "None",
+      secure: true,
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     });
 

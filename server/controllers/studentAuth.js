@@ -57,7 +57,8 @@ const studentLogin = async (req, res) => {
       process.env.JWT_SERVER_KEY,
       { expiresIn: 60 * 60 }
     );
-    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "lax" });
+    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true,sameSite: "None",
+      secure: true, });
 
     const reply = {
       id: student._id,
@@ -84,8 +85,8 @@ const studentLogout = async (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
 
     res.status(200).json({ message: "Logout Successful" });
