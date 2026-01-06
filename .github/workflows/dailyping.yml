@@ -1,0 +1,19 @@
+
+name: Keep Render Active
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Runs every 10 minutes
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend
+        run: |
+          curl -I https://mint-backend-9mha.onrender.com
+          
+      - name: Ping Frontend
+        run: |
+          curl -I https://mint-4fm1.onrender.com
