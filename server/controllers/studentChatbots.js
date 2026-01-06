@@ -9,7 +9,7 @@ const callSage = async (req, res) => {
       return res.status(400).json({ reply: "Please provide a message to get support." });
     }
     const model = genAi.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-1.5-flash",
       systemInstruction: `
 You are a friendly, empathetic, and professional mental health chatbot for KIIT University students. 
 
