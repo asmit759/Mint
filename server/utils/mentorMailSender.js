@@ -1,32 +1,44 @@
+
 const nodemailer = require("nodemailer");
-// require("dotenv").config();
 
 const mentorMailSender = async (mentorEmailId, studentEmailArray, title, body) => {
-    try {
-        let transporter = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            }
-        });
+  try {
+    // Create transporter with host, port, and TLS
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,     // e.g., smtp.gmail.com
+      port: 587,                        // TLS port
+      secure: false,                    // use TLS
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,      // allows some servers
+      }
+    });
 
-        let results = await Promise.all(
-            studentEmailArray.map(studentEmail => 
-                transporter.sendMail({
-                    from: `MINT : ${mentorEmailId}`,
-                    to: `${studentEmail}`,
-                    subject: `${title}`,
-                    html: `${body}`
-                })
-            )
-        );
+    // Optional: verify transporter
+    await transporter.verify();
 
-        return results;
+    // Send emails to all students
+    const results = await Promise.all(
+      studentEmailArray.map((studentEmail) =>
+        transporter.sendMail({
+          from: `"MINT Notifications" <${process.env.MAIL_USER}>`, // valid from
+          replyTo: mentorEmailId,                                   // reply goes to mentor
+          to: studentEmail,
+          subject: title,
+          html: body,
+        })
+      )
+    );
 
-    } catch (error) {
-        console.log(error.message);
-    }
-}
+    return results;
+
+  } catch (error) {
+    console.error("Email sending failed:", error.message);
+    throw new Error("Failed to send emails");
+  }
+};
 
 module.exports = mentorMailSender;

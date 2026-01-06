@@ -33,6 +33,13 @@ exports.alertStudent = async(req,res) =>{
 
         const response = await mentorMailSender(mentorEmail,studentEmailArray,title,body);
 
+        if(!response){
+            return res.status(400).json({
+            success:false,
+            message:"unable to send mail"
+        })
+        }
+
         return res.status(200).json({
             success:true,
             message:"Mail sent to all student successfully",
@@ -44,7 +51,8 @@ exports.alertStudent = async(req,res) =>{
         return res.status(500).json({
             success:false,
             error:error.message,
-            message:"failed to send the mail"
+            message:"failed to send the mail",
+            error
         })
     }
 }
