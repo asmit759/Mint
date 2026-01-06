@@ -14,8 +14,7 @@ Mint is a full-stack web platform designed to bridge the gap between **students*
 **Frontend:** React.js, Redux Toolkit, Framer Motion, Tailwind CSS  
 **Backend:** Node.js, Express.js, MongoDB  
 **AI Integration:** Google Gemini 2.0 Flash API  
-**Authentication:** JWT-based role authentication (Student / Mentor)  
-**Deployment:** *Coming soon*  
+**Authentication:** JWT-based role authentication (Student / Mentor)    
 
 ---
 
