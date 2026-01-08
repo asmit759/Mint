@@ -80,7 +80,7 @@ const StudentLanding = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white font-poppins">
-      <section id="welcome" className="min-h-[100dvh] flex flex-col p-6 md:p-8">
+      <section id="welcome" className="min-h-screen flex flex-col p-6 md:p-8">
         <motion.header
           variants={containerVariants}
           initial="hidden"
@@ -104,7 +104,7 @@ const StudentLanding = () => {
           </motion.button>
         </motion.header>
 
-        <div className="flex-grow w-full">
+        <div className="flex-grow flex items-center justify-center w-full">
           <motion.main
             variants={containerVariants}
             initial="hidden"
