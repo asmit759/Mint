@@ -3,22 +3,17 @@ const nodemailer = require("nodemailer");
 
 const mentorMailSender = async (mentorEmailId, studentEmailArray, title, body) => {
   try {
-    // Create transporter with host, port, and TLS
+
     const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,     // e.g., smtp.gmail.com
-      port: 587,                        // TLS port
-      secure: false,                    // use TLS
+      host: process.env.MAIL_HOST,
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
-      tls: {
-        rejectUnauthorized: false,      // allows some servers
-      }
     });
 
-    // Optional: verify transporter
-    await transporter.verify();
 
     // Send emails to all students
     const results = await Promise.all(
