@@ -8,6 +8,15 @@ const studentModel = require("../models/studentSchema");
 
 exports.alertStudent = async(req,res) =>{
     try {
+
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success:false,
+                message:"failed to load user.id"
+            })
+        }
+
+
         
         const mentorData = await mentor.findById(req.user.id).populate();
         
@@ -22,6 +31,13 @@ exports.alertStudent = async(req,res) =>{
 
         const {studentEmailArray} = req.body;
         //validating the studentn array
+        if (!Array.isArray(studentEmailArray) || studentEmailArray.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Student email array must be non-empty",
+            });
+        }
+
         if (!studentEmailArray) {
             return res.status(400).json({
                 success: false,
@@ -51,8 +67,7 @@ exports.alertStudent = async(req,res) =>{
         return res.status(500).json({
             success:false,
             error:error.message,
-            message:"failed to send the mail",
-            error
+            message:"failed to send the mail"
         })
     }
 }
