@@ -50,7 +50,6 @@ exports.alertStudent = async(req,res) =>{
 
 
         const response = await mentorMailSender(mentorEmail,studentEmailArray,title,body);
-        console.log("response : ",response)
 
         if(!response){
             return res.status(400).json({
