@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import axiosClient from '../../utils/AxiosCli';
-import axios from "axios";
 import { mentorLogout, logout } from '../../store/authSlice';
 import MentorNavbar from './MentorNavbar';
 
@@ -88,12 +87,11 @@ const MentorMail = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post(
+      const { data } = await axiosClient.post(
         '/mentorRoutes/sendMailToStudent',
         { studentEmailArray: uniqueEmails, title, body },
         { withCredentials: true }
       ); 
-      console.log("Mail sent successfully:", data);
       if (data?.success) {
         toast.success('Email sent successfully!', { position: 'top-center', theme: 'dark', transition: Bounce });
         setSelectedStudents([]);
@@ -104,7 +102,6 @@ const MentorMail = () => {
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to send email', { position: 'top-center', theme: 'dark', transition: Bounce });
-      console.error("Failed to send mail:", err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
