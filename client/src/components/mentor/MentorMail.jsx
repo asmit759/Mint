@@ -91,7 +91,8 @@ const MentorMail = () => {
         '/mentorRoutes/sendMailToStudent',
         { studentEmailArray: uniqueEmails, title, body },
         { withCredentials: true }
-      ); 
+      );
+      console.log(data) 
       if (data?.success) {
         toast.success('Email sent successfully!', { position: 'top-center', theme: 'dark', transition: Bounce });
         setSelectedStudents([]);
