@@ -47,10 +47,10 @@ exports.alertStudent = async(req,res) =>{
 
         const {title, body} = req.body;
 
-        console.log(process.env.MAIL_HOST);
-        console.log(process.env.MAIL_USER);
+
 
         const response = await mentorMailSender(mentorEmail,studentEmailArray,title,body);
+        console.log("response : ",response)
 
         if(!response){
             return res.status(400).json({
