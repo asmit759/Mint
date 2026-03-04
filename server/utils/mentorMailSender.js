@@ -14,7 +14,7 @@ const mentorMailSender = async (
     const results = await Promise.all(
       studentEmailArray.map((studentEmail) =>
         resend.emails.send({
-          from: "MINT Notifications <onboarding@resend.dev>",
+          from: "MINT Notifications <no-reply@mintapp.in>",
           to: studentEmail,
           subject: title,
           html: body,
