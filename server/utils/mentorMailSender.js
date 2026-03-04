@@ -5,16 +5,16 @@ const mentorMailSender = async (mentorEmailId, studentEmailArray, title, body) =
   try {
 
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-      debug: true,
-      logger: true,
-    });
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  family: 4,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+  connectionTimeout: 30000,
+});
 
 
     // Send emails to all students
