@@ -1,31 +1,23 @@
+const { Resend } = require("resend");
 
-const nodemailer = require("nodemailer");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const mentorMailSender = async (mentorEmailId, studentEmailArray, title, body) => {
+const mentorMailSender = async (
+  mentorEmailId,
+  studentEmailArray,
+  title,
+  body
+) => {
   try {
 
-    const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  family: 6,
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-
-});
-
-
-    // Send emails to all students
     const results = await Promise.all(
       studentEmailArray.map((studentEmail) =>
-        transporter.sendMail({
-          from: `"MINT Notifications" <${process.env.MAIL_USER}>`, // valid from
-          replyTo: mentorEmailId,                                   // reply goes to mentor
+        resend.emails.send({
+          from: "MINT Notifications <onboarding@resend.dev>",
           to: studentEmail,
           subject: title,
           html: body,
+          reply_to: mentorEmailId,
         })
       )
     );
@@ -33,7 +25,7 @@ const mentorMailSender = async (mentorEmailId, studentEmailArray, title, body) =
     return results;
 
   } catch (error) {
-    console.error("Email sending failed:", error.message);
+    console.error("Email sending failed:", error);
     throw new Error("Failed to send emails");
   }
 };
