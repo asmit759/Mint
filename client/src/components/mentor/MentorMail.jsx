@@ -87,7 +87,7 @@ const MentorMail = () => {
 
     setLoading(true);
     try {
-      const { data } = await axiosClient.post(
+      const { data } = await axios.post(
         '/mentorRoutes/sendMailToStudent',
         { studentEmailArray: uniqueEmails, title, body },
         { withCredentials: true }
