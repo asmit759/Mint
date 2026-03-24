@@ -6,6 +6,7 @@ const {getStud,getMentor,getParent,studUpdate,hostelDetails} = require("../contr
 const {grievances,createGeoGrievance} = require("../controllers/grievanceController")
 const {callSage,callKIITBandhu} = require("../controllers/studentChatbots");
 const  mentorMid  = require("../middleware/mentorMid");
+const {getAttendance} = require("../controllers/kiitScraperController");
 
 
 // general CRUD Operations
@@ -27,6 +28,9 @@ studRouter.post("/studentGrievance",studMid,grievances);
 
 // Mess Grievance using GeoLocation
 studRouter.post("/studentHostelGrievance",studMid,createGeoGrievance);
+
+// Student Attendance Scraper
+studRouter.post("/attendance", getAttendance);
 
 
 module.exports = studRouter;
