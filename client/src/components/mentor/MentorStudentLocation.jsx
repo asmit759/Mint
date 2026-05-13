@@ -23,7 +23,7 @@ const MentorStudentLocation = () => {
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
-        const res = await axios.get('https://mint-backend-9mha.onrender.com/mentorRoutes/getMentorDetails', {
+        const res = await axios.get('http://localhost:4000/mentorRoutes/getMentorDetails', {
           withCredentials: true,
         });
         setMentees(res.data.mentorDetails.mentees || []);
