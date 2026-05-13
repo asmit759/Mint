@@ -31,7 +31,7 @@ function InputField({ label, type = "text", value, onChange, placeholder }) {
         className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-600 focus:ring-1 focus:ring-neutral-600 transition-all"
         autoComplete="off"
       />
-    </div>
+    </div> 
   );
 }
 
