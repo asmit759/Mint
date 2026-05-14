@@ -126,7 +126,7 @@ const MentorStudentLocation = () => {
             <label className="flex items-center gap-2 text-indigo-300 font-semibold mb-4 text-sm uppercase tracking-wide">
               <FaUser className="text-indigo-400" />
               Select Student
-            </label>
+            </label> 
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
                 <select
