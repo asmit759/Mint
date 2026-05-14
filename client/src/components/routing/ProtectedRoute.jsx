@@ -11,29 +11,6 @@ const ProtectedRoute = ({ allow, children }) => {
   const location = useLocation();
 
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-black text-white text-lg">
-        Checking authentication...
-      </div>
-    );
-  }
-
-  // If not authenticated → redirect to login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  // If authenticated but wrong role , redirect to respective dashboard
-  if (allow && role !== allow) {
-    return role === "student" ? (
-      <Navigate to="/student/landing" replace />
-    ) : (
-      <Navigate to="/mentor-landing" replace />
-    );
-  }
-
-  //  Authenticated and correct role , render content
   return children;
 };
 

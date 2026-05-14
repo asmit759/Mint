@@ -50,7 +50,7 @@ function CampusGrievance() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white">
+    <div className="min-h-screen bg-background transition-colors duration-300 text-text-primary">
       <div className="max-w-3xl mx-auto px-6 py-10">
         <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           Campus Grievance
@@ -66,13 +66,13 @@ function CampusGrievance() {
             onChange={(e) => setText(e.target.value.slice(0, MAX_LEN))}
             rows={8}
             placeholder="Include details like place, date/time, people involved, and any reference IDs."
-            className="w-full px-4 py-3 rounded-xl bg-gray-900 text-indigo-100 placeholder-indigo-300/40 border border-indigo-800/40 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            className="w-full px-4 py-3 rounded-xl bg-surface text-indigo-100 placeholder-indigo-300/40 border border-indigo-800/40 focus:outline-none focus:ring-2 focus:ring-indigo-600"
           />
           <div className="flex items-center justify-between text-sm">
-            <span className={tooShort ? 'text-red-400' : 'text-gray-400'}>
+            <span className={tooShort ? 'text-red-400' : 'text-text-secondary'}>
               {trimmedLen}/{MIN_LEN} min
             </span>
-            <span className={`text-sm ${charsLeft < 30 ? 'text-yellow-300' : 'text-gray-400'}`}>
+            <span className={`text-sm ${charsLeft < 30 ? 'text-yellow-300' : 'text-text-secondary'}`}>
               {charsLeft} characters left
             </span>
           </div>
@@ -80,11 +80,11 @@ function CampusGrievance() {
           <button
             type="submit"
             disabled={submitting || trimmedLen < MIN_LEN}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-700/30 transition-colors"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-indigo-700 disabled:opacity-50 text-text-primary font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-700/30 transition-colors"
           >
             {submitting ? (
               <>
-                <svg className="w-5 h-5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                <svg className="w-5 h-5 animate-spin text-text-primary" viewBox="0 0 24 24" fill="none">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6H4z"/>
                 </svg>

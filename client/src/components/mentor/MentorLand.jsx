@@ -162,7 +162,7 @@ const MentorDashboard = () => {
   const nameToShow = getMentorName(user, mentorDetails);
 
   return (
-    <div className="relative bg-gradient-to-br from-gray-800 via-black to-indigo-700 min-h-screen overflow-hidden">
+    <div className="relative bg-background transition-colors duration-300 min-h-screen overflow-hidden">
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
@@ -181,13 +181,13 @@ const MentorDashboard = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mb-12 max-w-7xl mx-auto"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold text-text-primary mb-4 leading-tight">
             Welcome back,{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 animate-gradient">
               {nameToShow}
             </span>
           </h1>
-          <p className="text-gray-300 text-lg md:text-xl font-light">
+          <p className="text-text-secondary text-lg md:text-xl font-light">
             Manage your mentees and track their progress seamlessly
           </p>
         </motion.div>
@@ -234,7 +234,7 @@ const MentorDashboard = () => {
                 <div className="flex-1">
                   <div
                     className={`
-                      w-16 h-16 mb-6 text-white/80 group-hover:text-white
+                      w-16 h-16 mb-6 text-text-primary/80 group-hover:text-text-primary
                       transition-all duration-500 group-hover:scale-125 group-hover:rotate-6
                       ${item.size === 'large' ? 'md:w-20 md:h-20' : ''}
                     `}
@@ -242,11 +242,11 @@ const MentorDashboard = () => {
                     {item.icon}
                   </div>
 
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:translate-x-1 transition-all duration-300">
+                  <h3 className="text-2xl md:text-3xl font-bold text-text-primary mb-3 group-hover:translate-x-1 transition-all duration-300">
                     {item.title}
                   </h3>
 
-                  <p className="text-gray-300 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors duration-300">
+                  <p className="text-text-secondary text-sm md:text-base leading-relaxed group-hover:text-text-primary transition-colors duration-300">
                     {item.description}
                   </p>
                 </div>
@@ -254,7 +254,7 @@ const MentorDashboard = () => {
                 {/* Arrow button */}
                 <div className="flex items-center justify-end mt-6">
                   <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110 group-hover:translate-x-2 border border-white/20">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </div>
@@ -305,19 +305,19 @@ const MentorDashboard = () => {
           <nav className="flex gap-4 sm:gap-6">
             <button
               onClick={() => scrollTo('welcome')}
-              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
+              className="text-sm text-text-secondary hover:text-indigo-400 transition-colors"
             >
               Welcome
             </button>
             <button
               onClick={() => scrollTo('actions')}
-              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
+              className="text-sm text-text-secondary hover:text-indigo-400 transition-colors"
             >
               Actions
             </button>
             <button
               onClick={() => scrollTo('chatbots')}
-              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
+              className="text-sm text-text-secondary hover:text-indigo-400 transition-colors"
             >
               Chatbots
             </button>

@@ -110,7 +110,7 @@ const MentorMail = () => {
   const fromEmail = mentorDetails?.email || user?.email || 'unknown@kiit.ac.in';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       <MentorNavbar onLogout={handleLogout} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-8">
@@ -119,16 +119,16 @@ const MentorMail = () => {
             Back to Dashboard
           </button>
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-1">Send Email to Students</h1>
-          <p className="text-gray-400">From: <span className="text-indigo-300">{fromEmail}</span></p>
+          <p className="text-text-secondary">From: <span className="text-indigo-300">{fromEmail}</span></p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="bg-gray-900 border border-indigo-800/30 rounded-2xl shadow-2xl shadow-indigo-900/20 p-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="bg-surface border border-border rounded-2xl shadow-2xl shadow-indigo-900/20 p-8">
           <form onSubmit={handleSendMail} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-indigo-300 mb-2">Select Students ({selectedStudents.length} selected)</label>
               <div className="relative">
-                <button type="button" onClick={() => setIsDropdownOpen((v) => !v)} className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white flex items-center justify-between hover:border-indigo-600 transition duration-200">
-                  <span className="text-gray-300">
+                <button type="button" onClick={() => setIsDropdownOpen((v) => !v)} className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary flex items-center justify-between hover:border-indigo-600 transition duration-200">
+                  <span className="text-text-secondary">
                     {selectedStudents.length === 0 ? 'Choose students...' : `${selectedStudents.length} student${selectedStudents.length > 1 ? 's' : ''} selected`}
                   </span>
                   <svg className={`w-5 h-5 text-indigo-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,25 +138,25 @@ const MentorMail = () => {
 
                 <AnimatePresence>
                   {isDropdownOpen && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="absolute z-10 w-full mt-2 bg-gray-800 border border-indigo-700/50 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden">
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="absolute z-10 w-full mt-2 bg-surface border border-indigo-700/50 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden">
                       {!fetchingData && (mentees || []).length > 0 && (
-                        <div onClick={handleSelectAll} className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150 border-b border-indigo-700/30">
+                        <div onClick={handleSelectAll} className="px-4 py-3 hover:bg-primary/20 cursor-pointer transition duration-150 border-b border-border">
                           <div className="flex items-center gap-3">
-                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${selectedStudents.length === (mentees || []).map(emailOf).filter(Boolean).length ? 'bg-indigo-600 border-indigo-600' : 'border-indigo-500'}`}>
+                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${selectedStudents.length === (mentees || []).map(emailOf).filter(Boolean).length ? 'bg-primary border-indigo-600' : 'border-indigo-500'}`}>
                               {selectedStudents.length === (mentees || []).map(emailOf).filter(Boolean).length && (
-                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                 </svg>
                               )}
                             </div>
-                            <span className="text-white font-medium">Select All</span>
+                            <span className="text-text-primary font-medium">Select All</span>
                           </div>
                         </div>
                       )}
 
                       <div className="max-h-64 overflow-y-auto">
                         {fetchingData ? (
-                          <div className="px-4 py-8 text-gray-400 text-center">
+                          <div className="px-4 py-8 text-text-secondary text-center">
                             <svg className="animate-spin h-6 w-6 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -164,7 +164,7 @@ const MentorMail = () => {
                             Loading students...
                           </div>
                         ) : (mentees || []).length === 0 ? (
-                          <div className="px-4 py-8 text-gray-400 text-center">
+                          <div className="px-4 py-8 text-text-secondary text-center">
                             <svg className="w-12 h-12 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
@@ -174,18 +174,18 @@ const MentorMail = () => {
                           (mentees || []).map((student) => {
                             const email = emailOf(student);
                             return (
-                              <div key={student._id || email} onClick={() => handleStudentToggle(student)} className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150">
+                              <div key={student._id || email} onClick={() => handleStudentToggle(student)} className="px-4 py-3 hover:bg-primary/20 cursor-pointer transition duration-150">
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${selectedStudents.includes(email) ? 'bg-indigo-600 border-indigo-600' : 'border-indigo-500'}`}>
+                                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${selectedStudents.includes(email) ? 'bg-primary border-indigo-600' : 'border-indigo-500'}`}>
                                     {selectedStudents.includes(email) && (
-                                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <svg className="w-3 h-3 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                       </svg>
                                     )}
                                   </div>
                                   <div className="flex-1">
-                                    <p className="text-white font-medium">{student.name ?? 'Unnamed'}</p>
-                                    <p className="text-gray-400 text-sm">{email || 'email missing'}</p>
+                                    <p className="text-text-primary font-medium">{student.name ?? 'Unnamed'}</p>
+                                    <p className="text-text-secondary text-sm">{email || 'email missing'}</p>
                                   </div>
                                 </div>
                               </div>
@@ -201,27 +201,27 @@ const MentorMail = () => {
 
             <div>
               <label className="block text-sm font-medium text-indigo-300 mb-2">Email Subject</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter email subject" className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200" />
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter email subject" className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-indigo-300 mb-2">Email Body</label>
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your message here... (HTML supported)" rows={10} className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 resize-none" />
+              <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your message here... (HTML supported)" rows={10} className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 resize-none" />
               <p className="text-gray-500 text-xs mt-2">Tip: You can use HTML tags like &lt;p&gt;, &lt;b&gt;, &lt;i&gt; for formatting</p>
             </div>
 
             {body && (
-              <div className="bg-gray-800 border border-indigo-700/30 rounded-lg p-4">
+              <div className="bg-surface border border-border rounded-lg p-4">
                 <p className="text-indigo-300 text-sm font-medium mb-2">Preview:</p>
-                <div className="text-gray-300 text-sm" dangerouslySetInnerHTML={{ __html: body }} />
+                <div className="text-text-secondary text-sm" dangerouslySetInnerHTML={{ __html: body }} />
               </div>
             )}
 
             <div className="flex gap-4">
-              <button type="submit" disabled={loading} className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 hover:shadow-xl hover:shadow-indigo-600/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <button type="submit" disabled={loading} className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-text-primary font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 hover:shadow-xl hover:shadow-indigo-600/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                 {loading ? (
                   <>
-                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-5 w-5 text-text-primary" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -237,7 +237,7 @@ const MentorMail = () => {
                 )}
               </button>
 
-              <button type="button" onClick={() => { setSelectedStudents([]); setTitle(''); setBody(''); }} className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg transition duration-200 border border-indigo-700/30">
+              <button type="button" onClick={() => { setSelectedStudents([]); setTitle(''); setBody(''); }} className="px-6 py-3 bg-surface hover:bg-gray-700 text-text-secondary font-semibold rounded-lg transition duration-200 border border-border">
                 Clear
               </button>
             </div>

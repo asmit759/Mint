@@ -39,8 +39,8 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       // Fallback UI
       return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full bg-gray-900 border border-red-700/30 rounded-xl p-8 shadow-2xl">
+        <div className="min-h-screen bg-background transition-colors duration-300 flex items-center justify-center p-4">
+          <div className="max-w-2xl w-full bg-surface border border-red-700/30 rounded-xl p-8 shadow-2xl">
             <div className="flex items-center gap-4 mb-6">
               <div className="bg-red-600/20 p-3 rounded-lg">
                 <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,17 +49,17 @@ class ErrorBoundary extends React.Component {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-red-400">Something Went Wrong</h2>
-                <p className="text-gray-400 mt-1">An unexpected error occurred</p>
+                <p className="text-text-secondary mt-1">An unexpected error occurred</p>
               </div>
             </div>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-6">
+              <div className="bg-surface border border-gray-700 rounded-lg p-4 mb-6">
                 <p className="text-red-400 font-mono text-sm mb-2">
                   {this.state.error.toString()}
                 </p>
-                <details className="text-gray-400 text-xs">
-                  <summary className="cursor-pointer hover:text-white transition">
+                <details className="text-text-secondary text-xs">
+                  <summary className="cursor-pointer hover:text-text-primary transition">
                     View Stack Trace
                   </summary>
                   <pre className="mt-2 overflow-auto whitespace-pre-wrap">
@@ -72,13 +72,13 @@ class ErrorBoundary extends React.Component {
             <div className="flex gap-4">
               <button
                 onClick={this.handleReset}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-text-primary font-semibold rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50"
               >
                 Try Again
               </button>
               <button
                 onClick={() => window.location.href = '/'}
-                className="flex-1 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition duration-200 border border-indigo-700/30"
+                className="flex-1 px-6 py-3 bg-surface hover:bg-gray-700 text-text-primary font-semibold rounded-lg transition duration-200 border border-border"
               >
                 Go Home
               </button>

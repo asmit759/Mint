@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import Logo from '../../assets/mintLogo.png';
+import ThemeToggle from '../ThemeToggle';
 
 
 const getDisplayName = (u) => {
@@ -50,7 +51,7 @@ const MentorNavbar = ({ onLogout }) => {
   };
 
   return (
-    <nav className="bg-gray-900/30 backdrop-blur-md border-b border-indigo-800/30 shadow-lg shadow-indigo-900/20 sticky top-0 z-50">
+    <nav className="bg-surface/90 backdrop-blur-md border-b border-border shadow-sm sticky top-0 z-50 transition-colors duration-300 text-text-primary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
@@ -63,7 +64,7 @@ const MentorNavbar = ({ onLogout }) => {
                 whileHover={{ scale: 1.05, filter: 'drop-shadow(0 0 15px rgba(99,102,241,.6))' }}
                 transition={{ duration: 0.2 }}
               />
-              <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-poppins group-hover:from-indigo-300 group-hover:to-purple-300 transition-all duration-200">
+              <span className="text-2xl font-bold font-poppins text-primary transition-all duration-200">
                 MINT
               </span>
             </Link>
@@ -75,7 +76,7 @@ const MentorNavbar = ({ onLogout }) => {
               <Link
                 key={link.name}
                 to={link.path}
-                className="px-4 py-2 text-gray-300 hover:text-white hover:bg-indigo-600/20 rounded-lg transition duration-200 font-medium"
+                className="px-4 py-2 text-text-secondary hover:text-text-primary hover:bg-border/50 rounded-lg transition duration-200 font-medium"
               >
                 {link.name}
               </Link>
@@ -84,20 +85,22 @@ const MentorNavbar = ({ onLogout }) => {
 
           {/* Profile + Mobile button */}
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+
             {/* Desktop profile */}
             <div className="hidden md:block relative">
               <button
                 type="button"
                 onClick={() => setIsProfileOpen((v) => !v)}
-                className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-800/50 backdrop-blur-sm transition duration-200 border border-indigo-700/30"
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-border/50 transition duration-200 border border-border"
               >
-                <img src={avatarUrl} alt={name} className="h-8 w-8 rounded-full border-2 border-indigo-500" />
+                <img src={avatarUrl} alt={name} className="h-8 w-8 rounded-full border-2 border-primary" />
                 <div className="text-left hidden lg:block">
-                  <p className="text-sm font-medium text-white">{name}</p>
-                  <p className="text-xs text-gray-400">Mentor</p>
+                  <p className="text-sm font-medium text-text-primary">{name}</p>
+                  <p className="text-xs text-text-secondary">Mentor</p>
                 </div>
                 <svg
-                  className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-text-secondary transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -113,17 +116,17 @@ const MentorNavbar = ({ onLogout }) => {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="absolute right-0 mt-2 w-56 bg-gray-800/80 backdrop-blur-xl border border-indigo-700/30 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden"
+                    className="absolute right-0 mt-2 w-56 bg-surface border border-border rounded-lg shadow-xl overflow-hidden z-50"
                   >
-                    <div className="px-4 py-3 border-b border-indigo-700/30">
-                      <p className="text-sm font-medium text-white">{name}</p>
-                      <p className="text-xs text-gray-400 mt-1">{email}</p>
+                    <div className="px-4 py-3 border-b border-border">
+                      <p className="text-sm font-medium text-text-primary">{name}</p>
+                      <p className="text-xs text-text-secondary mt-1">{email}</p>
                     </div>
 
                     <div className="py-2">
                       <Link
                         to="/mentor/profile"
-                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600/20 hover:text-white transition duration-150"
+                        className="block px-4 py-2 text-sm text-text-secondary hover:bg-border/50 hover:text-text-primary transition duration-150"
                         onClick={() => setIsProfileOpen(false)}
                       >
                         <div className="flex items-center space-x-2">
@@ -136,7 +139,7 @@ const MentorNavbar = ({ onLogout }) => {
 
                       <Link
                         to="/mentor/settings"
-                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600/20 hover:text-white transition duration-150"
+                        className="block px-4 py-2 text-sm text-text-secondary hover:bg-border/50 hover:text-text-primary transition duration-150"
                         onClick={() => setIsProfileOpen(false)}
                       >
                         <div className="flex items-center space-x-2">
@@ -148,11 +151,11 @@ const MentorNavbar = ({ onLogout }) => {
                         </div>
                       </Link>
 
-                      <div className="border-t border-indigo-700/30 my-2"></div>
+                      <div className="border-t border-border my-2"></div>
 
                       <button
                         type="button"
-                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition duration-150"
+                        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 hover:text-red-600 transition duration-150"
                         onClick={handleLogoutClick}
                       >
                         <div className="flex items-center space-x-2">
@@ -168,11 +171,10 @@ const MentorNavbar = ({ onLogout }) => {
               </AnimatePresence>
             </div>
 
-            {/* Mobile menu button */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen((v) => !v)}
-              className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm transition duration-200"
+              className="md:hidden p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-border/50 transition duration-200"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
@@ -193,14 +195,14 @@ const MentorNavbar = ({ onLogout }) => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="md:hidden border-t border-indigo-800/30 py-4 backdrop-blur-md"
+              className="md:hidden border-t border-border py-4 bg-surface"
             >
               <div className="space-y-1 mb-4">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
                     to={link.path}
-                    className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-indigo-600/20 rounded-lg transition duration-200"
+                    className="block px-4 py-2 text-text-secondary hover:text-text-primary hover:bg-border/50 rounded-lg transition duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.name}
@@ -208,18 +210,18 @@ const MentorNavbar = ({ onLogout }) => {
                 ))}
               </div>
 
-              <div className="border-t border-indigo-800/30 pt-4">
+              <div className="border-t border-border pt-4">
                 <div className="flex items-center space-x-3 px-4 mb-3">
-                  <img src={avatarUrl} alt={name} className="h-10 w-10 rounded-full border-2 border-indigo-500" />
+                  <img src={avatarUrl} alt={name} className="h-10 w-10 rounded-full border-2 border-primary" />
                   <div>
-                    <p className="text-sm font-medium text-white">{name}</p>
-                    <p className="text-xs text-gray-400">{email}</p>
+                    <p className="text-sm font-medium text-text-primary">{name}</p>
+                    <p className="text-xs text-text-secondary">{email}</p>
                   </div>
                 </div>
 
                 <Link
                   to="/mentor/profile"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600/20 hover:text-white transition duration-150"
+                  className="block px-4 py-2 text-sm text-text-secondary hover:bg-border/50 hover:text-text-primary transition duration-150"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   My Profile
@@ -227,7 +229,7 @@ const MentorNavbar = ({ onLogout }) => {
 
                 <Link
                   to="/mentor/settings"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600/20 hover:text-white transition duration-150"
+                  className="block px-4 py-2 text-sm text-text-secondary hover:bg-border/50 hover:text-text-primary transition duration-150"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Settings
@@ -235,7 +237,7 @@ const MentorNavbar = ({ onLogout }) => {
 
                 <button
                   type="button"
-                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition duration-150"
+                  className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 hover:text-red-600 transition duration-150"
                   onClick={async () => {
                     setIsMobileMenuOpen(false);
                     await handleLogoutClick();

@@ -79,7 +79,7 @@ export default function HostelGrievance() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white">
+    <div className="min-h-screen bg-background transition-colors duration-300 text-text-primary">
       <div className="max-w-3xl mx-auto px-6 py-10">
         <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           Hostel/Mess Grievance
@@ -94,13 +94,13 @@ export default function HostelGrievance() {
               onChange={(e) => setText(e.target.value.slice(0, MAX_LEN))}
               rows={8}
               placeholder="Describe the issue, exact location (block/room/mess), date/time, and any staff references."
-              className="w-full px-4 py-3 rounded-xl bg-gray-900/60 text-indigo-100 placeholder-indigo-300/40 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              className="w-full px-4 py-3 rounded-xl bg-surface/60 text-indigo-100 placeholder-indigo-300/40 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-600"
             />
             <div className="mt-2 flex items-center justify-between text-sm">
-              <span className={len > 0 && len < MIN_LEN ? 'text-red-400' : 'text-gray-400'}>
+              <span className={len > 0 && len < MIN_LEN ? 'text-red-400' : 'text-text-secondary'}>
                 {len}/{MIN_LEN} min
               </span>
-              <span className={`text-sm ${left < 30 ? 'text-yellow-300' : 'text-gray-400'}`}>
+              <span className={`text-sm ${left < 30 ? 'text-yellow-300' : 'text-text-secondary'}`}>
                 {left} characters left
               </span>
             </div>
@@ -110,7 +110,7 @@ export default function HostelGrievance() {
             <div className="flex items-center justify-between">
               <div className="text-sm">
                 <div className="text-indigo-300 font-medium">Current location</div>
-                <div className="text-gray-300">
+                <div className="text-text-secondary">
                   {hasCoords ? `Lat ${coords.lat.toFixed(6)}, Long ${coords.long.toFixed(6)}` : 'Not captured'}
                 </div>
               </div>
@@ -118,12 +118,12 @@ export default function HostelGrievance() {
                 type="button"
                 onClick={getLocation}
                 disabled={gettingLoc}
-                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-primary hover:bg-indigo-700 disabled:opacity-50"
               >
                 {gettingLoc ? 'Getting...' : 'Use current location'}
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-text-secondary">
               Location is required so the system can verify you are near your assigned hostel. 
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function HostelGrievance() {
           <button
             type="submit"
             disabled={submitting || len < MIN_LEN || !hasCoords}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-700/30 transition-colors"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-indigo-700 disabled:opacity-50 text-text-primary font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-700/30 transition-colors"
           >
             {submitting ? (
               <>

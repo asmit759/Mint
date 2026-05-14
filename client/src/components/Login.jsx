@@ -82,7 +82,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 flex items-center justify-center px-4 lg:px-8">
+    <div className="min-h-screen bg-background text-text-primary transition-colors duration-300 flex items-center justify-center px-4 lg:px-8">
       <div className="flex w-full max-w-6xl gap-8 items-center">
         {/* LEFT PANEL */}
         <motion.div
@@ -101,13 +101,13 @@ const Login = () => {
           </motion.div>
 
           <motion.h1
-            className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-600 font-poppins tracking-tight"
+            className="text-6xl font-bold text-primary font-poppins tracking-tight"
             variants={itemVariants}
           >
             MINT
           </motion.h1>
           <motion.p
-            className="text-xl text-indigo-200 text-center max-w-md font-light leading-relaxed"
+            className="text-xl text-text-secondary text-center max-w-md font-light leading-relaxed"
             variants={itemVariants}
           >
             Because every great journey needs a guide.
@@ -134,19 +134,19 @@ const Login = () => {
           </motion.div>
 
           <motion.div className="mt-8 text-center space-y-2" variants={itemVariants}>
-            <p className="text-gray-400 text-sm">Connecting students with mentors</p>
-            <p className="text-gray-500 text-xs">@MINT all rights reserved 2025</p>
+            <p className="text-text-secondary text-sm">Connecting students with mentors</p>
+            <p className="text-text-secondary text-xs">@MINT all rights reserved 2025</p>
           </motion.div>
         </motion.div>
 
         {/* RIGHT PANEL */}
         <motion.div
-          className="bg-gray-900 rounded-2xl shadow-2xl shadow-indigo-900/50 p-8 w-full max-w-md border border-indigo-800/30"
+          className="bg-surface rounded-2xl shadow-xl p-8 w-full max-w-md border border-border"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <h2 className="text-3xl font-bold text-indigo-400 text-center mb-8 font-poppins">
+          <h2 className="text-3xl font-bold text-primary text-center mb-8 font-poppins">
             Login
           </h2>
 
@@ -157,8 +157,8 @@ const Login = () => {
                 onClick={() => setUserType('student')}
                 className={`flex-1 py-2 px-4 rounded-lg font-medium transition duration-200 ${
                   userType === 'student'
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/50'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-indigo-700/30'
+                    ? 'bg-primary text-text-primary shadow-md'
+                    : 'bg-background text-text-secondary hover:bg-border border border-border'
                 }`}
               >
                 Student
@@ -168,8 +168,8 @@ const Login = () => {
                 onClick={() => setUserType('mentor')}
                 className={`flex-1 py-2 px-4 rounded-lg font-medium transition duration-200 ${
                   userType === 'mentor'
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/50'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-indigo-700/30'
+                    ? 'bg-primary text-text-primary shadow-md'
+                    : 'bg-background text-text-secondary hover:bg-border border border-border'
                 }`}
               >
                 Mentor
@@ -177,64 +177,64 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-indigo-300 mb-2">
+              <label className="block text-sm font-medium text-text-primary mb-2">
                 Email Address
               </label>
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary transition duration-200"
                 {...register('email', {
                   required: 'Email is required',
                   maxLength: { value: 30, message: 'Email must be less than 30 characters' },
                 })}
               />
               {errors.email && (
-                <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-indigo-300 mb-2">
+              <label className="block text-sm font-medium text-text-primary mb-2">
                 Password
               </label>
               <input
                 type="password"
                 placeholder="Enter your password"
-                className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary transition duration-200"
                 {...register('password', { required: 'Password is required' })}
               />
               {errors.password && (
-                <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 hover:shadow-xl hover:shadow-indigo-600/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary hover:opacity-90 text-text-primary font-semibold py-3 rounded-lg transition duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
 
             {serverError && (
-              <p className="text-red-400 text-sm text-center mt-3">{serverError}</p>
+              <p className="text-red-500 text-sm text-center mt-3">{serverError}</p>
             )}
           </form>
 
           <div className="mt-6 text-center flex flex-col gap-2">
-            <p className="text-gray-400 text-sm">Don't have an account?</p>
+            <p className="text-text-secondary text-sm">Don't have an account?</p>
             <div className="flex justify-center gap-3">
               <Link
                 to="/student/signup"
-                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition duration-200"
+                className="text-primary hover:opacity-80 text-sm font-medium transition duration-200"
               >
                 Student Sign Up
               </Link>
-              <span className="text-gray-600">|</span>
+              <span className="text-border">|</span>
               <Link
                 to="/mentor/signup"
-                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition duration-200"
+                className="text-primary hover:opacity-80 text-sm font-medium transition duration-200"
               >
                 Mentor Sign Up
               </Link>
