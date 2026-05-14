@@ -2,99 +2,170 @@ const puppeteer = require('puppeteer-core');
 
 // Helper to clean and format the raw array of arrays from SAP portal into a structured object
 function cleanScrapedData(rawData) {
-    const student = {
-        name: "Unknown",
-        rollNo: "Unknown",
-        regNo: "Unknown",
-        program: "Unknown",
-        semester: "Unknown"
-    };
+  // 1. FLATTEN RAW DATA
+  if (!rawData || !Array.isArray(rawData)) {
+    rawData = [];
+  }
 
-    const textData = JSON.stringify(rawData);
+  const rows = rawData.map(row => {
+    if (!Array.isArray(row)) return [String(row).trim()];
+    return row.flat(Infinity)
+      .map(cell => String(cell).trim())
+      .filter(cell => cell !== '');
+  }).filter(row => row.length > 0);
 
-    // Regex extraction for student details
-    const rollNoMatch = textData.match(/Roll No\.\s*:\s*(?:\\n\\t|",")?(\d+)/);
-    if (rollNoMatch) student.rollNo = rollNoMatch[1];
+  const allText = rows.flat().join('\n');
 
-    const nameMatch = textData.match(/Student Name\s*:\s*(?:\\n\\t|",")?([A-Z\s]+?)(?:\\t|",")/);
-    if (nameMatch) student.name = nameMatch[1].trim();
+  // 2. STUDENT DETAILS EXTRACTION
+  const extractField = (pattern) => {
+    const regex = new RegExp(pattern + "\\s*[:\\-]?\\s*([^\\n]+)", "i");
+    const match = allText.match(regex);
+    if (match) {
+      return match[1].replace(/[\t\r]+/g, '').trim().replace(/\s+/g, ' ');
+    }
+    return "Unknown";
+  };
 
-    const regNoMatch = textData.match(/Reg\. No\.\s*:\s*(?:\\n\\t|",")?(\d+)/);
-    if (regNoMatch) student.regNo = regNoMatch[1];
+  const student = {
+    name: extractField("Student Name"),
+    rollNo: extractField("Roll No\\.?"),
+    regNo: extractField("Reg\\.? No\\.?"),
+    program: extractField("Program of Study"),
+    semester: extractField("Semester(?:\\s*\\(currently pursuing\\))?")
+  };
 
-    const progMatch = textData.match(/Program of Study\s*:\s*(?:\\n\\t|",")?([^\\"]+)/);
-    if (progMatch) student.program = progMatch[1].replace(/\\n/g, '').trim();
+  // 3. UNIVERSAL HEADER DETECTION & 4. HEADER ALIASES
+  const headerAliases = {
+    subject: ['subject', 'course', 'paper'],
+    faculty: ['faculty name', 'teacher name', 'faculty'],
+    percentage: ['total percentage', 'percentage'],
+    totalClasses: ['total no. of days', 'total no of days', 'total days', 'total classes'],
+    present: ['no.of present', 'no. of present', 'present'],
+    absent: ['no.of absent', 'no. of absent', 'absent'],
+    excused: ['no. of excuses', 'no.of excuses', 'excuses', 'excused']
+  };
 
-    const semMatch = textData.match(/Semester \(currently pursuing\)\s*:\s*(?:\\n\\t|",")?([^\\"]+)/);
-    if (semMatch) student.semester = semMatch[1].replace(/\\n/g, '').trim();
+  const getCanonicalHeader = (cell) => {
+    const lowerCell = cell.toLowerCase().replace(/\s+/g, ' ').trim();
+    for (const [canonical, aliases] of Object.entries(headerAliases)) {
+      if (aliases.includes(lowerCell)) {
+        return canonical;
+      }
+    }
+    return null;
+  };
 
-    const attendanceMap = new Map();
+  let headerRowIndex = -1;
+  let columnMap = {};
 
-    const processRow = (row) => {
-        if (Array.isArray(row) && row.length >= 8) {
-            const pct = parseFloat(row[1]);
-            const total = parseFloat(row[2]);
-            const faculty = row[3];
-            const absent = parseFloat(row[4]);
-            const subject = row[5];
-            const present = parseFloat(row[7]);
-            
-            if (!isNaN(pct) && !isNaN(total) && typeof subject === 'string' && subject.length > 2) {
-                attendanceMap.set(subject.trim(), {
-                    subject: subject.trim(),
-                    faculty: faculty ? faculty.trim() : "Unknown",
-                    percentage: pct,
-                    totalClasses: total,
-                    present: present,
-                    absent: absent,
-                    excused: parseFloat(row[6]) || 0
-                });
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    let matchCount = 0;
+    let tempMap = {};
+    
+    for (let col = 0; col < row.length; col++) {
+      const canonical = getCanonicalHeader(row[col]);
+      if (canonical) {
+        matchCount++;
+        if (!tempMap[canonical]) tempMap[canonical] = [];
+        tempMap[canonical].push(col);
+      }
+    }
+    
+    if (matchCount >= 4) {
+      headerRowIndex = i;
+      columnMap = tempMap;
+      break;
+    }
+  }
+
+  // 7. DATA ROW PARSING
+  const attendance = [];
+  const seenSubjects = new Set();
+
+  if (headerRowIndex !== -1) {
+    // 6. DUPLICATE FACULTY NAME COLUMNS
+    let actualFacultyCol = -1;
+    if (columnMap.faculty && columnMap.faculty.length > 0) {
+      if (columnMap.faculty.length === 1) {
+        actualFacultyCol = columnMap.faculty[0];
+      } else {
+        for (const colIdx of columnMap.faculty) {
+          let hasText = false;
+          for (let i = headerRowIndex + 1; i < rows.length; i++) {
+            const val = rows[i][colIdx];
+            if (val && !/^\d+$/.test(val.replace(/\s+/g, ''))) {
+              hasText = true;
+              break;
             }
+          }
+          if (hasText) {
+            actualFacultyCol = colIdx;
+            break;
+          }
         }
-    };
+        if (actualFacultyCol === -1) actualFacultyCol = columnMap.faculty[0];
+      }
+    }
 
-    const processString = (str) => {
-        const lines = str.split('\\n'); // escaped newline because stringified
-        for (const line of lines) {
-            const parts = line.split('\\t'); // escaped tab
-            if (parts.length >= 8) {
-                const pct = parseFloat(parts[1]);
-                const total = parseFloat(parts[2]);
-                const faculty = parts[3];
-                const absent = parseFloat(parts[4]);
-                const subject = parts[5];
-                const present = parseFloat(parts[7]);
-
-                if (!isNaN(pct) && !isNaN(total) && typeof subject === 'string' && subject.length > 2) {
-                    attendanceMap.set(subject.trim(), {
-                        subject: subject.trim(),
-                        faculty: faculty ? faculty.trim() : "Unknown",
-                        percentage: pct,
-                        totalClasses: total,
-                        present: present,
-                        absent: absent,
-                        excused: parseFloat(parts[6]) || 0
-                    });
-                }
-            }
+    // 5. FLEXIBLE COLUMN ORDER
+    for (let i = headerRowIndex + 1; i < rows.length; i++) {
+      const row = rows[i];
+      
+      const getVal = (canonical) => {
+        if (canonical === 'faculty') {
+          return actualFacultyCol !== -1 && row[actualFacultyCol] !== undefined ? row[actualFacultyCol] : '';
         }
-    };
-
-    const explore = (item) => {
-        if (Array.isArray(item)) {
-            processRow(item);
-            item.forEach(explore);
-        } else if (typeof item === 'string') {
-            processString(item);
+        if (columnMap[canonical] && columnMap[canonical].length > 0) {
+          const colIdx = columnMap[canonical][0];
+          return row[colIdx] !== undefined ? row[colIdx] : '';
         }
-    };
+        return '';
+      };
 
-    explore(rawData);
+      const subject = getVal('subject');
+      const faculty = getVal('faculty');
+      const percentageStr = getVal('percentage');
+      const totalClassesStr = getVal('totalClasses');
+      const presentStr = getVal('present');
+      const absentStr = getVal('absent');
+      const excusedStr = getVal('excused');
 
-    return {
-        student,
-        attendance: Array.from(attendanceMap.values())
-    };
+      // 8. ROW VALIDATION
+      if (!subject || /^\d+$/.test(subject.replace(/\s+/g, '')) || getCanonicalHeader(subject) === 'subject') {
+        continue;
+      }
+
+      const percentage = parseFloat(percentageStr) || 0;
+      const totalClasses = parseFloat(totalClassesStr) || 0;
+      const present = parseFloat(presentStr) || 0;
+      const absent = parseFloat(absentStr) || 0;
+      const excused = parseFloat(excusedStr) || 0;
+
+      if (percentage < 0 || percentage > 100) continue;
+      if (totalClasses === 0 && present === 0 && absent === 0 && percentage === 0) continue;
+
+      // 9. REMOVE DUPLICATES
+      if (seenSubjects.has(subject)) continue;
+      seenSubjects.add(subject);
+
+      attendance.push({
+        subject,
+        faculty,
+        percentage,
+        totalClasses,
+        present,
+        absent,
+        excused
+      });
+    }
+  }
+
+  // 10. OUTPUT
+  return {
+    student,
+    attendance
+  };
 }
 
 // Helper to reliably wait for text to become visible anywhere across all iframes, then click it
@@ -361,11 +432,15 @@ const getAttendance = async (req, res) => {
     let attendanceData = [];
     if (formFrame) {
       attendanceData = await formFrame.evaluate(() => {
-         const rows = Array.from(document.querySelectorAll('table tbody tr'));
-         return rows.map(tr => {
-            const cells = Array.from(tr.querySelectorAll('td, th'));
+         // Query all rows
+         const allTrs = Array.from(document.querySelectorAll('tr'));
+         return allTrs.map(tr => {
+            // CRITICAL FIX: Only get DIRECT children that are TD or TH.
+            // WebDynpro uses nested tables. Using querySelectorAll('td, th') grabs descendants 
+            // inside nested tables, resulting in duplicate columns and misaligned data!
+            const cells = Array.from(tr.children).filter(el => el.tagName === 'TD' || el.tagName === 'TH');
             return cells.map(td => td.innerText.trim());
-         }).filter(row => row.length > 0 && row.some(cell => cell.length > 0)); 
+         }).filter(row => row.length >= 4); // A valid header or data row has multiple columns
       });
     }
 
