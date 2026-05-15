@@ -1,7 +1,7 @@
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 const main = require("./config/db");
 const cors = require("cors");
 
@@ -47,11 +47,9 @@ app.use("/location", locationRoutes);
 
 const initCon = async ()=>{
     try{
-        console.log("Mongo URI:", process.env.MONGO_CONNECT);
 
         await main();
 
-        console.log("MongoDB Connected");
 
         const PORT = process.env.PORT || 4000;
         app.listen(PORT,()=>{

@@ -14,6 +14,10 @@ const studentSchema = new Schema({
         minLength: 5,
         maxLength: 20
     },
+    avatarSeed: {
+        type: String,
+        default: ""
+    },
     email_id: {
         type: String,
         required: true,

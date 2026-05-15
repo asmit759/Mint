@@ -146,10 +146,10 @@ const approveLeave = async(req,res)=>{
       })
     }
 
-    if (!leave.parentApproval) {
+    if (decision === "Approved" && !leave.parentApproval) {
       return res.status(400).json({ 
         success:false,
-        message: "Parent approval required first" 
+        message: "Parent approval required first for approval" 
       });
     }
 
@@ -185,6 +185,8 @@ const getLeaves = async (req, res) => {
           studentName: student?.name || "Unknown",
           studentEmail: student?.email_id || "N/A",
           studentParentContact: student?.fatherContact || "N/A",
+          rollNo: student?.roll_no || "N/A",
+          avatarSeed: student?.avatarSeed || "",
         };
       })
     );
@@ -198,4 +200,18 @@ const getLeaves = async (req, res) => {
 };
 
 
-module.exports = {requestLeave,renderParentForm,verifyParentApproval,approveLeave,getLeaves}
+const deleteLeave = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const leave = await Leave.findByIdAndDelete(id);
+    if (!leave) {
+      return res.status(404).json({ message: "Leave not found" });
+    }
+    return res.status(200).json({ message: "Leave deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting leave:", error);
+    return res.status(500).json({ message: "Error deleting leave", error });
+  }
+};
+
+module.exports = {requestLeave,renderParentForm,verifyParentApproval,approveLeave,getLeaves,deleteLeave}

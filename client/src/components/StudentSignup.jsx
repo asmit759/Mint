@@ -5,12 +5,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { studRegister } from '../store/authSlice';
+import AvatarPicker from './student/AvatarPicker';
 
 const StudentSignup = () => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const [formData, setFormData] = useState(null);
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [avatarSeed, setAvatarSeed] = useState('');
   const password = watch('password', '');
 
   const dispatch = useDispatch();
@@ -43,8 +45,12 @@ const StudentSignup = () => {
   }, [formData, dispatch, navigate]);
 
   const onSubmit = (data) => {
+    if (!avatarSeed) {
+      setServerError('Please select an avatar.');
+      return;
+    }
     const { confirm_password, ...submitData } = data;
-    setFormData(submitData);
+    setFormData({ ...submitData, avatarSeed });
   };
 
   return (
@@ -53,6 +59,8 @@ const StudentSignup = () => {
         <h2 className="text-3xl font-bold text-indigo-400 text-center mb-8">Student Registration</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <AvatarPicker onSelectAvatar={setAvatarSeed} />
+          
           <div>
             <label className="block text-sm font-medium text-indigo-300 mb-2">Full Name</label>
             <input
