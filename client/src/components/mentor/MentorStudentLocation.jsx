@@ -83,7 +83,7 @@ const MentorStudentLocation = () => {
   const coordinates = locationData?.mapUrl ? getCoordinates(locationData.mapUrl) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Fixed Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
         <MentorNavbar onLogout={handleLogout} />
@@ -103,7 +103,7 @@ const MentorStudentLocation = () => {
               <div className="relative bg-black/40 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-8 shadow-2xl">
                 <div className="flex items-center gap-4 mb-2">
                   <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <HiLocationMarker className="text-3xl text-white" />
+                    <HiLocationMarker className="text-3xl text-text-primary" />
                   </div>
                   <div>
                     <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent">
@@ -130,15 +130,15 @@ const MentorStudentLocation = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
                 <select
-                  className="w-full bg-gray-900/50 border border-indigo-500/30 text-white rounded-xl px-4 py-3.5 
+                  className="w-full bg-surface/50 border border-indigo-500/30 text-text-primary rounded-xl px-4 py-3.5 
                              focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
                              hover:border-indigo-400/50 transition-all duration-200 appearance-none cursor-pointer"
                   value={selectedEmail}
                   onChange={(e) => setSelectedEmail(e.target.value)}
                 >
-                  <option value="" className="bg-gray-900">-- Select a Mentee --</option>
+                  <option value="" className="bg-surface">-- Select a Mentee --</option>
                   {mentees.map((mentee) => (
-                    <option key={mentee._id} value={mentee.email_id} className="bg-gray-900">
+                    <option key={mentee._id} value={mentee.email_id} className="bg-surface">
                       {mentee.name} ({mentee.email_id})
                     </option>
                   ))}
@@ -154,7 +154,7 @@ const MentorStudentLocation = () => {
                 onClick={handleFetchLocation}
                 disabled={!selectedEmail || loading}
                 className="px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500
-                           text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/30
+                           text-text-primary font-semibold rounded-xl shadow-lg shadow-indigo-500/30
                            disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none
                            transition-all duration-200 transform hover:scale-105 active:scale-95
                            flex items-center justify-center gap-2 whitespace-nowrap"
@@ -206,7 +206,7 @@ const MentorStudentLocation = () => {
                     href={locationData.mapUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors duration-200 text-sm font-semibold"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-indigo-500 text-text-primary rounded-lg transition-colors duration-200 text-sm font-semibold"
                   >
                     <span>Open in Google Maps</span>
                     <FaExternalLinkAlt />
@@ -214,7 +214,7 @@ const MentorStudentLocation = () => {
                 </div>
 
                 {/* Embedded Google Map */}
-                <div className="relative w-full h-[500px] bg-gray-900">
+                <div className="relative w-full h-[500px] bg-surface">
                   <iframe
     src={locationData.mapUrl.replace('https://www.google.com/maps', 'https://maps.google.com/maps') + '&output=embed'}
     width="100%"
@@ -226,7 +226,7 @@ const MentorStudentLocation = () => {
                   
                   {/* Overlay for styling */}
                   <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm border border-indigo-500/30 rounded-lg px-4 py-2">
-                    <p className="text-white text-sm font-semibold flex items-center gap-2">
+                    <p className="text-text-primary text-sm font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                       Student Location
                     </p>
@@ -243,7 +243,7 @@ const MentorStudentLocation = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-bold mb-2">Location Information</h4>
+                    <h4 className="text-text-primary font-bold mb-2">Location Information</h4>
                     <p className="text-indigo-300 text-sm leading-relaxed">
                       The map above shows the real-time location of the selected student. You can click on "Open in Google Maps" to view detailed directions and nearby landmarks. Location data is updated automatically.
                     </p>

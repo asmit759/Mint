@@ -361,7 +361,7 @@ export default function AttendanceDashboard() {
             <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-[0.2em]">Student Portal</span>
             <div className="h-px bg-neutral-800 flex-1"></div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center text-white">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center text-text-primary">
             Attendance Dashboard
           </h1>
         </motion.div>
@@ -446,13 +446,13 @@ export default function AttendanceDashboard() {
                 <div className="flex bg-neutral-900 border border-neutral-800 rounded-lg p-1 shrink-0 self-end sm:self-auto">
                   <button 
                     onClick={() => setViewMode('grid')}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${viewMode === 'grid' ? 'bg-neutral-800 text-white' : 'text-neutral-500 hover:text-neutral-300'}`}
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${viewMode === 'grid' ? 'bg-neutral-800 text-text-primary' : 'text-neutral-500 hover:text-neutral-300'}`}
                   >
                     Grid
                   </button>
                   <button 
                     onClick={() => setViewMode('table')}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${viewMode === 'table' ? 'bg-neutral-800 text-white' : 'text-neutral-500 hover:text-neutral-300'}`}
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${viewMode === 'table' ? 'bg-neutral-800 text-text-primary' : 'text-neutral-500 hover:text-neutral-300'}`}
                   >
                     Table
                   </button>

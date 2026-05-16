@@ -157,7 +157,7 @@ function App() {
         path="/mentor/attendance"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white ">
+            <div className="min-h-screen">
               <AttendanceDashboard />
             </div>
           </ProtectedRoute>
@@ -175,7 +175,7 @@ function App() {
         path="/mentor/student-location"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <MentorStudentLocation />
             </div>
           </ProtectedRoute>
@@ -185,7 +185,7 @@ function App() {
         path="/mentor/chat"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <h1 className="text-3xl font-bold">Messages - Coming Soon</h1>
             </div>
           </ProtectedRoute>
@@ -205,7 +205,7 @@ function App() {
         path="/mentor/students"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <h1 className="text-3xl font-bold">Students - Coming Soon</h1>
             </div>
           </ProtectedRoute>
@@ -215,7 +215,7 @@ function App() {
         path="/mentor/sessions"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <h1 className="text-3xl font-bold">Sessions - Coming Soon</h1>
             </div>
           </ProtectedRoute>

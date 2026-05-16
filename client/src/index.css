@@ -1,6 +1,40 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: var(--primary);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border);
+}
+
+:root {
+  --primary: #212529;
+  --background: #ffffff;
+  --surface: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border: #dee2e6;
+}
+
+[data-theme="dark"] {
+  --primary: #212529;
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --border: #343a40;
+}
+
+* {
+  font-family: "Baumans", system-ui, sans-serif;
+}
+
 body {
   height: 100%;
   overflow: hidden; /* Let Lenis control scroll */
+  background-color: var(--background);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

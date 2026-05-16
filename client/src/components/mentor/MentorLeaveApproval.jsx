@@ -198,7 +198,7 @@ const MentorLeaveApproval = () => {
   return (
     <>
       <ToastContainer />
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-indigo-950">
+      <div className="min-h-screen bg-background transition-colors duration-300">
         <MentorNavbar onLogout={handleLogout} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Header Section */}
@@ -211,7 +211,7 @@ const MentorLeaveApproval = () => {
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-500 bg-clip-text text-transparent mb-3 sm:mb-4 px-4">
               Leave Approval Dashboard
             </h1>
-            <p className="text-gray-400 text-base sm:text-lg px-4">Review and manage student leave requests</p>
+            <p className="text-text-secondary text-base sm:text-lg px-4">Review and manage student leave requests</p>
             <div className="mt-3 sm:mt-4 h-1 w-24 sm:w-32 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
           </motion.div>
 
@@ -222,13 +222,13 @@ const MentorLeaveApproval = () => {
             transition={{ duration: 0.4, delay: 0.2 }}
             className="flex justify-center mb-6 sm:mb-8 overflow-x-auto pb-2"
           >
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-2 border border-gray-800 inline-flex gap-2 min-w-max">
+            <div className="bg-surface/50 backdrop-blur-sm rounded-2xl p-2 border border-gray-800 inline-flex gap-2 min-w-max">
               <button
                 onClick={() => setActiveTab('pending')}
                 className={`px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base whitespace-nowrap ${
                   activeTab === 'pending'
-                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg shadow-yellow-500/50'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-text-primary shadow-lg shadow-yellow-500/50'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-border/50'
                 }`}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,8 +245,8 @@ const MentorLeaveApproval = () => {
                 onClick={() => setActiveTab('approved')}
                 className={`px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base whitespace-nowrap ${
                   activeTab === 'approved'
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/50'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-text-primary shadow-lg shadow-green-500/50'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-border/50'
                 }`}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,8 +263,8 @@ const MentorLeaveApproval = () => {
                 onClick={() => setActiveTab('rejected')}
                 className={`px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base whitespace-nowrap ${
                   activeTab === 'rejected'
-                    ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/50'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 text-text-primary shadow-lg shadow-red-500/50'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-border/50'
                 }`}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -281,8 +281,8 @@ const MentorLeaveApproval = () => {
                 onClick={() => setActiveTab('all')}
                 className={`px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base whitespace-nowrap ${
                   activeTab === 'all'
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/50'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-text-primary shadow-lg shadow-indigo-500/50'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-border/50'
                 }`}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -307,7 +307,7 @@ const MentorLeaveApproval = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-yellow-300 text-xs sm:text-sm font-medium mb-1">Pending Requests</p>
-                  <h3 className="text-4xl sm:text-5xl font-bold text-white">{pendingCount}</h3>
+                  <h3 className="text-4xl sm:text-5xl font-bold text-text-primary">{pendingCount}</h3>
                 </div>
                 <div className="bg-yellow-500/20 rounded-full p-3 sm:p-5">
                   <svg className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,7 +321,7 @@ const MentorLeaveApproval = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-300 text-xs sm:text-sm font-medium mb-1">Approved</p>
-                  <h3 className="text-4xl sm:text-5xl font-bold text-white">{approvedCount}</h3>
+                  <h3 className="text-4xl sm:text-5xl font-bold text-text-primary">{approvedCount}</h3>
                 </div>
                 <div className="bg-green-500/20 rounded-full p-3 sm:p-5">
                   <svg className="w-8 h-8 sm:w-10 sm:h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,7 +335,7 @@ const MentorLeaveApproval = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-red-300 text-xs sm:text-sm font-medium mb-1">Rejected</p>
-                  <h3 className="text-4xl sm:text-5xl font-bold text-white">{rejectedCount}</h3>
+                  <h3 className="text-4xl sm:text-5xl font-bold text-text-primary">{rejectedCount}</h3>
                 </div>
                 <div className="bg-red-500/20 rounded-full p-3 sm:p-5">
                   <svg className="w-8 h-8 sm:w-10 sm:h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -367,7 +367,7 @@ const MentorLeaveApproval = () => {
                 <svg className="w-20 h-20 sm:w-28 sm:h-28 text-gray-600 mx-auto mb-4 sm:mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <h3 className="text-2xl sm:text-3xl font-bold text-gray-300 mb-2 sm:mb-3">No {activeTab === 'all' ? '' : activeTab} Requests</h3>
+                <h3 className="text-2xl sm:text-3xl font-bold text-text-secondary mb-2 sm:mb-3">No {activeTab === 'all' ? '' : activeTab} Requests</h3>
                 <p className="text-gray-500 text-base sm:text-lg">
                   {activeTab === 'pending' && 'All leave requests have been reviewed'}
                   {activeTab === 'approved' && 'No approved leaves found'}
@@ -408,7 +408,7 @@ const MentorLeaveApproval = () => {
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-800 gap-3 sm:gap-0">
                         <div className="flex items-center space-x-3 sm:space-x-5">
                           <div className="relative flex-shrink-0">
-                            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl sm:rounded-2xl w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center text-white font-bold text-xl sm:text-2xl shadow-lg shadow-indigo-500/50 group-hover:scale-110 transition-transform duration-300">
+                            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl sm:rounded-2xl w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center text-text-primary font-bold text-xl sm:text-2xl shadow-lg shadow-indigo-500/50 group-hover:scale-110 transition-transform duration-300">
                               {studentName.charAt(0).toUpperCase()}
                             </div>
                             <div className={`absolute -bottom-1 -right-1 rounded-full w-4 h-4 sm:w-5 sm:h-5 border-2 border-black ${
@@ -417,7 +417,7 @@ const MentorLeaveApproval = () => {
                             }`}></div>
                           </div>
                           <div>
-                            <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">
+                            <h3 className="text-xl sm:text-2xl font-bold text-text-primary group-hover:text-indigo-400 transition-colors duration-300">
                               {studentName}
                             </h3>
                             <p className="text-gray-500 text-xs sm:text-sm font-medium truncate max-w-[200px] sm:max-w-none">{studentId}</p>
@@ -441,8 +441,8 @@ const MentorLeaveApproval = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                           <div className="flex-1 min-w-0">
-                            <p className="text-gray-400 text-xs">Email</p>
-                            <p className="text-white text-xs sm:text-sm font-medium break-all">{studentEmail}</p>
+                            <p className="text-text-secondary text-xs">Email</p>
+                            <p className="text-text-primary text-xs sm:text-sm font-medium break-all">{studentEmail}</p>
                           </div>
                         </div>
                         
@@ -451,8 +451,8 @@ const MentorLeaveApproval = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                           </svg>
                           <div className="flex-1">
-                            <p className="text-gray-400 text-xs">Parent Contact</p>
-                            <p className="text-white text-xs sm:text-sm font-medium">{formatPhoneNumber(studentContact)}</p>
+                            <p className="text-text-secondary text-xs">Parent Contact</p>
+                            <p className="text-text-primary text-xs sm:text-sm font-medium">{formatPhoneNumber(studentContact)}</p>
                           </div>
                         </div>
                       </div>
@@ -460,13 +460,13 @@ const MentorLeaveApproval = () => {
                       {/* Leave Details */}
                       <div className="space-y-3 sm:space-y-5 mb-6 sm:mb-8">
                         <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-gray-700/50 hover:border-indigo-500/30 transition-all duration-300">
-                          <div className="flex items-center space-x-2 sm:space-x-3 text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3">
+                          <div className="flex items-center space-x-2 sm:space-x-3 text-text-secondary text-xs sm:text-sm mb-2 sm:mb-3">
                             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <span className="font-semibold">Duration</span>
                           </div>
-                          <p className="text-white text-sm sm:text-lg font-semibold ml-6 sm:ml-8">
+                          <p className="text-text-primary text-sm sm:text-lg font-semibold ml-6 sm:ml-8">
                             {formattedFromDate} → {formattedToDate}
                           </p>
                           <p className="text-indigo-400 text-xs sm:text-sm font-medium ml-6 sm:ml-8 mt-1 sm:mt-2">
@@ -475,18 +475,18 @@ const MentorLeaveApproval = () => {
                         </div>
 
                         <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-gray-700/50 hover:border-indigo-500/30 transition-all duration-300">
-                          <div className="flex items-center space-x-2 sm:space-x-3 text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3">
+                          <div className="flex items-center space-x-2 sm:space-x-3 text-text-secondary text-xs sm:text-sm mb-2 sm:mb-3">
                             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                             </svg>
                             <span className="font-semibold">Reason</span>
                           </div>
-                          <p className="text-white text-sm sm:text-base ml-6 sm:ml-8 leading-relaxed">{leave.reason}</p>
+                          <p className="text-text-primary text-sm sm:text-base ml-6 sm:ml-8 leading-relaxed">{leave.reason}</p>
                         </div>
 
                         <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-gray-700/50">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2 sm:space-x-3 text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center space-x-2 sm:space-x-3 text-text-secondary text-xs sm:text-sm">
                               <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
@@ -495,7 +495,7 @@ const MentorLeaveApproval = () => {
                             <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-bold ${
                               leave.parentApproval 
                                 ? 'bg-green-500/20 text-green-400 border border-green-500/40'
-                                : 'bg-gray-500/20 text-gray-400 border border-gray-500/40'
+                                : 'bg-gray-500/20 text-text-secondary border border-gray-500/40'
                             }`}>
                               {leave.parentApproval ? '✓ Approved' : 'Pending'}
                             </span>
@@ -505,7 +505,7 @@ const MentorLeaveApproval = () => {
                         {leave.status === 'Approved' && leave.passotp && (
                           <div className="bg-gradient-to-br from-indigo-800/60 to-purple-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-indigo-500/50">
                             <div className="flex items-center justify-between flex-wrap gap-2">
-                              <div className="flex items-center space-x-2 sm:space-x-3 text-gray-300 text-xs sm:text-sm">
+                              <div className="flex items-center space-x-2 sm:space-x-3 text-text-secondary text-xs sm:text-sm">
                                 <svg className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                                 </svg>
@@ -525,7 +525,7 @@ const MentorLeaveApproval = () => {
                           <button
                             onClick={() => handleLeaveDecision(leave._id, 'Approved')}
                             disabled={processingId === leave._id}
-                            className="flex-1 group/btn relative bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 hover:from-indigo-500 hover:via-indigo-600 hover:to-purple-600 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-2xl hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                            className="flex-1 group/btn relative bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 hover:from-indigo-500 hover:via-indigo-600 hover:to-purple-600 text-text-primary font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-2xl hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
                           >
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
                             <div className="relative flex items-center justify-center space-x-2 sm:space-x-3">
@@ -547,7 +547,7 @@ const MentorLeaveApproval = () => {
                           <button
                             onClick={() => handleLeaveDecision(leave._id, 'Rejected')}
                             disabled={processingId === leave._id}
-                            className="flex-1 group/btn relative bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 hover:from-red-600 hover:via-red-700 hover:to-red-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-2xl hover:shadow-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                            className="flex-1 group/btn relative bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 hover:from-red-600 hover:via-red-700 hover:to-red-800 text-text-primary font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-2xl hover:shadow-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
                           >
                             <div className="relative flex items-center justify-center space-x-2 sm:space-x-3">
                               <svg className="w-5 h-5 sm:w-6 sm:h-6 group-hover/btn:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
