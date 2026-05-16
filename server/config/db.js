@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 
 async function main(){
-    await mongoose.connect(process.env.MONGO_CONNECT,{
-        useNewUrlParser: true,
-        useUnifiedTopology:true,
-    })
+    await mongoose.connect(process.env.MONGO_CONNECT)
     .then(()=>console.log("DB Connected Success"))
     .catch((error)=>{
         console.log("DB Connection failed");

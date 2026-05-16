@@ -89,3 +89,18 @@ exports.mentorLogin = async (req, res) => {
     return res.status(500).json({ success: false, message: e.message || "Login failed" });
   }
 };
+
+exports.mentorLogout = async (req, res) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      expires: new Date(0),
+    });
+
+    res.status(200).json({ success: true, message: "Logout Successful" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || "Logout failed" });
+  }
+};

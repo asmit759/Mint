@@ -2,7 +2,7 @@
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Login from './components/Login';
 import StudentSignup from './components/StudentSignup';
@@ -34,6 +34,7 @@ import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
 function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, role, loading } = useSelector((s) => s.auth);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -45,6 +46,8 @@ function App() {
         } catch {
           // both failed → remain unauthenticated
         }
+      } finally {
+        setIsCheckingAuth(false);
       }
     })();
   }, [dispatch]);
@@ -58,6 +61,14 @@ function App() {
       currentPath: window.location.pathname,
     });
   }, [isAuthenticated, role, loading]);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#212529] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
