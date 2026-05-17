@@ -144,7 +144,7 @@ const StudentLanding = () => {
             {/* Column 2: Vertical Stack */}
             <div className="flex flex-col items-start justify-center gap-4">
               <GlowingButton
-                text="Study-Mat"
+                text="Study"
                 icon={<FiBook />}
                 onClick={goToStudyMaterials}
                 className="w-44"
