@@ -147,6 +147,38 @@ function App() {
         }
       />
 
+      {/* NEW: Future Student Features */}
+      <Route
+        path="/student/mentor-chat"
+        element={
+          <ProtectedRoute allow="student">
+            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+              <h1 className="text-3xl font-bold">Mentor Chat - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/attendance"
+        element={
+          <ProtectedRoute allow="student">
+            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+              <h1 className="text-3xl font-bold">Attendance - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/study-materials"
+        element={
+          <ProtectedRoute allow="student">
+            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+              <h1 className="text-3xl font-bold">Study Materials - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
       {/* Protected Mentor Routes */}
       <Route
         path="/mentor-landing"
