@@ -69,10 +69,15 @@ const StudentLanding = () => {
 
           <div className="flex items-center gap-6">
             <div
-              className="w-10 h-10 rounded-full bg-gray-400 border-2 border-white/50 overflow-hidden flex items-center justify-center text-white font-bold cursor-pointer hover:opacity-80 transition"
-              title="Profile (Coming Soon)"
+              onClick={() => navigate('/student/profile')}
+              className="w-10 h-10 rounded-full bg-gray-400 border-2 border-white/50 overflow-hidden flex items-center justify-center text-white font-bold cursor-pointer hover:opacity-80 transition hover:ring-2 hover:ring-white/50"
+              title="Profile"
             >
-              {displayName(user).charAt(0).toUpperCase()}
+              {user?.profilePhotoUrl ? (
+                <img src={user.profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                displayName(user).charAt(0).toUpperCase()
+              )}
             </div>
 
             <button

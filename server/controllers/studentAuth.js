@@ -7,8 +7,13 @@ const validate= require("../utils/validator")
 const studentRegister = async (req,res)=>{
     try {
         validate(req.body);
-        const {email_id,name,password} = req.body;
+        const {email_id,name,password, avatarSeed} = req.body;
         req.body.password= await(bcrypt.hash(password,10));
+        
+        if (avatarSeed) {
+            req.body.profilePhotoUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(avatarSeed)}&backgroundColor=000000`;
+        }
+
         const student = await Student.create(req.body);
 
         // const token = jwt.sign({_id:student._id,email_id:email_id,},process.env.JWT_SERVER_KEY,{expiresIn:60*60})
@@ -21,7 +26,16 @@ const studentRegister = async (req,res)=>{
             address:student.address,
             profilePhotoUrl:student.profilePhotoUrl,
             mentor:student.mentor,
-            parent:student.parent,
+            age:student.age,
+            semester:student.semester,
+            branch:student.branch,
+            hostel:student.hostel,
+            room_no:student.room_no,
+            fatherName:student.fatherName,
+            fatherContact:student.fatherContact,
+            motherName:student.motherName,
+            motherContact:student.motherContact,
+            parentEmail:student.parentEmail
         }
 
         res.status(200).json({
@@ -67,7 +81,17 @@ const studentLogin = async (req, res) => {
       roll_no: student.roll_no,
       address: student.address,
       profilePhotoUrl: student.profilePhotoUrl,
-      mentor: student.mentor
+      mentor: student.mentor,
+      age: student.age,
+      semester: student.semester,
+      branch: student.branch,
+      hostel: student.hostel,
+      room_no: student.room_no,
+      fatherName: student.fatherName,
+      fatherContact: student.fatherContact,
+      motherName: student.motherName,
+      motherContact: student.motherContact,
+      parentEmail: student.parentEmail
     };
 
     // Use a consistent key: "user"

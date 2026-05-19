@@ -26,6 +26,7 @@ import BandhuChat from './components/student/BandhuChat';
 import StudentLeaveApply from './components/student/StudentLeaveApply';
 import CampusGrievance from './components/student/CampusGrievance';
 import HostelGrievance from './components/student/HostelGrievance';
+import StudentProfile from './components/student/StudentProfile';
 
 // Auth checks
 import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
@@ -104,6 +105,14 @@ function App() {
       />
 
       {/* NEW: Student action pages */}
+      <Route
+        path="/student/profile"
+        element={
+          <ProtectedRoute allow="student">
+            <StudentProfile />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/leave/apply"
         element={
