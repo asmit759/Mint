@@ -5,12 +5,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { studRegister } from '../store/authSlice';
+import AvatarPicker from './student/AvatarPicker';
 
 const StudentSignup = () => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const [formData, setFormData] = useState(null);
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [avatarSeed, setAvatarSeed] = useState('');
   const password = watch('password', '');
 
   const dispatch = useDispatch();
@@ -43,22 +45,28 @@ const StudentSignup = () => {
   }, [formData, dispatch, navigate]);
 
   const onSubmit = (data) => {
+    if (!avatarSeed) {
+      setServerError('Please select an avatar.');
+      return;
+    }
     const { confirm_password, ...submitData } = data;
-    setFormData(submitData);
+    setFormData({ ...submitData, avatarSeed });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 flex items-center justify-center px-4 py-8">
-      <div className="bg-gray-900 rounded-2xl shadow-2xl shadow-indigo-900/50 p-8 w-full max-w-md border border-indigo-800/30">
+    <div className="min-h-screen bg-background transition-colors duration-300 flex items-center justify-center px-4 py-8">
+      <div className="bg-surface rounded-2xl shadow-2xl shadow-indigo-900/50 p-8 w-full max-w-md border border-border">
         <h2 className="text-3xl font-bold text-indigo-400 text-center mb-8">Student Registration</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <AvatarPicker onSelectAvatar={setAvatarSeed} />
+          
           <div>
             <label className="block text-sm font-medium text-indigo-300 mb-2">Full Name</label>
             <input
               type="text"
               placeholder="Enter your full name"
-              className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
               {...register('name', { required: 'Name is required', minLength: { value: 2, message: 'Name must be at least 2 characters' } })}
             />
             {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
@@ -69,7 +77,7 @@ const StudentSignup = () => {
             <input
               type="email"
               placeholder="Enter your KIIT email"
-              className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
               {...register('email_id', { required: 'Email is required' })}
             />
             {errors.email_id && <p className="text-red-400 text-sm mt-1">{errors.email_id.message}</p>}
@@ -80,7 +88,7 @@ const StudentSignup = () => {
             <input
               type="password"
               placeholder="Enter your password"
-              className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
               {...register('password', { required: 'Password is required' })}
             />
             {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>}
@@ -91,7 +99,7 @@ const StudentSignup = () => {
             <input
               type="password"
               placeholder="Confirm your password"
-              className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              className="w-full px-4 py-3 bg-surface border border-indigo-700/50 rounded-lg text-text-primary placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
               {...register('confirm_password', {
                 required: 'Please confirm password',
                 validate: (v) => v === password || 'Passwords do not match',
@@ -103,7 +111,7 @@ const StudentSignup = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary hover:bg-indigo-700 text-text-primary font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Registering...' : 'Sign Up'}
           </button>
@@ -112,7 +120,7 @@ const StudentSignup = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
+          <p className="text-text-secondary text-sm">
             Already have an account? <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">Login here</Link>
           </p>
         </div>

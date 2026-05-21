@@ -7,13 +7,13 @@ const Button = ({ name, disabled, type = "button" }) => {
       <button
         type={type}
         disabled={disabled}
-        className={`flex justify-center gap-2 items-center mx-auto shadow-xl shadow-indigo-500/40 text-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-white backdrop-blur-md lg:font-semibold isolation-auto before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-gradient-to-r before:from-indigo-400 before:to-purple-500 hover:text-white before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative z-10 px-6 py-3 overflow-hidden border-2 border-indigo-500/50 rounded-full group transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-600/60 ${
+        className={`flex justify-center gap-2 items-center mx-auto shadow-xl shadow-indigo-500/40 text-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-text-primary backdrop-blur-md lg:font-semibold isolation-auto before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-gradient-to-r before:from-indigo-400 before:to-purple-500 hover:text-text-primary before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative z-10 px-6 py-3 overflow-hidden border-2 border-indigo-500/50 rounded-full group transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-600/60 ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >
         {name}
         <svg
-          className="w-8 h-8 justify-end group-hover:rotate-90 text-white ease-linear duration-300 rounded-full border border-indigo-400/50 group-hover:border-white/30 p-2 rotate-45 group-hover:bg-white/10"
+          className="w-8 h-8 justify-end group-hover:rotate-90 text-text-primary ease-linear duration-300 rounded-full border border-indigo-400/50 group-hover:border-white/30 p-2 rotate-45 group-hover:bg-white/10"
           viewBox="0 0 16 19"
           xmlns="http://www.w3.org/2000/svg"
         >

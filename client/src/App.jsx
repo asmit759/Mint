@@ -2,7 +2,7 @@
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Login from './components/Login';
 import StudentSignup from './components/StudentSignup';
@@ -26,6 +26,7 @@ import BandhuChat from './components/student/BandhuChat';
 import StudentLeaveApply from './components/student/StudentLeaveApply';
 import CampusGrievance from './components/student/CampusGrievance';
 import HostelGrievance from './components/student/HostelGrievance';
+import StudentProfile from './components/student/StudentProfile';
 
 // Auth checks
 import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
@@ -34,6 +35,7 @@ import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
 function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, role, loading } = useSelector((s) => s.auth);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -45,6 +47,8 @@ function App() {
         } catch {
           // both failed → remain unauthenticated
         }
+      } finally {
+        setIsCheckingAuth(false);
       }
     })();
   }, [dispatch]);
@@ -58,6 +62,14 @@ function App() {
       currentPath: window.location.pathname,
     });
   }, [isAuthenticated, role, loading]);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#212529] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
@@ -93,6 +105,14 @@ function App() {
       />
 
       {/* NEW: Student action pages */}
+      <Route
+        path="/student/profile"
+        element={
+          <ProtectedRoute allow="student">
+            <StudentProfile />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/leave/apply"
         element={
@@ -136,6 +156,38 @@ function App() {
         }
       />
 
+      {/* NEW: Future Student Features */}
+      <Route
+        path="/student/mentor-chat"
+        element={
+          <ProtectedRoute allow="student">
+            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+              <h1 className="text-3xl font-bold">Mentor Chat - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/attendance"
+        element={
+          <ProtectedRoute allow="student">
+            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+              <h1 className="text-3xl font-bold">Attendance - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/study-materials"
+        element={
+          <ProtectedRoute allow="student">
+            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+              <h1 className="text-3xl font-bold">Study Materials - Coming Soon</h1>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
       {/* Protected Mentor Routes */}
       <Route
         path="/mentor-landing"
@@ -157,7 +209,7 @@ function App() {
         path="/mentor/attendance"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white ">
+            <div className="min-h-screen">
               <AttendanceDashboard />
             </div>
           </ProtectedRoute>
@@ -175,7 +227,7 @@ function App() {
         path="/mentor/student-location"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <MentorStudentLocation />
             </div>
           </ProtectedRoute>
@@ -185,7 +237,7 @@ function App() {
         path="/mentor/chat"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <h1 className="text-3xl font-bold">Messages - Coming Soon</h1>
             </div>
           </ProtectedRoute>
@@ -205,7 +257,7 @@ function App() {
         path="/mentor/students"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <h1 className="text-3xl font-bold">Students - Coming Soon</h1>
             </div>
           </ProtectedRoute>
@@ -215,7 +267,7 @@ function App() {
         path="/mentor/sessions"
         element={
           <ProtectedRoute allow="mentor">
-            <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700 text-white">
+            <div className="min-h-screen">
               <h1 className="text-3xl font-bold">Sessions - Coming Soon</h1>
             </div>
           </ProtectedRoute>

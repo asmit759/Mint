@@ -6,10 +6,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import axiosClient from '../../utils/AxiosCli';
 import { mentorLogout, logout } from '../../store/authSlice';
-import MentorNavbar from './MentorNavbar';
+import GlowingButton from '../smallComp/GlowingButton';
+import { 
+  FiChevronDown, 
+  FiArrowLeft,
+  FiCornerDownRight,
+  FiUsers
+} from 'react-icons/fi';
+
+import mintLogo from '../../assets/mintLogo.png';
 
 const emailOf = (s) =>
-  s?.email ?? s?.email_id ?? s?.emailId ?? s?.contact?.email ?? ''; 
+  s?.email ?? s?.email_id ?? s?.emailId ?? s?.contact?.email ?? '';
 
 const MentorMail = () => {
   const navigate = useNavigate();
@@ -32,7 +40,7 @@ const MentorMail = () => {
     const fetchMentorDetails = async () => {
       setFetchingData(true);
       try {
-        const { data } = await axiosClient.get('/mentorRoutes/getMentorDetails', { withCredentials: true }); 
+        const { data } = await axiosClient.get('/mentorRoutes/getMentorDetails', { withCredentials: true });
         if (data?.success) {
           setMentorDetails(data.mentorDetails || user || null);
         } else {
@@ -48,10 +56,6 @@ const MentorMail = () => {
     if (isAuthenticated && role === 'mentor') fetchMentorDetails(); else setFetchingData(false);
   }, [isAuthenticated, role, user]);
 
-  const handleLogout = async () => {
-    try { await dispatch(mentorLogout()).unwrap(); } catch { dispatch(logout()); } finally { navigate('/login', { replace: true }); } // clear session via thunk [web:115]
-  };
-
   const mentees = mentorDetails?.mentees ?? mentorDetails?.students ?? [];
 
   const handleStudentToggle = (student) => {
@@ -63,13 +67,13 @@ const MentorMail = () => {
   };
 
   const handleSelectAll = () => {
-    const allEmails = (mentees || []).map(emailOf).filter(Boolean); // build clean list [web:365]
+    const allEmails = (mentees || []).map(emailOf).filter(Boolean);
     if (selectedStudents.length === allEmails.length) setSelectedStudents([]);
     else setSelectedStudents(allEmails);
   };
 
   const handleSendMail = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     if (!isAuthenticated || role !== 'mentor') {
       toast.error('You must be logged in as a mentor to send emails', { position: 'top-center', theme: 'dark', transition: Bounce });
       return;
@@ -91,7 +95,7 @@ const MentorMail = () => {
         '/mentorRoutes/sendMailToStudent',
         { studentEmailArray: uniqueEmails, title, body },
         { withCredentials: true }
-      ); 
+      );
       if (data?.success) {
         toast.success('Email sent successfully!', { position: 'top-center', theme: 'dark', transition: Bounce });
         setSelectedStudents([]);
@@ -107,89 +111,159 @@ const MentorMail = () => {
     }
   };
 
-  const fromEmail = mentorDetails?.email || user?.email || 'unknown@kiit.ac.in';
+  const templates = [
+    {
+      id: 1,
+      label: 'Schedule Meeting',
+      subject: 'Upcoming Mentorship Meeting',
+      content: 'Hi there,\n\nJust a quick reminder about our upcoming mentorship meeting. Please come prepared with any updates or questions.\n\nBest,\nYour Mentor'
+    },
+    {
+      id: 2,
+      label: 'Checking In',
+      subject: 'Motivation & Check-in',
+      content: 'Hi there,\n\nWanted to quickly check in and see how your studies are going. Remember that consistency is key!\n\nBest,\nYour Mentor'
+    },
+    {
+      id: 3,
+      label: 'Attendance',
+      subject: 'Attendance Follow-up',
+      content: 'Hi there,\n\nI noticed some discrepancies in your recent attendance. Let\'s schedule a time to discuss this so we can keep you on track.\n\nBest,\nYour Mentor'
+    },
+    {
+      id: 4,
+      label: 'Career Guidance',
+      subject: 'Career Opportunities',
+      content: 'Hi there,\n\nI found some great resources regarding your career interests. Let\'s discuss them in our next session!\n\nBest,\nYour Mentor'
+    }
+  ];
+
+  const applyTemplate = (subject, content) => {
+    setTitle(subject);
+    setBody(content);
+    toast.success('Template applied', { position: 'top-center', autoClose: 1000, hideProgressBar: true, theme: 'dark' });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-indigo-700">
-      <MentorNavbar onLogout={handleLogout} />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-8">
-          <button type="button" onClick={() => navigate('/mentor-landing')} className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 mb-4 transition duration-200">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Back to Dashboard
+    <div className="relative min-h-screen bg-background font-poppins text-text-primary overflow-hidden flex flex-col selection:bg-primary/20 selection:text-text-primary transition-colors duration-300">
+      
+      {/* Refined Ambient Lighting: Softer, larger, deeply blurred */}
+      <div className="absolute top-[-10%] left-[10%] w-[50vw] h-[50vw] bg-text-secondary/[0.04] rounded-full blur-[140px] pointer-events-none transition-colors duration-300" />
+      <div className="absolute bottom-[-10%] right-[5%] w-[40vw] h-[40vw] bg-primary/[0.03] rounded-full blur-[160px] pointer-events-none transition-colors duration-300" />
+
+      <main className="flex-grow flex flex-col p-6 sm:p-12 w-full max-w-6xl mx-auto mt-4 relative z-10">
+        
+        {/* Navigation */}
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ duration: 1 }}
+          className="w-full flex items-center justify-between -translate-y-6"
+        >
+          <button 
+            onClick={() => navigate('/mentor/dashboard')} 
+            className="flex items-center gap-3 text-xs text-text-secondary hover:text-text-primary font-medium tracking-widest uppercase transition-colors"
+          >
+            <FiArrowLeft className="w-4 h-4" /> Dashboard
           </button>
-          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-1">Send Email to Students</h1>
-          <p className="text-gray-400">From: <span className="text-indigo-300">{fromEmail}</span></p>
+
+          {/* Mint Logo */}
+          <div className="flex items-center gap-4 opacity-80 hover:opacity-100 transition-opacity">
+            <img
+              src={mintLogo}
+              alt="Mint Logo"
+              className="w-14 h-14 object-contain"
+            />
+            <span className="text-xl font-medium text-text-primary tracking-[0.15em] transition-colors duration-300">
+              MINT
+            </span>
+          </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="bg-gray-900 border border-indigo-800/30 rounded-2xl shadow-2xl shadow-indigo-900/20 p-8">
-          <form onSubmit={handleSendMail} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-indigo-300 mb-2">Select Students ({selectedStudents.length} selected)</label>
-              <div className="relative">
-                <button type="button" onClick={() => setIsDropdownOpen((v) => !v)} className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white flex items-center justify-between hover:border-indigo-600 transition duration-200">
-                  <span className="text-gray-300">
-                    {selectedStudents.length === 0 ? 'Choose students...' : `${selectedStudents.length} student${selectedStudents.length > 1 ? 's' : ''} selected`}
+        {/* Hero Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-16"
+        >
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-text-primary mb-5 transition-colors duration-300">
+            Mentorship <span className="text-text-secondary transition-colors duration-300">Communication.</span>
+          </h1>
+          <p className="text-text-secondary text-base md:text-lg font-light tracking-wide max-w-xl transition-colors duration-300">
+            A premium space to guide, inspire, and connect with your mentees.
+          </p>
+        </motion.div>
+
+        {/* Asymmetric Split Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full">
+          
+          {/* Main Composer Area (Left 7 cols) */}
+          <motion.div 
+            initial={{ opacity: 0, y: 25 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 flex flex-col gap-10"
+          >
+            
+            {/* Recipient Selector */}
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] text-text-secondary font-medium tracking-widest uppercase flex items-center justify-between ml-2 transition-colors duration-300">
+                <span>To</span>
+                {selectedStudents.length > 0 && (
+                  <span className="text-primary font-semibold transition-colors duration-300">{selectedStudents.length} Selected</span>
+                )}
+              </label>
+              <div className="relative z-20">
+                <button 
+                  type="button" 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+                  className="w-full px-6 py-5 bg-surface border border-border rounded-3xl text-left flex items-center justify-between hover:bg-surface/80 hover:border-border/80 transition-all shadow-xl shadow-black/5 backdrop-blur-xl transition-colors duration-300"
+                >
+                  <span className="text-text-primary font-light text-[15px] transition-colors duration-300">
+                    {selectedStudents.length === 0 ? 'Select Recipients...' : `${selectedStudents.length} Mentee${selectedStudents.length > 1 ? 's' : ''}`}
                   </span>
-                  <svg className={`w-5 h-5 text-indigo-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <FiChevronDown className={`text-text-secondary w-5 h-5 transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
                   {isDropdownOpen && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="absolute z-10 w-full mt-2 bg-gray-800 border border-indigo-700/50 rounded-lg shadow-2xl shadow-indigo-900/50 overflow-hidden">
-                      {!fetchingData && (mentees || []).length > 0 && (
-                        <div onClick={handleSelectAll} className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150 border-b border-indigo-700/30">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${selectedStudents.length === (mentees || []).map(emailOf).filter(Boolean).length ? 'bg-indigo-600 border-indigo-600' : 'border-indigo-500'}`}>
-                              {selectedStudents.length === (mentees || []).map(emailOf).filter(Boolean).length && (
-                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                </svg>
-                              )}
-                            </div>
-                            <span className="text-white font-medium">Select All</span>
+                    <motion.div 
+                      initial={{ opacity: 0, y: -8, scale: 0.98 }} 
+                      animate={{ opacity: 1, y: 0, scale: 1 }} 
+                      exit={{ opacity: 0, y: -8, scale: 0.98 }} 
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} 
+                      className="absolute top-full left-0 right-0 mt-4 bg-surface/95 backdrop-blur-3xl border border-border rounded-[1.75rem] shadow-2xl shadow-black/10 overflow-hidden z-50 transition-colors duration-300"
+                    >
+                      {!fetchingData && mentees.length > 0 && (
+                        <div onClick={handleSelectAll} className="px-6 py-5 border-b border-border hover:bg-background/50 cursor-pointer transition flex items-center gap-4">
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedStudents.length === mentees.length ? 'border-primary bg-primary/20' : 'border-border'}`}>
+                            {selectedStudents.length === mentees.length && <div className="w-2 h-2 rounded-full bg-primary" />}
                           </div>
+                          <span className="text-text-primary font-light text-sm tracking-wide transition-colors duration-300">Select All</span>
                         </div>
                       )}
 
-                      <div className="max-h-64 overflow-y-auto">
+                      <div className="max-h-72 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         {fetchingData ? (
-                          <div className="px-4 py-8 text-gray-400 text-center">
-                            <svg className="animate-spin h-6 w-6 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Loading students...
-                          </div>
-                        ) : (mentees || []).length === 0 ? (
-                          <div className="px-4 py-8 text-gray-400 text-center">
-                            <svg className="w-12 h-12 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            No students found
-                          </div>
+                          <div className="p-8 text-center text-text-secondary font-light text-sm">Loading mentees...</div>
+                        ) : mentees.length === 0 ? (
+                          <div className="p-8 text-center text-text-secondary font-light text-sm">No mentees found.</div>
                         ) : (
-                          (mentees || []).map((student) => {
+                          mentees.map(student => {
                             const email = emailOf(student);
+                            const isSelected = selectedStudents.includes(email);
                             return (
-                              <div key={student._id || email} onClick={() => handleStudentToggle(student)} className="px-4 py-3 hover:bg-indigo-600/20 cursor-pointer transition duration-150">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition duration-200 ${selectedStudents.includes(email) ? 'bg-indigo-600 border-indigo-600' : 'border-indigo-500'}`}>
-                                    {selectedStudents.includes(email) && (
-                                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                      </svg>
-                                    )}
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-white font-medium">{student.name ?? 'Unnamed'}</p>
-                                    <p className="text-gray-400 text-sm">{email || 'email missing'}</p>
-                                  </div>
+                              <div key={student._id || email} onClick={() => handleStudentToggle(student)} className="px-6 py-4 hover:bg-background/50 cursor-pointer transition-colors flex items-center gap-4 border-b border-border last:border-none">
+                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'border-primary bg-primary/20' : 'border-border'}`}>
+                                  {isSelected && <div className="w-2 h-2 rounded-full bg-primary" />}
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-text-primary font-light text-[15px] tracking-wide transition-colors duration-300">{student.name ?? 'Unnamed'}</span>
+                                  <span className="text-text-secondary font-light text-xs mt-1 transition-colors duration-300">{email}</span>
                                 </div>
                               </div>
-                            );
+                            )
                           })
                         )}
                       </div>
@@ -199,53 +273,113 @@ const MentorMail = () => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-indigo-300 mb-2">Email Subject</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter email subject" className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-indigo-300 mb-2">Email Body</label>
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your message here... (HTML supported)" rows={10} className="w-full px-4 py-3 bg-gray-800 border border-indigo-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 resize-none" />
-              <p className="text-gray-500 text-xs mt-2">Tip: You can use HTML tags like &lt;p&gt;, &lt;b&gt;, &lt;i&gt; for formatting</p>
-            </div>
-
-            {body && (
-              <div className="bg-gray-800 border border-indigo-700/30 rounded-lg p-4">
-                <p className="text-indigo-300 text-sm font-medium mb-2">Preview:</p>
-                <div className="text-gray-300 text-sm" dangerouslySetInnerHTML={{ __html: body }} />
+            {/* Subject Input */}
+            <div className="flex flex-col gap-3 z-10">
+              <label className="text-[11px] text-text-secondary font-medium tracking-widest uppercase ml-2 transition-colors duration-300">Subject</label>
+              <div className="relative group">
+                <div className="absolute -inset-[1px] bg-gradient-to-b from-text-secondary/10 to-transparent rounded-[2rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <input 
+                  type="text" 
+                  value={title} 
+                  onChange={(e) => setTitle(e.target.value)} 
+                  placeholder="Message Subject" 
+                  className="relative w-full px-6 py-5 bg-surface border border-border rounded-3xl text-text-primary placeholder-text-secondary/60 focus:outline-none focus:bg-background transition-all shadow-xl shadow-black/5 font-light text-[15px] transition-colors duration-300"
+                />
               </div>
-            )}
-
-            <div className="flex gap-4">
-              <button type="submit" disabled={loading} className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-500/50 hover:shadow-xl hover:shadow-indigo-600/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                {loading ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    Send Email
-                  </>
-                )}
-              </button>
-
-              <button type="button" onClick={() => { setSelectedStudents([]); setTitle(''); setBody(''); }} className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg transition duration-200 border border-indigo-700/30">
-                Clear
-              </button>
             </div>
-          </form>
-        </motion.div>
-      </div>
 
-      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick={false} rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="dark" transition={Bounce} />
+            {/* Body Textarea */}
+            <div className="flex flex-col gap-3 z-10">
+              <label className="text-[11px] text-text-secondary font-medium tracking-widest uppercase ml-2 transition-colors duration-300">Message</label>
+              <div className="relative group">
+                <div className="absolute -inset-[1px] bg-gradient-to-b from-text-secondary/10 to-transparent rounded-[2rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <textarea 
+                  value={body} 
+                  onChange={(e) => setBody(e.target.value)} 
+                  placeholder="Write your message here... (HTML supported)" 
+                  rows={10} 
+                  className="relative w-full px-6 py-6 bg-surface border border-border rounded-3xl text-text-primary placeholder-text-secondary/60 focus:outline-none focus:bg-background transition-all shadow-xl shadow-black/5 font-light text-[15px] resize-none leading-relaxed transition-colors duration-300"
+                />
+              </div>
+            </div>
+
+            {/* CTA Section */}
+            <div className="pt-4 flex flex-col sm:flex-row gap-5 justify-end z-10">
+              <div className="w-full sm:w-32 opacity-70 hover:opacity-100 transition-opacity">
+                <GlowingButton 
+                  text="Clear" 
+                  onClick={() => { setSelectedStudents([]); setTitle(''); setBody(''); }}
+                  className="!min-h-[50px] !text-[15px]"
+                />
+              </div>
+              <div className="w-full sm:w-44">
+                <GlowingButton 
+                  text={loading ? "Sending..." : "Send"} 
+                  icon={loading ? null : <FiCornerDownRight className="w-4 h-4" />} 
+                  onClick={handleSendMail}
+                  className="!min-h-[50px] !text-[15px]"
+                />
+              </div>
+            </div>
+
+          </motion.div>
+
+          {/* Right Column: Templates & Insights (Right 5 cols) */}
+          <div className="lg:col-span-5 flex flex-col gap-12 mt-4 lg:pl-6">
+            
+            {/* Mentor Stats Overview */}
+            <motion.div 
+              initial={{ opacity: 0, y: 25 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col gap-4"
+            >
+              <label className="text-[11px] text-text-secondary font-medium tracking-widest uppercase ml-2 transition-colors duration-300">Overview</label>
+              <div className="p-8 bg-surface border border-border rounded-[2rem] flex items-end justify-between shadow-2xl shadow-black/5 transition-colors duration-300">
+                <div className="flex flex-col">
+                  <span className="text-6xl font-light text-text-primary tracking-tighter transition-colors duration-300">{mentees.length}</span>
+                  <span className="text-[11px] text-text-secondary font-medium uppercase tracking-widest mt-2 transition-colors duration-300">Total Mentees</span>
+                </div>
+                <div className="w-12 h-12 rounded-full border border-border bg-background/50 flex items-center justify-center transition-colors duration-300">
+                  <FiUsers className="text-text-secondary w-5 h-5 transition-colors duration-300" />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Quick Templates */}
+            <motion.div 
+              initial={{ opacity: 0, y: 25 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col gap-4"
+            >
+              <label className="text-[11px] text-text-secondary font-medium tracking-widest uppercase ml-2 transition-colors duration-300">Quick Actions</label>
+              <div className="grid grid-cols-1 gap-4">
+                {templates.map(template => (
+                  <motion.button 
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    key={template.id}
+                    onClick={() => applyTemplate(template.subject, template.content)}
+                    className="group flex flex-col items-start gap-1 p-6 bg-surface hover:bg-surface/80 border border-border rounded-[2rem] transition-colors text-left shadow-2xl shadow-black/5 transition-colors duration-300"
+                  >
+                    <span className="text-[15px] font-medium text-text-primary group-hover:text-text-primary/80 transition-colors tracking-wide transition-colors duration-300">
+                      {template.label}
+                    </span>
+                    <span className="text-xs text-text-secondary font-light line-clamp-1 tracking-wider mt-1 group-hover:text-text-secondary/80 transition-colors transition-colors duration-300">
+                      {template.subject}
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+          </div>
+
+        </div>
+      </main>
+
+      <ToastContainer position="top-center" autoClose={3000} theme="dark" transition={Bounce} />
     </div>
   );
 };

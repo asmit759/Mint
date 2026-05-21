@@ -1,7 +1,7 @@
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 const main = require("./config/db");
 const cors = require("cors");
 
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin: "https://mint-4fm1.onrender.com",
+    origin: ["http://localhost:5173","http://localhost:5174"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
@@ -47,11 +47,9 @@ app.use("/location", locationRoutes);
 
 const initCon = async ()=>{
     try{
-        console.log("Mongo URI:", process.env.MONGO_CONNECT);
 
         await main();
 
-        console.log("MongoDB Connected");
 
         const PORT = process.env.PORT || 4000;
         app.listen(PORT,()=>{

@@ -1,12 +1,15 @@
-// src/components/mentor/MentorLand.jsx
 import React, { useState, useEffect } from 'react';
+import { FiLogOut, FiMail, FiCalendar, FiClock, FiMessageSquare, FiAlertTriangle, FiMapPin, FiHeart } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import MentorNavbar from '../mentor/MentorNavbar';
-import { BiSolidMessageSquareDetail } from 'react-icons/bi';
 import { mentorLogout, logout } from '../../store/authSlice';
+import { ToastContainer, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+
+import mintLogo from '../../assets/mintLogo.png';
+import bgImage from '../../assets/mentor_bg.png';
+import GlowingButton from '../smallComp/GlowingButton';
 
 const getMentorName = (u, m) => {
   const name =
@@ -20,9 +23,9 @@ const getMentorName = (u, m) => {
 };
 
 const MentorDashboard = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, role } = useSelector((s) => s.auth);
+  const navigate = useNavigate();
+  const { user, role } = useSelector((state) => state.auth);
   const [mentorDetails, setMentorDetails] = useState(user || null);
 
   useEffect(() => {
@@ -33,11 +36,11 @@ const MentorDashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const { data } = await axios.get(
-          'https://mint-backend-9mha.onrender.com/mentorRoutes/getMentorDetails',
+          'http://localhost:4000/mentorRoutes/getMentorDetails',
           { withCredentials: true }
         );
         if (data?.success) setMentorDetails(data.mentorDetails);
-      } catch {}
+      } catch { }
     };
     if (role === 'mentor' && user && !user?.contactNumber) fetchDashboardData();
   }, [role, user]);
@@ -52,279 +55,168 @@ const MentorDashboard = () => {
     }
   };
 
-  const dashboardItems = [
-    {
-      id: 1,
-      title: 'Mail Mentees',
-      description: 'Send personalized emails and important announcements to your mentees',
-      icon: (
-        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
-      route: '/mentor/send-email',
-      gradient: 'from-purple-500 via-pink-500 to-rose-500',
-      glowColor: 'rgba(236, 72, 153, 0.4)',
-      size: 'large',
-    },
-    {
-      id: 2,
-      title: 'Attendance',
-      description: 'Monitor and track mentee attendance records with detailed insights',
-      icon: (
-        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>
-      ),
-      route: '/mentor/attendance',
-      gradient: 'from-cyan-400 via-blue-500 to-indigo-600',
-      glowColor: 'rgba(59, 130, 246, 0.4)',
-      size: 'medium',
-    },
-    {
-      id: 3,
-      title: 'Leave Applications',
-      description: 'Review and approve mentee leave requests efficiently',
-      icon: (
-        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      ),
-      route: '/mentor/leave-applications',
-      gradient: 'from-amber-400 via-orange-500 to-red-500',
-      glowColor: 'rgba(251, 146, 60, 0.4)',
-      size: 'medium',
-    },
-    {
-      id: 4,
-      title: 'Student Location',
-      description: 'View real-time location tracking of your mentees',
-      icon: (
-        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
-      route: '/mentor/student-location',
-      gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
-      glowColor: 'rgba(20, 184, 166, 0.4)',
-      size: 'small',
-    },
-    {
-      id: 5,
-      title: 'Messages',
-      description: 'Connect and chat with your mentees in real-time',
-      icon: (
-        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      ),
-      route: '/mentor/chat',
-      gradient: 'from-violet-500 via-purple-500 to-fuchsia-500',
-      glowColor: 'rgba(168, 85, 247, 0.4)',
-      size: 'small',
-    },
-    {
-      id: 6,
-      title: 'Student Grievances',
-      description: 'Address and resolve mentee concerns promptly',
-      icon: <BiSolidMessageSquareDetail className="h-14 w-14" />,
-      route: '/mentor/grievances',
-      gradient: 'from-indigo-600 via-purple-600 to-pink-600',
-      glowColor: 'rgba(147, 51, 234, 0.4)',
-      size: 'small',
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { y: 30, opacity: 0, scale: 0.95 },
-    visible: { 
-      y: 0, 
-      opacity: 1, 
-      scale: 1,
-      transition: { type: 'spring', stiffness: 100, damping: 15 } 
-    },
-  };
-
-  const handleNavigation = (route, event) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    navigate(route);
-  };
-
   const nameToShow = getMentorName(user, mentorDetails);
 
   return (
-    <div className="relative bg-gradient-to-br from-gray-800 via-black to-indigo-700 min-h-screen overflow-hidden">
-      
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 -left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-        <div className="absolute top-0 -right-1/4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
-      </div>
+    <>
+      {/* IMAGE SECTION */}
+      <div className="relative min-h-screen font-poppins overflow-hidden flex flex-col">
 
-      <div className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
-        <MentorNavbar onLogout={handleLogout} />
-      </div>
+        {/* Background */}
+        <img
+          src={bgImage}
+          alt="Background"
+          className="absolute top-0 z-[-2] h-full max-w-none object-cover"
+          style={{ 
+            width: '130vw', // Forces the image to be wider than the screen
+            left: '-15vw' // Adjust this to shift! (-30vw pushes image left, 0 pushes image right)
+          }}
+        />
 
-      <div className="relative z-10 p-6 md:p-10 lg:p-12">
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="mb-12 max-w-7xl mx-auto"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
-            Welcome back,{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 animate-gradient">
-              {nameToShow}
+        <div className="absolute inset-0 z-[-1] bg-black/20" />
+
+        {/* Header */}
+        <header className="flex justify-between items-center p-6 md:px-10">
+          <div className="flex items-center gap-4">
+            <img
+              src={mintLogo}
+              alt="Mint Logo"
+              className="w-14 h-14 object-contain"
+            />
+            <span className="text-2xl font-bold text-white tracking-wide">
+              MINT
             </span>
-          </h1>
-          <p className="text-gray-300 text-lg md:text-xl font-light">
-            Manage your mentees and track their progress seamlessly
-          </p>
-        </motion.div>
+          </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto"
-        >
-          {dashboardItems.map((item) => (
-            <motion.div
-              key={item.id}
-              variants={itemVariants}
-              whileHover={{ scale: 1.03, y: -8 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={(e) => handleNavigation(item.route, e)}
-              className={`
-                group relative cursor-pointer rounded-2xl overflow-hidden
-                transform transition-all duration-300
-                ${item.size === 'large' ? 'md:col-span-2 md:row-span-2' : ''}
-                ${item.size === 'medium' ? 'md:col-span-1 md:row-span-2' : ''}
-                ${item.size === 'small' ? 'md:col-span-1 md:row-span-1' : ''}
-              `}
-              style={{
-                minHeight:
-                  item.size === 'large' ? '420px' :
-                  item.size === 'medium' ? '420px' : '200px',
-              }}
+          <div className="flex items-center gap-6">
+            <div
+              onClick={() => navigate('/mentor/profile')}
+              className="w-10 h-10 rounded-full bg-gray-400 border-2 border-white/50 overflow-hidden flex items-center justify-center text-white font-bold cursor-pointer hover:opacity-80 transition hover:ring-2 hover:ring-white/50"
+              title="Profile"
             >
-              {/* Glass morphism background */}
-              <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-30 transition-all duration-700 ease-out`}
-                />
-                <div
-                  className="absolute -inset-2 opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-700 ease-out"
-                  style={{ background: item.glowColor }}
-                />
-              </div>
+              {user?.profilePhotoUrl ? (
+                <img src={user.profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                nameToShow.charAt(0).toUpperCase()
+              )}
+            </div>
 
-              {/* Content */}
-              <div className="relative h-full p-6 md:p-8 flex flex-col justify-between z-10">
-                <div className="flex-1">
-                  <div
-                    className={`
-                      w-16 h-16 mb-6 text-white/80 group-hover:text-white
-                      transition-all duration-500 group-hover:scale-125 group-hover:rotate-6
-                      ${item.size === 'large' ? 'md:w-20 md:h-20' : ''}
-                    `}
-                  >
-                    {item.icon}
-                  </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-400 rounded-lg hover:bg-red-500/10 hover:text-red-300 transition-colors"
+            >
+              <FiLogOut />
+              Logout
+            </button>
+          </div>
+        </header>
 
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:translate-x-1 transition-all duration-300">
-                    {item.title}
-                  </h3>
+        {/* Main */}
+        <main className="flex-grow flex flex-col items-center justify-center p-6 w-full max-w-7xl mx-auto space-y-12">
 
-                  <p className="text-gray-300 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors duration-300">
-                    {item.description}
-                  </p>
+          {/* Welcome */}
+          <div className="flex flex-col items-center justify-center text-center w-full">
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-2 text-white drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)]">
+              Welcome back,
+            </h1>
+
+            <h2 className="text-3xl md:text-5xl font-bold text-white/80 drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)]">
+              {nameToShow}
+            </h2>
+          </div>
+
+          {/* Content */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10 -translate-y-2 items-center">
+
+            <div className="hidden md:block"></div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 p-8 bg-black/20 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] rounded-[2.5rem]">
+
+              {/* Left Column */}
+              <div className="flex flex-col items-center justify-center gap-4">
+
+                <div className="flex justify-center w-full">
+                  <GlowingButton
+                    text="Mail Mentees"
+                    icon={<FiMail />}
+                    onClick={() => navigate('/mentor/send-email')}
+                    className="w-44"
+                  />
                 </div>
 
-                {/* Arrow button */}
-                <div className="flex items-center justify-end mt-6">
-                  <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110 group-hover:translate-x-2 border border-white/20">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
+                <div className="flex justify-center gap-4 w-full">
+                  <GlowingButton
+                    text="Leaves"
+                    icon={<FiCalendar />}
+                    onClick={() => navigate('/mentor/leave-applications')}
+                    className="w-40"
+                  />
+
+                  <GlowingButton
+                    text="Chats"
+                    icon={<FiMessageSquare />}
+                    onClick={() => navigate('/mentor/chat')}
+                    className="w-44"
+                  />
                 </div>
+
+                <div className="flex justify-center w-full">
+                  <GlowingButton
+                    text="Attendance Check"
+                    icon={<FiClock />}
+                    onClick={() => navigate('/mentor/attendance')}
+                    className="w-40"
+                  />
+                </div>
+
               </div>
 
-              {/* Decorative blobs */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/10 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
-              
-              {/* Shine effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000" />
+              {/* Divider */}
+              <div className="hidden sm:block w-[1.5px] h-48 bg-white/30 rounded-full mx-2"></div>
+              <div className="block sm:hidden h-[1.5px] w-48 bg-white/30 rounded-full my-2"></div>
+
+              {/* Right Column */}
+              <div className="flex flex-col items-start justify-center gap-4">
+
+                <GlowingButton
+                  text="Grievances"
+                  icon={<FiAlertTriangle />}
+                  onClick={() => navigate('/mentor/grievances')}
+                  className="w-44"
+                />
+
+                <GlowingButton
+                  text="Location"
+                  icon={<FiMapPin />}
+                  onClick={() => navigate('/mentor/student-location')}
+                  className="w-44"
+                />
+
               </div>
-            </motion.div>
-          ))}
-        </motion.div>
+            </div>
+          </div>
+        </main>
       </div>
 
-      <style jsx>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          background-size: 200% auto;
-          animation: gradient 3s ease infinite;
-        }
-      `}</style>
+      {/* FOOTER BELOW IMAGE */}
+      <footer className="w-full bg-black py-4 px-6 md:px-10 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+        <span>
+          Made with <FiHeart className="inline text-red-500 mx-1" />
+          by Asmit and Omm
+        </span>
 
-      <footer className="w-full bg-black text-gray-500 text-center py-6 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm">Made with ❤️ by Asmit And Omm</p>
-          <nav className="flex gap-4 sm:gap-6">
-            <button
-              onClick={() => scrollTo('welcome')}
-              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
-            >
-              Welcome
-            </button>
-            <button
-              onClick={() => scrollTo('actions')}
-              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
-            >
-              Actions
-            </button>
-            <button
-              onClick={() => scrollTo('chatbots')}
-              className="text-sm text-gray-400 hover:text-indigo-400 transition-colors"
-            >
-              Chatbots
-            </button>
-          </nav>
-        </div>
+        <span className="mt-2 md:mt-0">
+          © Mint 2026 All Rights Reserved
+        </span>
       </footer>
-    </div>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        theme="dark"
+        transition={Bounce}
+      />
+    </>
   );
 };
 

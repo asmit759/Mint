@@ -14,7 +14,6 @@ import {
 } from 'react-icons/bi';
 import { FaPaperPlane, FaSpinner } from 'react-icons/fa';
 import { HiExclamationCircle } from 'react-icons/hi';
-import MentorNavbar from './MentorNavbar';
 import { mentorLogout, logout } from '../../store/authSlice';
 import axiosClient from '../../utils/AxiosCli';
 
@@ -196,9 +195,7 @@ const StudentGrievances = () => {
   return (
     <>
       <ToastContainer />
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950">
-        <MentorNavbar onLogout={handleLogout} />
-
+      <div className="min-h-screen bg-background transition-colors duration-300">
         {/* Main Content */}
         <div className="px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-7xl mx-auto">
@@ -214,7 +211,7 @@ const StudentGrievances = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <BiSolidMessageSquareDetail className="text-2xl sm:text-3xl text-white" />
+                        <BiSolidMessageSquareDetail className="text-2xl sm:text-3xl text-text-primary" />
                       </div>
                       <div>
                         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent">
@@ -230,11 +227,11 @@ const StudentGrievances = () => {
                     <div className="flex gap-3 sm:gap-4">
                       <div className="bg-indigo-500/20 backdrop-blur-sm border border-indigo-500/30 rounded-lg px-3 sm:px-4 py-2">
                         <p className="text-xs text-indigo-300 uppercase tracking-wide">Total</p>
-                        <p className="text-xl sm:text-2xl font-bold text-white">{grievances.length}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-text-primary">{grievances.length}</p>
                       </div>
                       <div className="bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 rounded-lg px-3 sm:px-4 py-2">
                         <p className="text-xs text-amber-300 uppercase tracking-wide">Pending</p>
-                        <p className="text-xl sm:text-2xl font-bold text-white">
+                        <p className="text-xl sm:text-2xl font-bold text-text-primary">
                           {grievances.filter(g => !g.resolved).length}
                         </p>
                       </div>
@@ -257,8 +254,8 @@ const StudentGrievances = () => {
                   onClick={() => setFilter(f)}
                   className={`px-4 sm:px-6 py-2 rounded-lg font-semibold text-xs sm:text-sm uppercase tracking-wide transition-all duration-200 whitespace-nowrap ${
                     filter === f
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                      : 'text-indigo-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-text-primary shadow-lg'
+                      : 'text-indigo-300 hover:text-text-primary hover:bg-white/5'
                   }`}
                 >
                   {f}
@@ -320,10 +317,10 @@ const StudentGrievances = () => {
                       {/* Student Info */}
                       <div className="flex items-start gap-3 sm:gap-4 mb-4">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                          <BiUser className="text-xl sm:text-2xl text-white" />
+                          <BiUser className="text-xl sm:text-2xl text-text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-base sm:text-lg font-bold text-white mb-1 truncate">
+                          <h3 className="text-base sm:text-lg font-bold text-text-primary mb-1 truncate">
                             {grievance.student?.name || 'Unknown Student'}
                           </h3>
                           <p className="text-xs sm:text-sm text-indigo-300 truncate">
@@ -364,7 +361,7 @@ const StudentGrievances = () => {
                         {!grievance.resolved && (
                           <button
                             onClick={() => setSelectedGrievance(grievance)}
-                            className="px-3 sm:px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
+                            className="px-3 sm:px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-text-primary text-xs sm:text-sm font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
                           >
                             Resolve
                           </button>
@@ -396,9 +393,9 @@ const StudentGrievances = () => {
                 className="bg-gradient-to-br from-gray-900 to-black border border-indigo-500/30 rounded-2xl p-4 sm:p-6 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
-                  <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-text-primary flex items-center gap-2 sm:gap-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <FaPaperPlane className="text-white text-sm sm:text-base" />
+                      <FaPaperPlane className="text-text-primary text-sm sm:text-base" />
                     </div>
                     Resolve Grievance
                   </h2>
@@ -414,10 +411,10 @@ const StudentGrievances = () => {
                 <div className="bg-indigo-900/20 border border-indigo-500/20 rounded-xl p-3 sm:p-4 mb-4">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
-                      <BiUser className="text-white text-sm sm:text-base" />
+                      <BiUser className="text-text-primary text-sm sm:text-base" />
                     </div>
                     <div>
-                      <p className="text-white font-semibold text-sm sm:text-base">{selectedGrievance.student?.name || 'Unknown'}</p>
+                      <p className="text-text-primary font-semibold text-sm sm:text-base">{selectedGrievance.student?.name || 'Unknown'}</p>
                       <p className="text-xs text-indigo-400">{selectedGrievance.student?.email_id || 'N/A'}</p>
                     </div>
                   </div>
@@ -434,7 +431,7 @@ const StudentGrievances = () => {
                     onChange={(e) => setResponse(e.target.value)}
                     placeholder="Enter your response to resolve this grievance..."
                     rows={5}
-                    className="w-full bg-gray-900/50 border border-indigo-500/30 text-white text-sm sm:text-base rounded-xl px-3 sm:px-4 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                    className="w-full bg-surface/50 border border-indigo-500/30 text-text-primary text-sm sm:text-base rounded-xl px-3 sm:px-4 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                   />
                 </div>
 
@@ -442,14 +439,14 @@ const StudentGrievances = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => setSelectedGrievance(null)}
-                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gray-700 hover:bg-gray-600 text-white text-sm sm:text-base font-semibold rounded-xl transition-colors"
+                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gray-700 hover:bg-gray-600 text-text-primary text-sm sm:text-base font-semibold rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleResolve}
                     disabled={!response.trim() || resolving}
-                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm sm:text-base font-semibold rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-text-primary text-sm sm:text-base font-semibold rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     {resolving ? (
                       <>

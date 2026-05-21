@@ -11,7 +11,7 @@ const getStud = async(req,res)=>{
 
         const student = await Student.findById(id);
         
-        res.status(400).json({
+        res.status(200).json({
             message:"Student Fetched Successully",
             student:student
         }) 
@@ -79,23 +79,29 @@ const getParent = async (req, res) => {
 };
 
 
-// const studUpdate = async (req, res) => {
-//     try {
-//         const id = req.result.id;
-//         const updated = await Student.findByIdAndUpdate(id, req.body, { new: true });
+const studUpdate = async (req, res) => {
+    try {
+        const id = req.result.id;
+        const { profilePhotoUrl } = req.body;
+        
+        if (!profilePhotoUrl) {
+            return res.status(400).json({ message: "Only profile photo can be updated." });
+        }
 
-//         if (!updated) {
-//             return res.status(404).json({ message: "Student not found" });
-//         }
+        const updated = await Student.findByIdAndUpdate(id, { profilePhotoUrl }, { new: true });
 
-//         res.status(200).json({
-//             message: "Student updated successfully",
-//             student: updated
-//         });
-//     } catch (err) {
-//         res.status(500).send("Error updating Student: " + err.message);
-//     }
-// };
+        if (!updated) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        res.status(200).json({
+            message: "Profile photo updated successfully",
+            student: updated
+        });
+    } catch (err) {
+        res.status(500).send("Error updating Student: " + err.message);
+    }
+};
 
 // Hostel Details
 
@@ -115,7 +121,7 @@ const hostelDetails = async(req,res)=>{
         }
 
         const hostel = await Hostel.findById(hostelId);
-        res.status(400).json({
+        res.status(200).json({
             message:"Student hostel Fetched Successully",
             hostel:hostel
         })
@@ -126,4 +132,4 @@ const hostelDetails = async(req,res)=>{
 }
 
 
-module.exports = {getStud,getMentor,getParent,hostelDetails};
+module.exports = {getStud,getMentor,getParent,hostelDetails,studUpdate};

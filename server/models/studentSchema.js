@@ -14,6 +14,10 @@ const studentSchema = new Schema({
         minLength: 5,
         maxLength: 20
     },
+    avatarSeed: {
+        type: String,
+        default: ""
+    },
     email_id: {
         type: String,
         required: true,
@@ -42,8 +46,8 @@ const studentSchema = new Schema({
     },
     address: [
         {
-            street: { type: String, minLength: 5, maxLength: 40, default: "" },
-            city: { type: String, minLength: 5, maxLength: 10, default: "" },
+            street: { type: String, minLength: 5, maxLength: 200, default: "" },
+            city: { type: String, minLength: 5, maxLength: 30, default: "" },
             pincode: { type: Number, min: 100000, max: 999999, default: null },
             state: { type: String, minLength: 3, maxLength: 20, default: "" },
             country: { type: String, minLength: 5, maxLength: 30, default: "" }
@@ -53,7 +57,7 @@ const studentSchema = new Schema({
     semester: { type: Number, enum: [1,2,3,4,5,6,7,8], default: 1 },
     branch: { type: String, enum: ['CSE','ME'], default: 'CSE' },
     hostel: { type: Schema.Types.ObjectId, ref: 'Hostel', default: null },
-    room_no: { type: String, minLength: 3, maxLength: 6, default: null },
+    room_no: { type: String, minLength: 3, maxLength: 6, default: "" },
     mentor: { type: Schema.Types.ObjectId, ref: "mentor" },
     fatherName: { type: String, minLength: 5, maxLength: 20 },
     fatherContact: { type: Number, min: 1000000000, max: 9999999999 },

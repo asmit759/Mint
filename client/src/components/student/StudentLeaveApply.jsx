@@ -55,7 +55,7 @@ export default function StudentLeaveApply() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-950 text-white">
+    <div className="min-h-screen bg-background transition-colors duration-300 text-text-primary">
       <div className="max-w-3xl mx-auto px-6 py-10">
         <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           Apply for Leave
@@ -70,7 +70,7 @@ export default function StudentLeaveApply() {
               onChange={(e) => setReason(e.target.value)}
               rows={5}
               placeholder="Describe why you need leave..."
-              className="w-full px-4 py-3 bg-gray-900/60 border border-white/20 rounded-xl text-indigo-100 placeholder-indigo-300/40 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              className="w-full px-4 py-3 bg-surface/60 border border-white/20 rounded-xl text-indigo-100 placeholder-indigo-300/40 focus:outline-none focus:ring-2 focus:ring-indigo-600"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function StudentLeaveApply() {
                 value={fromDate}
                 min={minDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900/60 border border-white/20 rounded-xl text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full px-4 py-3 bg-surface/60 border border-white/20 rounded-xl text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-600"
               />
             </div>
             <div>
@@ -92,7 +92,7 @@ export default function StudentLeaveApply() {
                 value={toDate}
                 min={fromDate || minDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900/60 border border-white/20 rounded-xl text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full px-4 py-3 bg-surface/60 border border-white/20 rounded-xl text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-600"
               />
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function StudentLeaveApply() {
           <button
             type="submit"
             disabled={submitting || invalidRange || !reason.trim()}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-700/30 transition-colors"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-indigo-700 disabled:opacity-50 text-text-primary font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-700/30 transition-colors"
           >
             {submitting ? (
               <>
