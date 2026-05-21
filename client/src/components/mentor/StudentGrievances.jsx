@@ -14,7 +14,6 @@ import {
 } from 'react-icons/bi';
 import { FaPaperPlane, FaSpinner } from 'react-icons/fa';
 import { HiExclamationCircle } from 'react-icons/hi';
-import MentorNavbar from './MentorNavbar';
 import { mentorLogout, logout } from '../../store/authSlice';
 import axiosClient from '../../utils/AxiosCli';
 
@@ -197,8 +196,6 @@ const StudentGrievances = () => {
     <>
       <ToastContainer />
       <div className="min-h-screen bg-background transition-colors duration-300">
-        <MentorNavbar onLogout={handleLogout} />
-
         {/* Main Content */}
         <div className="px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-7xl mx-auto">

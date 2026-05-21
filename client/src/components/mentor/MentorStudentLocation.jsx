@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaUser, FaExternalLinkAlt, FaSpinner } from 'react-icons/fa';
 import { HiLocationMarker } from 'react-icons/hi';
 import { BiCurrentLocation } from 'react-icons/bi';
-import MentorNavbar from './MentorNavbar';
 import { mentorLogout, logout } from '../../store/authSlice';
 
 const MentorStudentLocation = () => {
@@ -84,13 +83,8 @@ const MentorStudentLocation = () => {
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
-        <MentorNavbar onLogout={handleLogout} />
-      </div>
-
       {/* Main Content */}
-      <div className="pt-20 px-4 sm:px-6 lg:px-8 pb-12">
+      <div className="pt-8 px-4 sm:px-6 lg:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
