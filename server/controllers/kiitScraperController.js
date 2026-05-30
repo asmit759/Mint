@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-console.log("Executable path hi :", puppeteer.executablePath());
+const chromium = require('@sparticuz/chromium');
 
 // Helper to clean and format the raw array of arrays from SAP portal into a structured object
 function cleanScrapedData(rawData) {
@@ -244,9 +244,16 @@ const getAttendance = async (req, res) => {
     };
 
     try {
+      const isProduction = process.env.NODE_ENV === "production" || process.env.RENDER;
+      const executablePath = isProduction 
+          ? await chromium.executablePath() 
+          : puppeteer.executablePath();
+
       browser = await puppeteer.launch({ 
-         ...launchOptions,
-         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
+         args: isProduction ? [...chromium.args, ...launchOptions.args] : launchOptions.args,
+         defaultViewport: chromium.defaultViewport,
+         executablePath: executablePath,
+         headless: isProduction ? chromium.headless : true,
       });
     } catch (e) {
       console.log("Failed to launch browser:", e);
