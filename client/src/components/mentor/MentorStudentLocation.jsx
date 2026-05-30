@@ -1,6 +1,6 @@
 // src/components/mentor/StudentLocation.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosClient from '../../utils/AxiosCli';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -22,9 +22,7 @@ const MentorStudentLocation = () => {
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/mentorRoutes/getMentorDetails', {
-          withCredentials: true,
-        });
+        const res = await axiosClient.get('/mentorRoutes/getMentorDetails');
         setMentees(res.data.mentorDetails.mentees || []);
       } catch (err) {
         console.error('Error fetching mentor details:', err);
@@ -40,7 +38,7 @@ const MentorStudentLocation = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await axios.get('https://mint-backend-9mha.onrender.com/location/get-location', {
+      const res = await axiosClient.get('/location/get-location', {
         params: { studentEmail: selectedEmail },
       });
       

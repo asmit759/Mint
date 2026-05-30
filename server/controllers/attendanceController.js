@@ -1,6 +1,7 @@
 const Attendance = require("../models/attendance");
 const parseAttendanceExcel = require("../utils/attendanceParser");
 const Student = require("../models/studentSchema");
+const AttendanceShare = require("../models/attendanceShareSchema");
 
 exports.uploadAttendance = async (req, res) => {
   try {
@@ -90,3 +91,45 @@ exports.getAttendance = async (req,res) => {
   }
 
 }
+
+exports.getSharedAttendance = async (req, res) => {
+    try {
+        const mentorEmail = req.user.email || req.user.mentorMail;
+        if (!mentorEmail) {
+            return res.status(401).json({ success: false, message: "Mentor email not found in token" });
+        }
+
+        const mentorDoc = await require("../models/mentor").findOne({ email: mentorEmail });
+        if (!mentorDoc) {
+            return res.status(404).json({ success: false, message: "Mentor not found" });
+        }
+
+        const mentorId = mentorDoc._id;
+        const sharedRecords = await AttendanceShare.find({ mentorId });
+        
+        res.status(200).json({
+            success: true,
+            data: sharedRecords
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.deleteSharedAttendance = async (req, res) => {
+    try {
+        const recordId = req.params.id;
+        const deletedRecord = await AttendanceShare.findByIdAndDelete(recordId);
+        
+        if (!deletedRecord) {
+            return res.status(404).json({ success: false, message: "Record not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Shared attendance report deleted successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
