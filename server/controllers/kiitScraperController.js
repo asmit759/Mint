@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 
+
 // Helper to clean and format the raw array of arrays from SAP portal into a structured object
 function cleanScrapedData(rawData) {
   // 1. FLATTEN RAW DATA
