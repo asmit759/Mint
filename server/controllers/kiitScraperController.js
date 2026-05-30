@@ -246,7 +246,7 @@ const getAttendance = async (req, res) => {
     try {
       browser = await puppeteer.launch({ 
          ...launchOptions,
-         executablePath: puppeteer.executablePath()
+         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
       });
     } catch (e) {
       console.log("Failed to launch browser:", e);
