@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",
@@ -11,6 +13,7 @@
   "dependencies": {
     "@google/genai": "^1.19.0",
     "@google/generative-ai": "^0.24.1",
+    "@sparticuz/chromium": "^147.0.0",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -26,6 +29,7 @@
     "nodemon": "^3.1.10",
     "otp-generator": "^4.0.1",
     "puppeteer": "^24.40.0",
+    "puppeteer-core": "^25.1.0",
     "redis": "^5.8.2",
     "socket.io": "^4.8.3",
     "twilio": "^5.10.2",

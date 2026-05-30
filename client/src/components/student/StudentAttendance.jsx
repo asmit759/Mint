@@ -324,7 +324,8 @@ export default function StudentAttendance() {
       setFetched(true);
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch attendance. Check your credentials or server.");
+      const backendError = err.response?.data?.details || err.response?.data?.error;
+      setError(backendError || "Failed to fetch attendance. Check your credentials or server.");
       setAttendanceData([]);
       setStudentProfile(null);
     } finally {
