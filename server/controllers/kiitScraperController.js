@@ -460,7 +460,11 @@ const getAttendance = async (req, res) => {
   } catch (error) {
     if (browser) await browser.close();
     console.error("Puppeteer Scraper Error:", error);
-    return res.status(500).json({ error: "Failed to scrape attendance", details: error.message });
+    return res.status(500).json({ 
+        error: "Failed to scrape attendance", 
+        details: error.message || String(error),
+        stack: error.stack 
+    });
   }
 };
 
