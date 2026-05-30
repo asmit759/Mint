@@ -126,7 +126,7 @@ const Login = () => {
                 <input
                   type="email"
                   placeholder={userType === 'student' ? '1234567@kiit.ac.in' : 'name@example.com'}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition duration-200"
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-white/60 transition duration-200"
                   {...register('email', {
                     required: 'Email is required',
                     maxLength: { value: 30, message: 'Must be less than 30 characters' },
@@ -143,7 +143,7 @@ const Login = () => {
                 <input
                   type="password"
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200"
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-white/60 transition duration-200"
                   {...register('password', { required: 'Password is required' })}
                 />
                 {errors.password && (
@@ -154,14 +154,8 @@ const Login = () => {
           </AnimatePresence>
 
           {/* Submit Button */}
-          <div className="w-full mt-6 flex justify-center pointer-events-auto">
-             {loading ? (
-                <button disabled className="w-full bg-indigo-600/50 text-white font-medium py-3.5 rounded-xl cursor-not-allowed">
-                  Signing in...
-                </button>
-             ) : (
-                <GlowingButton text="Sign In" className="mt-4" />
-             )}
+          <div className={`w-full mt-6 flex justify-center ${loading ? 'opacity-70 pointer-events-none' : 'pointer-events-auto'}`}>
+             <GlowingButton text={loading ? 'Signing in...' : 'Sign In'} className="mt-4" />
           </div>
 
           {serverError && (

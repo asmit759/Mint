@@ -2,7 +2,7 @@ const express = require("express");
 const studRouter = express.Router();
 
 const {studMid} = require("../middleware/studentMiddleware")
-const {getStud,getMentor,getParent,studUpdate,hostelDetails} = require("../controllers/studentCont")
+const {getStud,getMentor,getParent,studUpdate,hostelDetails,shareAttendance} = require("../controllers/studentCont")
 const {getAllHostels} = require("../controllers/hostelControllers")
 const {grievances,createGeoGrievance} = require("../controllers/grievanceController")
 const {callSage,callKIITBandhu} = require("../controllers/studentChatbots");
@@ -31,6 +31,6 @@ studRouter.post("/studentHostelGrievance",studMid,createGeoGrievance);
 
 // Student Attendance Scraper
 studRouter.post("/attendance", getAttendance);
-
+studRouter.post("/shareAttendance", studMid, shareAttendance);
 
 module.exports = studRouter;

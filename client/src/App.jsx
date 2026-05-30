@@ -14,7 +14,7 @@ import StudentLanding from './components/student/Landing';
 import MentorLand from './components/mentor/MentorLand';
 import MentorMail from './components/mentor/MentorMail';
 import ProtectedRoute from './components/routing/ProtectedRoute';
-import AttendanceDashboard from './components/mentor/AttendanceDashboard';
+import StudentAttendanceReports from './components/mentor/StudentAttendanceReports';
 import MentorStudentLocation from './components/mentor/MentorStudentLocation';
 import StudentGrievances from './components/mentor/StudentGrievances';
 import MentorLeaveApproval from './components/mentor/MentorLeaveApproval';
@@ -27,6 +27,7 @@ import StudentLeaveApply from './components/student/StudentLeaveApply';
 import CampusGrievance from './components/student/CampusGrievance';
 import HostelGrievance from './components/student/HostelGrievance';
 import StudentProfile from './components/student/StudentProfile';
+import StudentAttendance from './components/student/StudentAttendance';
 
 // Auth checks
 import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
@@ -170,8 +171,8 @@ function App() {
         path="/student/attendance"
         element={
           <ProtectedRoute allow="student">
-            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
-              <h1 className="text-3xl font-bold">Attendance - Coming Soon</h1>
+            <div className="min-h-screen">
+              <StudentAttendance />
             </div>
           </ProtectedRoute>
         }
@@ -209,7 +210,7 @@ function App() {
         element={
           <ProtectedRoute allow="mentor">
             <div className="min-h-screen">
-              <AttendanceDashboard />
+              <StudentAttendanceReports />
             </div>
           </ProtectedRoute>
         }

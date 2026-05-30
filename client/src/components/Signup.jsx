@@ -209,14 +209,8 @@ const Signup = () => {
           </AnimatePresence>
 
           {/* Submit Button */}
-          <div className="w-full mt-4 flex justify-center pointer-events-auto">
-             {loading ? (
-                <button disabled className="w-full bg-indigo-600/50 text-white font-medium py-3.5 rounded-xl cursor-not-allowed">
-                  Creating account...
-                </button>
-             ) : (
-                <GlowingButton text="Create Account" className="mt-2" />
-             )}
+          <div className={`w-full mt-4 flex justify-center ${loading ? 'opacity-70 pointer-events-none' : 'pointer-events-auto'}`}>
+             <GlowingButton text={loading ? 'Creating account...' : 'Create Account'} className="mt-2" />
           </div>
 
           {serverError && (
