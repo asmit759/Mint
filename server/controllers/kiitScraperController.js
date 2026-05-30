@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+console.log("Executable path hi :", puppeteer.executablePath());
 
 // Helper to clean and format the raw array of arrays from SAP portal into a structured object
 function cleanScrapedData(rawData) {
@@ -245,7 +246,7 @@ const getAttendance = async (req, res) => {
     try {
       browser = await puppeteer.launch({ 
          ...launchOptions,
-         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
+         executablePath: puppeteer.executablePath()
       });
     } catch (e) {
       console.log("Failed to launch browser:", e);
