@@ -5,12 +5,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import Login from './components/Login';
-import StudentSignup from './components/StudentSignup';
+import Signup from './components/Signup';
 
 // IMPORTANT: ensure this import points to the real file
 import StudentLanding from './components/student/Landing';
 
-import MentorSignup from './components/MentorSignup';
+
 import MentorLand from './components/mentor/MentorLand';
 import MentorMail from './components/mentor/MentorMail';
 import ProtectedRoute from './components/routing/ProtectedRoute';
@@ -91,8 +91,7 @@ function App() {
 
       {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
-      <Route path="/student/signup" element={<StudentSignup />} />
-      <Route path="/mentor/signup" element={<MentorSignup />} />
+      <Route path="/signup" element={<Signup />} />
 
       {/* Protected Student Routes */}
       <Route

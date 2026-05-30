@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../assets/mintLogo.png';
+import BgImage from '../assets/loginpage_bg.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import { studLogin, mentorLogin } from '../store/authSlice';
+import GlowingButton from './smallComp/GlowingButton';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -34,14 +36,15 @@ const Login = () => {
           ? { email_id: data.email, password: data.password }
           : { email: data.email, password: data.password };
 
-      const action =
-        userType === 'student'
-          ? await dispatch(studLogin(credentials)).unwrap()
-          : await dispatch(mentorLogin(credentials)).unwrap();
+      if (userType === 'student') {
+        await dispatch(studLogin(credentials)).unwrap();
+      } else {
+        await dispatch(mentorLogin(credentials)).unwrap();
+      }
 
       toast.success(`${userType === 'student' ? 'Student' : 'Mentor'} Login Successful!`, {
         position: 'top-center',
-        autoClose: 2000,
+        autoClose: 1500,
         theme: 'dark',
         transition: Bounce,
       });
@@ -56,202 +59,129 @@ const Login = () => {
     }
   };
 
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.1 } },
-  };
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-  };
-  const logoVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
-    visible: { scale: 1, opacity: 1, transition: { duration: 0.8, ease: 'easeOut' } },
-    float: {
-      y: [-10, 10, -10],
-      transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
-    },
-  };
-  const lineVariants = {
-    hidden: { scaleX: 0 },
-    visible: (i) => ({
-      scaleX: 1,
-      transition: { delay: i * 0.1 + 0.5, duration: 0.5, ease: 'easeOut' },
-    }),
-  };
-
   return (
-    <div className="min-h-screen bg-background text-text-primary transition-colors duration-300 flex items-center justify-center px-4 lg:px-8">
-      <div className="flex w-full max-w-6xl gap-8 items-center">
-        {/* LEFT PANEL */}
-        <motion.div
-          className="hidden lg:flex flex-col items-center justify-center flex-1 space-y-6 p-12"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div className="relative" variants={logoVariants} animate="float">
-            <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full"></div>
-            <motion.img
-              src={Logo}
-              alt="MINT Logo"
-              className="w-48 h-48 relative z-10 drop-shadow-2xl"
-            />
-          </motion.div>
+    <div 
+      className="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-indigo-600 selection:text-white transition-colors duration-300 relative"
+      style={{ backgroundImage: `url(${BgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
+      {/* Overlay to ensure readability if the gif is bright/busy */}
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
 
-          <motion.h1
-            className="text-6xl font-bold text-primary font-poppins tracking-tight"
-            variants={itemVariants}
-          >
-            MINT
-          </motion.h1>
-          <motion.p
-            className="text-xl text-text-secondary text-center max-w-md font-light leading-relaxed"
-            variants={itemVariants}
-          >
-            Because every great journey needs a guide.
-          </motion.p>
+      {/* Container */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-md bg-background/95 backdrop-blur-lg rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-border p-8 sm:p-10 relative z-10"
+      >
+        
+        {/* Header */}
+        <div className="flex flex-col items-center mb-8">
+          <img src={Logo} alt="MINT Logo" className="w-24 h-24 mb-3 drop-shadow-md" />
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight font-poppins mb-1">MINT</h1>
+          <h2 className="text-xl font-semibold text-text-primary tracking-tight mt-2">Welcome back</h2>
+          <p className="text-sm text-text-secondary mt-1">Sign in to your account</p>
+        </div>
 
-          <motion.div className="flex gap-4 mt-8" variants={itemVariants}>
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                variants={lineVariants}
-                className={`${
-                  i === 0 ? 'w-16' : i === 1 ? 'w-8' : 'w-4'
-                } h-1 bg-gradient-to-r ${
-                  i === 0
-                    ? 'from-indigo-500 to-purple-500'
-                    : i === 1
-                    ? 'from-purple-500 to-pink-500'
-                    : 'from-pink-500 to-indigo-500'
-                } rounded-full`}
-                style={{ originX: 0 }}
-              />
-            ))}
-          </motion.div>
-
-          <motion.div className="mt-8 text-center space-y-2" variants={itemVariants}>
-            <p className="text-text-secondary text-sm">Connecting students with mentors</p>
-            <p className="text-text-secondary text-xs">@MINT all rights reserved 2025</p>
-          </motion.div>
-        </motion.div>
-
-        {/* RIGHT PANEL */}
-        <motion.div
-          className="bg-surface rounded-2xl shadow-xl p-8 w-full max-w-md border border-border"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-        >
-          <h2 className="text-3xl font-bold text-primary text-center mb-8 font-poppins">
-            Login
-          </h2>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => setUserType('student')}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition duration-200 ${
-                  userType === 'student'
-                    ? 'bg-primary text-text-primary shadow-md'
-                    : 'bg-background text-text-secondary hover:bg-border border border-border'
-                }`}
-              >
-                Student
-              </button>
-              <button
-                type="button"
-                onClick={() => setUserType('mentor')}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition duration-200 ${
-                  userType === 'mentor'
-                    ? 'bg-primary text-text-primary shadow-md'
-                    : 'bg-background text-text-secondary hover:bg-border border border-border'
-                }`}
-              >
-                Mentor
-              </button>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary transition duration-200"
-                {...register('email', {
-                  required: 'Email is required',
-                  maxLength: { value: 30, message: 'Email must be less than 30 characters' },
-                })}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary transition duration-200"
-                {...register('password', { required: 'Password is required' })}
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-              )}
-            </div>
-
+        {/* Role Selector */}
+        <div className="flex p-1 bg-surface border border-border rounded-xl mb-8 relative">
+          {['student', 'mentor'].map((tab) => (
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary hover:opacity-90 text-text-primary font-semibold py-3 rounded-lg transition duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              key={tab}
+              type="button"
+              onClick={() => setUserType(tab)}
+              className="flex-1 relative py-2.5 text-sm font-medium z-10 outline-none"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {userType === tab && (
+                <motion.div 
+                  layoutId="activeTabLogin" 
+                  className="absolute inset-0 bg-background rounded-lg shadow-sm border border-border" 
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                />
+              )}
+              <span className={`relative z-20 transition-colors duration-200 ${userType === tab ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </span>
             </button>
+          ))}
+        </div>
 
-            {serverError && (
-              <p className="text-red-500 text-sm text-center mt-3">{serverError}</p>
-            )}
-          </form>
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={userType}
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 5 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">
+                  {userType === 'student' ? 'KIIT Email' : 'Email Address'}
+                </label>
+                <input
+                  type="email"
+                  placeholder={userType === 'student' ? '1234567@kiit.ac.in' : 'name@example.com'}
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition duration-200"
+                  {...register('email', {
+                    required: 'Email is required',
+                    maxLength: { value: 30, message: 'Must be less than 30 characters' },
+                  })}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.email.message}</p>
+                )}
+              </div>
 
-          <div className="mt-6 text-center flex flex-col gap-2">
-            <p className="text-text-secondary text-sm">Don't have an account?</p>
-            <div className="flex justify-center gap-3">
-              <Link
-                to="/student/signup"
-                className="text-primary hover:opacity-80 text-sm font-medium transition duration-200"
-              >
-                Student Sign Up
-              </Link>
-              <span className="text-border">|</span>
-              <Link
-                to="/mentor/signup"
-                className="text-primary hover:opacity-80 text-sm font-medium transition duration-200"
-              >
-                Mentor Sign Up
-              </Link>
-            </div>
+              {/* Password */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200"
+                  {...register('password', { required: 'Password is required' })}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.password.message}</p>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Submit Button */}
+          <div className="w-full mt-6 flex justify-center pointer-events-auto">
+             {loading ? (
+                <button disabled className="w-full bg-indigo-600/50 text-white font-medium py-3.5 rounded-xl cursor-not-allowed">
+                  Signing in...
+                </button>
+             ) : (
+                <GlowingButton text="Sign In" className="mt-4" />
+             )}
           </div>
-        </motion.div>
-      </div>
 
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick={false}
-        pauseOnHover
-        theme="dark"
-        transition={Bounce}
-      />
+          {serverError && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-sm text-center mt-3 font-medium">
+              {serverError}
+            </motion.p>
+          )}
+        </form>
+
+        <div className="mt-8 text-center">
+          <p className="text-text-secondary text-sm">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-indigo-600 font-medium hover:underline underline-offset-4">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </motion.div>
+
+      <ToastContainer position="top-center" autoClose={3000} theme="dark" transition={Bounce} />
     </div>
   );
 };
