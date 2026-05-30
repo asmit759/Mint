@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { mentorLogout, logout } from '../../store/authSlice';
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import axiosClient from '../../utils/AxiosCli';
 
 import mintLogo from '../../assets/mintLogo.png';
 import bgImage from '../../assets/mentor_bg.png';
@@ -35,9 +35,8 @@ const MentorDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const { data } = await axios.get(
-          'http://localhost:4000/mentorRoutes/getMentorDetails',
-          { withCredentials: true }
+        const { data } = await axiosClient.get(
+          '/mentorRoutes/getMentorDetails'
         );
         if (data?.success) setMentorDetails(data.mentorDetails);
       } catch { }
@@ -162,7 +161,7 @@ const MentorDashboard = () => {
 
                 <div className="flex justify-center w-full">
                   <GlowingButton
-                    text="Attendance Check"
+                    text="Student Attendance Reports"
                     icon={<FiClock />}
                     onClick={() => navigate('/mentor/attendance')}
                     className="w-40"

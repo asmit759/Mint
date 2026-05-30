@@ -1,7 +1,8 @@
 
 const Student = require("../models/studentSchema");
 const mentor = require("../models/mentor");
-const Hostel = require("../models/hostelSchema")
+const Hostel = require("../models/hostelSchema");
+const AttendanceShare = require("../models/attendanceShareSchema");
 
 const getStud = async(req,res)=>{
 
@@ -131,5 +132,44 @@ const hostelDetails = async(req,res)=>{
     }
 }
 
+const shareAttendance = async (req, res) => {
+    try {
+        const id = req.result.id;
+        const { overallAttendance, attendanceDetails } = req.body;
 
-module.exports = {getStud,getMentor,getParent,hostelDetails,studUpdate};
+        const student = await Student.findById(id);
+        if (!student) return res.status(404).json({ success: false, message: "Student not found" });
+        if (!student.mentor) return res.status(404).json({ success: false, message: "Mentor not assigned" });
+
+        const mentorId = student.mentor;
+        const studentName = student.name;
+        const rollNumber = student.roll_no;
+        
+        const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours from now
+
+        let record = await AttendanceShare.findOne({ studentId: id });
+        if (record) {
+            record.overallAttendance = overallAttendance;
+            record.attendanceDetails = attendanceDetails;
+            record.sharedAt = Date.now();
+            record.expiresAt = expiresAt;
+            await record.save();
+        } else {
+            record = await AttendanceShare.create({
+                studentId: id,
+                mentorId,
+                studentName,
+                rollNumber,
+                overallAttendance,
+                attendanceDetails,
+                expiresAt
+            });
+        }
+
+        res.status(200).json({ success: true, message: "Attendance shared successfully", data: record });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Error sharing attendance: " + err.message });
+    }
+};
+
+module.exports = {getStud,getMentor,getParent,hostelDetails,studUpdate,shareAttendance};

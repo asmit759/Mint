@@ -5,16 +5,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import Login from './components/Login';
-import StudentSignup from './components/StudentSignup';
+import Signup from './components/Signup';
 
 // IMPORTANT: ensure this import points to the real file
 import StudentLanding from './components/student/Landing';
 
-import MentorSignup from './components/MentorSignup';
+
 import MentorLand from './components/mentor/MentorLand';
 import MentorMail from './components/mentor/MentorMail';
 import ProtectedRoute from './components/routing/ProtectedRoute';
-import AttendanceDashboard from './components/mentor/AttendanceDashboard';
+import StudentAttendanceReports from './components/mentor/StudentAttendanceReports';
 import MentorStudentLocation from './components/mentor/MentorStudentLocation';
 import StudentGrievances from './components/mentor/StudentGrievances';
 import MentorLeaveApproval from './components/mentor/MentorLeaveApproval';
@@ -27,6 +27,7 @@ import StudentLeaveApply from './components/student/StudentLeaveApply';
 import CampusGrievance from './components/student/CampusGrievance';
 import HostelGrievance from './components/student/HostelGrievance';
 import StudentProfile from './components/student/StudentProfile';
+import StudentAttendance from './components/student/StudentAttendance';
 
 // Auth checks
 import { studCheckAuth, mentorCheckAuth } from './store/authSlice';
@@ -91,8 +92,7 @@ function App() {
 
       {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
-      <Route path="/student/signup" element={<StudentSignup />} />
-      <Route path="/mentor/signup" element={<MentorSignup />} />
+      <Route path="/signup" element={<Signup />} />
 
       {/* Protected Student Routes */}
       <Route
@@ -171,8 +171,8 @@ function App() {
         path="/student/attendance"
         element={
           <ProtectedRoute allow="student">
-            <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
-              <h1 className="text-3xl font-bold">Attendance - Coming Soon</h1>
+            <div className="min-h-screen">
+              <StudentAttendance />
             </div>
           </ProtectedRoute>
         }
@@ -210,7 +210,7 @@ function App() {
         element={
           <ProtectedRoute allow="mentor">
             <div className="min-h-screen">
-              <AttendanceDashboard />
+              <StudentAttendanceReports />
             </div>
           </ProtectedRoute>
         }

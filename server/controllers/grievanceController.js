@@ -70,6 +70,17 @@ const resolveGrievance= async(req,res)=>{
     }
 }
 
+const deleteGrievance = async (req, res) => {
+    try {
+        const { grievanceId } = req.params;
+        const grievance = await Grievance.findByIdAndDelete(grievanceId);
+        if (!grievance) return res.status(404).json({ error: "Grievance not found." });
+        res.json({ message: "Grievance deleted successfully.", grievance });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to delete grievance." });
+    }
+};
+
 // Haversine formula
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -135,4 +146,4 @@ const createGeoGrievance = async (req, res) => {
 
 
 
-module.exports = {grievances,getMenteeGrievances,resolveGrievance,createGeoGrievance};
+module.exports = {grievances,getMenteeGrievances,resolveGrievance,createGeoGrievance,deleteGrievance};

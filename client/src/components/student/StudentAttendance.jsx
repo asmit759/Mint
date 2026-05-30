@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
-import axios from "axios";
+import axiosClient from "../../utils/AxiosCli";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import GlowingButton from '../smallComp/GlowingButton';
 // Helper for initials
 const getInitials = (name) => {
   if (!name || name === "Unknown") return "?";
@@ -279,7 +281,7 @@ function LoadingGame() {
   );
 }
 
-export default function AttendanceDashboard() {
+export default function StudentAttendance() {
   const [formData, setFormData] = useState({
     userId: "",
     password: "",
@@ -291,6 +293,7 @@ export default function AttendanceDashboard() {
   const [studentProfile, setStudentProfile] = useState(null);
   
   const [loading, setLoading] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [error, setError] = useState("");
   const [fetched, setFetched] = useState(false);
 
@@ -310,7 +313,7 @@ export default function AttendanceDashboard() {
     setLoading(true);
     setFetched(false);
     try {
-      const res = await axios.post("http://localhost:4000/studentFacility/attendance", formData);
+      const res = await axiosClient.post("/studentFacility/attendance", formData);
       if (res.data && res.data.data) {
          setStudentProfile(res.data.data.student);
          setAttendanceData(res.data.data.attendance || []);
@@ -326,6 +329,22 @@ export default function AttendanceDashboard() {
       setStudentProfile(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      setSharing(true);
+      const avg = overallAvg(attendanceData);
+      await axiosClient.post("/studentFacility/shareAttendance", {
+        overallAttendance: avg + "%",
+        attendanceDetails: attendanceData
+      }, { withCredentials: true });
+      toast.success("Attendance shared with mentor!");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to share attendance");
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -380,19 +399,11 @@ export default function AttendanceDashboard() {
             <SelectField label="Session" value={formData.session} onChange={set("session")} options={["Spring", "Autumn"]} />
           </div>
 
-          <button
-            onClick={handleFetch}
-            disabled={loading}
-            className="w-full bg-white hover:bg-neutral-200 text-black font-medium text-sm py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <div className="flex gap-1.5 items-center h-5">
-                <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce"></div>
-              </div>
-            ) : "Sync Attendance"}
-          </button>
+          <div className="w-full mt-2 flex justify-center pointer-events-auto">
+             <div className={`w-full flex justify-center ${loading ? 'opacity-70 pointer-events-none' : ''}`}>
+               <GlowingButton onClick={handleFetch} text={loading ? 'Syncing...' : 'Sync Attendance'} />
+             </div>
+          </div>
 
           {error && (
              <motion.div initial={{opacity:0}} animate={{opacity:1}} className="mt-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-xs rounded-lg text-center">
@@ -414,7 +425,20 @@ export default function AttendanceDashboard() {
               transition={{ duration: 0.3 }}
             >
               
-              {studentProfile && <StudentProfile student={studentProfile} />}
+              {studentProfile && (
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
+                  <div className="flex-1">
+                    <StudentProfile student={studentProfile} />
+                  </div>
+                  {attendanceData.length > 0 && (
+                    <div className="shrink-0 w-full sm:w-auto self-start">
+                      <div className={`w-full sm:w-56 ${sharing ? 'opacity-70 pointer-events-none' : ''}`}>
+                        <GlowingButton onClick={handleShare} text={sharing ? 'Sharing...' : 'Share with Mentor'} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <SummaryStrip data={attendanceData} />
 
@@ -520,8 +544,8 @@ export default function AttendanceDashboard() {
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
+      <ToastContainer position="top-center" autoClose={3000} theme="dark" />
     </div>
   );
 }
