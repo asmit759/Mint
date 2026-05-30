@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 
 // Helper to clean and format the raw array of arrays from SAP portal into a structured object
 function cleanScrapedData(rawData) {
@@ -243,10 +243,20 @@ const getAttendance = async (req, res) => {
     };
 
     try {
+<<<<<<< HEAD
       browser = await puppeteer.launch({ ...launchOptions, channel: 'chrome' });
     } catch (e) {
       console.log("Chrome not found, falling back to edge");
       browser = await puppeteer.launch({ ...launchOptions, channel: 'msedge' });
+=======
+      browser = await puppeteer.launch({ 
+         ...launchOptions,
+         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
+      });
+    } catch (e) {
+      console.log("Failed to launch browser:", e);
+      throw e;
+>>>>>>> cbe4bc4 (pupeeter change)
     }
 
     const page = await browser.newPage();
