@@ -4,7 +4,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../assets/mintLogo.png';
-import BgImage from '../assets/loginpage_bg.gif';
+import BgImage from '../assets/login_bg.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { studLogin, mentorLogin } from '../store/authSlice';
 import GlowingButton from './smallComp/GlowingButton';
