@@ -3,18 +3,15 @@ const genAi = new GoogleGenerativeAI(process.env.GenAiKey)
 
 const callSage = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, history } = req.body;
 
     if (!message) {
       return res.status(400).json({ reply: "Please provide a message to get support." });
     }
     const model = genAi.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.5-flash",
       systemInstruction: `
 You are a friendly, empathetic, and professional mental health chatbot for KIIT University students. 
-
-## USER MESSAGE CONTEXT
-- ${message}: The student's message describing stress, anxiety, low mood, or other mental health concerns.
 
 ## GOALS
 1. **Active Listening & Validation**
@@ -61,7 +58,18 @@ You are a friendly, empathetic, and professional mental health chatbot for KIIT 
 7. **Always tailor the response to the student's message**, including wellness tips, escalation advice, and resource references naturally, without making it feel like a menu or list.
       `
     });
-    const result = await model.generateContent(message);
+
+    // Format history from client to Gemini format
+    const formattedHistory = (history || []).map(h => ({
+      role: h.role === 'user' ? 'user' : 'model',
+      parts: [{ text: h.text }]
+    }));
+
+    const chat = model.startChat({
+      history: formattedHistory
+    });
+
+    const result = await chat.sendMessage(message);
     const reply = result.response.text();
 
     res.status(200).json({ reply });
@@ -74,22 +82,17 @@ You are a friendly, empathetic, and professional mental health chatbot for KIIT 
 
 const callKIITBandhu = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, history } = req.body;
 
     if (!message) {
       return res.status(400).json({ reply: "Please provide a message to get support." });
     }
 
     const model = genAi.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash",
       systemInstruction: `
 You are an informative, professional, and friendly **KIIT School of Computer Engineering Support Chatbot**.  
 Your role is to help students understand academic rules, degree options, facilities, and conduct policies based on the **KIIT School of Computer Engineering Student Handbook**.
-
-## USER MESSAGE CONTEXT
-- ${message}: The student's query about academics, attendance, grading, support services, disciplinary rules, or campus life.
-
----
 
 ## GOALS
 
@@ -151,7 +154,17 @@ Your role is to help students understand academic rules, degree options, facilit
       `
     });
 
-    const result = await model.generateContent(message);
+    // Format history from client to Gemini format
+    const formattedHistory = (history || []).map(h => ({
+      role: h.role === 'user' ? 'user' : 'model',
+      parts: [{ text: h.text }]
+    }));
+
+    const chat = model.startChat({
+      history: formattedHistory
+    });
+
+    const result = await chat.sendMessage(message);
     const reply = result.response.text();
 
     res.status(200).json({ reply });
@@ -160,6 +173,5 @@ Your role is to help students understand academic rules, degree options, facilit
     res.status(500).json({ error: "Error generating response" });
   }
 };
-
 
 module.exports = {callSage,callKIITBandhu}
