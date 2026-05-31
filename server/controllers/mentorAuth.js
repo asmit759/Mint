@@ -69,10 +69,11 @@ exports.mentorLogin = async (req, res) => {
       { expiresIn: "48h" }
     );
 
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "None",
-      secure: true,
+      sameSite: isProd ? "None" : "Lax",
+      secure: isProd,
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     });
 
@@ -92,10 +93,11 @@ exports.mentorLogin = async (req, res) => {
 
 exports.mentorLogout = async (req, res) => {
   try {
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie("token", "", {
       httpOnly: true,
-      sameSite: "None",
-      secure: true,
+      sameSite: isProd ? "None" : "Lax",
+      secure: isProd,
       expires: new Date(0),
     });
 

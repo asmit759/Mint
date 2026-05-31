@@ -133,7 +133,7 @@ function App() {
         path="/grievance/hostel"
         element={
           <ProtectedRoute allow="student">
-            <HostelGrievance />
+            <CampusGrievance />
           </ProtectedRoute>
         }
       />
