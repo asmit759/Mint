@@ -216,6 +216,54 @@ async function clickElementWithText(page, textStr, maxRetries = 20, exactMatch =
   return false;
 }
 
+// Helper to dynamically locate the active SAP form frame
+async function getFormFrame(page) {
+  const frames = page.frames();
+  for (const frame of frames) {
+    try {
+      if (typeof frame.isDetached === 'function' && frame.isDetached()) {
+        continue;
+      }
+      const isAppFrame = await frame.evaluate(() => {
+        const text = (document.body.innerText || "").toLowerCase();
+        return text.includes('student details') && 
+               text.includes('total percentage') && 
+               text.includes('select year & session') &&
+               !text.includes('detailed navigation');
+      }).catch(() => false);
+
+      if (isAppFrame) {
+        return frame;
+      }
+    } catch (e) {
+      // If frame is detached/closed during evaluation, ignore and continue searching
+    }
+  }
+  return null;
+}
+
+// Helper to execute operations on the form frame, auto-recovering if the frame detaches
+async function executeWithFreshFrame(page, actionFn) {
+  let formFrame = await getFormFrame(page);
+  if (!formFrame) {
+    throw new Error("Could not locate the Attendance Form frame on the page.");
+  }
+  try {
+    return await actionFn(formFrame);
+  } catch (err) {
+    if (err.message && err.message.toLowerCase().includes('detached')) {
+      console.log("Detected detached frame. Waiting and re-fetching fresh frame to retry...");
+      await new Promise(r => setTimeout(r, 800));
+      formFrame = await getFormFrame(page);
+      if (!formFrame) {
+        throw new Error("Could not re-locate the Attendance Form frame after detachment.");
+      }
+      return await actionFn(formFrame);
+    }
+    throw err;
+  }
+}
+
 const getAttendance = async (req, res) => {
   const { userId, password, year, session } = req.body;
 
@@ -245,9 +293,12 @@ const getAttendance = async (req, res) => {
 
     try {
       const isProduction = process.env.NODE_ENV === "production" || process.env.RENDER;
-      const executablePath = isProduction 
-          ? await chromium.executablePath() 
-          : puppeteer.executablePath();
+      let executablePath;
+      if (isProduction) {
+          executablePath = await chromium.executablePath();
+      } else {
+          executablePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+      }
 
       browser = await puppeteer.launch({ 
          args: isProduction ? [...chromium.args, ...launchOptions.args] : launchOptions.args,
@@ -255,6 +306,26 @@ const getAttendance = async (req, res) => {
          executablePath: executablePath,
          headless: isProduction ? chromium.headless : true,
       });
+
+      // browser = await puppeteer.launch({
+      //   headless:false,
+      //   args:['--no-sandbox']
+      // });
+
+    //   browser = await puppeteer.launch({
+    //     executablePath,
+    //     headless: isProduction
+    //     ? chromium.headless
+    //     : false,
+    //     args: isProduction
+    //     ? [...chromium.args, ...launchOptions.args]
+    //     : launchOptions.args,
+
+    // defaultViewport:
+    //     isProduction
+    //         ? chromium.defaultViewport
+    //         : null
+    //       });
     } catch (e) {
       console.log("Failed to launch browser:", e);
       throw e;
@@ -323,20 +394,7 @@ const getAttendance = async (req, res) => {
     let submitBtnSelector = 'button, input[type="button"], input[type="submit"], input[type="image"], a.urBtnStd';
 
     for (let attempt = 1; attempt <= 50; attempt++) {
-        for (const frame of page.frames()) {
-           const isAppFrame = await frame.evaluate(() => {
-               const text = (document.body.innerText || "").toLowerCase();
-               return text.includes('student details') && 
-                      text.includes('total percentage') && 
-                      text.includes('select year & session') &&
-                      !text.includes('detailed navigation');
-           }).catch(() => false);
-    
-           if (isAppFrame) {
-               formFrame = frame;
-               break;
-           }
-        }
+        formFrame = await getFormFrame(page);
         if (formFrame) break;
         await new Promise(r => setTimeout(r, 300));
     }
@@ -347,112 +405,123 @@ const getAttendance = async (req, res) => {
 
     // Attempt to inject user answers
     try {
-       const selectsCount = await formFrame.evaluate(() => document.querySelectorAll('select').length);
-       if (selectsCount >= 2) {
-           await formFrame.select('select:nth-of-type(1)', year);  
-           // OPTIMIZATION: Reduced 2000ms to 500ms
-           await new Promise(r => setTimeout(r, 500));
-           await formFrame.select('select:nth-of-type(2)', session);
-        } else {
-           try {
-               const targetYear = year || '2025-2026';
-               
-               // Year Dropdown
-               const yearInput = await formFrame.$('#WD52');
-               if (yearInput) {
-                   await yearInput.click();
-                   // OPTIMIZATION: Reduced 1500ms to 500ms
-                   await new Promise(r => setTimeout(r, 500)); 
-                   
-                   await formFrame.evaluate((val) => {
-                       const nodes = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => {
-                           return el.children.length === 0 && (el.innerText || '').trim() === val;
-                       });
-                       const popupItem = nodes[nodes.length - 1]; 
-                       if (popupItem) popupItem.click();
-                   }, targetYear);
-                   
-                   // OPTIMIZATION: Reduced 2000ms to 500ms
-                   await new Promise(r => setTimeout(r, 500));
-               }
+        // Step 1: Select year dropdown
+        await executeWithFreshFrame(page, async (frame) => {
+            const selectsCount = await frame.evaluate(() => document.querySelectorAll('select').length);
+            if (selectsCount >= 2) {
+                await frame.select('select:nth-of-type(1)', year);  
+            } else {
+                const targetYear = year || '2025-2026';
+                const yearInput = await frame.$('#WD52');
+                if (yearInput) {
+                    await yearInput.click();
+                    await new Promise(r => setTimeout(r, 500)); 
+                    await frame.evaluate((val) => {
+                        const nodes = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => {
+                            return el.children.length === 0 && (el.innerText || '').trim() === val;
+                        });
+                        const popupItem = nodes[nodes.length - 1]; 
+                        if (popupItem) popupItem.click();
+                    }, targetYear);
+                }
+            }
+        });
 
-               // Session Dropdown
-               const sessionInput = await formFrame.$('#WD6F');
-               if (sessionInput) {
-                   await sessionInput.click();
-                   // OPTIMIZATION: Reduced 1500ms to 500ms
-                   await new Promise(r => setTimeout(r, 500)); 
-                   
-                   await formFrame.evaluate((val) => {
-                       const nodes = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => {
-                           const txt = (el.innerText || '').trim().toLowerCase();
-                           return el.children.length === 0 && txt === val.toLowerCase();
-                       });
-                       const popupItem = nodes[nodes.length - 1];
-                       if (popupItem) popupItem.click();
-                   }, session);
-                   
-                   // OPTIMIZATION: Reduced 2000ms to 500ms
-                   await new Promise(r => setTimeout(r, 500));
-               }
-           } catch (nativeEr) {
-               console.log("Native typing using exact IDs failed:", nativeEr);
-           }
+        // Buffer to allow frame updates/reloads to start/stabilize
+        await new Promise(r => setTimeout(r, 800));
 
-           // OPTIMIZATION: Reduced 2000ms to 500ms
-           await new Promise(r => setTimeout(r, 500));
-       }
-       
-       // Click submit/show to populate the table (Aggressive Search)
-       await formFrame.evaluate((sel) => {
-           let success = false;
-           const btns = Array.from(document.querySelectorAll(sel));
-           const sBtn = btns.find(b => {
-               const txt = (b.innerText || b.value || b.title || "").toLowerCase();
-               return txt === "submit" || txt === "show" || txt === "get" || txt === "view" || txt.includes("submit");
-           });
-           
-           if (sBtn) {
-               sBtn.click();
-               success = true;
-           } else {
-               const allLeaves = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => el.children.length === 0);
-               const fallbackBtn = allLeaves.find(el => (el.innerText || '').trim().toLowerCase() === 'submit');
-               if (fallbackBtn) {
-                   fallbackBtn.click();
-                   success = true;
-               }
-           }
-       }, submitBtnSelector);
+        // Step 2: Select session dropdown
+        await executeWithFreshFrame(page, async (frame) => {
+            const selectsCount = await frame.evaluate(() => document.querySelectorAll('select').length);
+            if (selectsCount >= 2) {
+                await frame.select('select:nth-of-type(2)', session);
+            } else {
+                const sessionInput = await frame.$('#WD6F');
+                if (sessionInput) {
+                    await sessionInput.click();
+                    await new Promise(r => setTimeout(r, 500)); 
+                    await frame.evaluate((val) => {
+                        const nodes = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => {
+                            const txt = (el.innerText || '').trim().toLowerCase();
+                            return el.children.length === 0 && txt === val.toLowerCase();
+                        });
+                        const popupItem = nodes[nodes.length - 1];
+                        if (popupItem) popupItem.click();
+                    }, session);
+                }
+            }
+        });
 
-       // OPTIMIZATION: Replaced 8000ms fixed delay with dynamic polling for actual data
-       await formFrame.waitForFunction(() => {
-           const text = document.body.innerText || "";
-           // Data rows contain decimal numbers (e.g., 83.05, 59.00). 
-           // If we see one, the AJAX response has populated the table!
-           return /\\d{1,3}\\.\\d{2}/.test(text);
-       }, { timeout: 10000 }).catch(() => {});
-       
-       // Small buffer to ensure DOM is fully painted
-       await new Promise(r => setTimeout(r, 1000));
+        // Buffer to allow frame updates/reloads to start/stabilize
+        await new Promise(r => setTimeout(r, 800));
+
+        // Step 3: Click submit/show to populate the table (Aggressive Search)
+        await executeWithFreshFrame(page, async (frame) => {
+            await frame.evaluate((sel) => {
+                let success = false;
+                const btns = Array.from(document.querySelectorAll(sel));
+                const sBtn = btns.find(b => {
+                    const txt = (b.innerText || b.value || b.title || "").toLowerCase();
+                    return txt === "submit" || txt === "show" || txt === "get" || txt === "view" || txt.includes("submit");
+                });
+                
+                if (sBtn) {
+                    sBtn.click();
+                    success = true;
+                } else {
+                    const allLeaves = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => el.children.length === 0);
+                    const fallbackBtn = allLeaves.find(el => (el.innerText || '').trim().toLowerCase() === 'submit');
+                    if (fallbackBtn) {
+                        fallbackBtn.click();
+                        success = true;
+                    }
+                }
+            }, submitBtnSelector);
+        });
+
+        // Step 4: Dynamically poll for loaded data, recovering from detached frames
+        let dataLoaded = false;
+        for (let attempt = 1; attempt <= 20; attempt++) {
+            try {
+                dataLoaded = await executeWithFreshFrame(page, async (frame) => {
+                    return await frame.evaluate(() => {
+                        const text = document.body.innerText || "";
+                        // Data rows contain decimal numbers (e.g., 83.05, 59.00). 
+                        // If we see one, the AJAX response has populated the table!
+                        return /\d{1,3}\.\d{2}/.test(text);
+                    });
+                });
+                if (dataLoaded) break;
+            } catch (e) {
+                // ignore detached frame or evaluation issues and retry
+            }
+            await new Promise(r => setTimeout(r, 500));
+        }
+
+        // Small buffer to ensure DOM is fully painted
+        await new Promise(r => setTimeout(r, 1000));
     } catch(err) {
-       console.log("Error interacting with form:", err);
+        console.log("Error interacting with form:", err);
     }
 
-    // 5. Extract table data
+    // 5. Extract table data with dynamic fresh frame
     let attendanceData = [];
-    if (formFrame) {
-      attendanceData = await formFrame.evaluate(() => {
-         // Query all rows
-         const allTrs = Array.from(document.querySelectorAll('tr'));
-         return allTrs.map(tr => {
-            // CRITICAL FIX: Only get DIRECT children that are TD or TH.
-            // WebDynpro uses nested tables. Using querySelectorAll('td, th') grabs descendants 
-            // inside nested tables, resulting in duplicate columns and misaligned data!
-            const cells = Array.from(tr.children).filter(el => el.tagName === 'TD' || el.tagName === 'TH');
-            return cells.map(td => td.innerText.trim());
-         }).filter(row => row.length >= 4); // A valid header or data row has multiple columns
-      });
+    try {
+        attendanceData = await executeWithFreshFrame(page, async (frame) => {
+            return await frame.evaluate(() => {
+                // Query all rows
+                const allTrs = Array.from(document.querySelectorAll('tr'));
+                return allTrs.map(tr => {
+                    // CRITICAL FIX: Only get DIRECT children that are TD or TH.
+                    // WebDynpro uses nested tables. Using querySelectorAll('td, th') grabs descendants 
+                    // inside nested tables, resulting in duplicate columns and misaligned data!
+                    const cells = Array.from(tr.children).filter(el => el.tagName === 'TD' || el.tagName === 'TH');
+                    return cells.map(td => td.innerText.trim());
+                }).filter(row => row.length >= 4); // A valid header or data row has multiple columns
+            });
+        });
+    } catch (err) {
+        console.error("Error extracting attendance data:", err);
     }
 
     await browser.close();
