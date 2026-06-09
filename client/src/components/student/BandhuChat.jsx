@@ -8,7 +8,9 @@ import styled, { keyframes } from 'styled-components';
 import axiosClient from '../../utils/AxiosCli';
 import bandhuAvatar from '../../assets/KiitBandhu.png';
 
-const BANDHU_ENDPOINT = '/studentFacility/studentGuide'; 
+// const BANDHU_ENDPOINT = '/studentFacility/studentGuide';
+import axios from 'axios';
+const BANDHU_ENDPOINT = 'http://127.0.0.1:8000/request'; 
 
 const displayName = (user) =>
   user?.name ||
@@ -105,27 +107,15 @@ const BandhuChat = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token') || undefined;
-
-      // Filter out the initial welcome message from the history sent to the API
-      const historyToSend = messages.filter(
-        (m) => m.text !== 'Hello! Ask me anything about campus, rules, or academics.'
-      );
-
-      const res = await axiosClient.post(
+      const res = await axios.post(
         BANDHU_ENDPOINT,
         { 
-          message: text,
-          history: historyToSend
-        },
-        { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
+          query: text
+        }
       );
 
       const raw = res?.data;
-      const reply =
-        typeof raw?.reply === 'string' ? raw.reply :
-        typeof raw?.message === 'string' ? raw.message :
-        JSON.stringify(raw ?? 'No response', null, 2);
+      const reply = raw?.answer || 'No response';
 
       setMessages((prev) => [...prev, { role: 'model', text: reply }]);
     } catch (err) {

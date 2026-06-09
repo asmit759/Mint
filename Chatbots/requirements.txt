@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+langchain
+langchain-core
+langchain-community
+langchain-pinecone
+langchain-huggingface
+langchain-google-genai
+sentence-transformers
+pinecone
+transformers
+torch
