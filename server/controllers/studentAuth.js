@@ -71,8 +71,13 @@ const studentLogin = async (req, res) => {
       process.env.JWT_SERVER_KEY,
       { expiresIn: 60 * 60 }
     );
-    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true,sameSite: "None",
-      secure: true, });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookie("token", token, { 
+      maxAge: 24 * 60 * 60 * 1000, 
+      httpOnly: true,
+      sameSite: isProd ? "None" : "Lax",
+      secure: isProd, 
+    });
 
     const reply = {
       id: student._id,
@@ -107,10 +112,11 @@ const studentLogin = async (req, res) => {
 
 const studentLogout = async (req, res) => {
   try {
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie("token", "", {
       httpOnly: true,
-      sameSite: "None",
-      secure: true,
+      sameSite: isProd ? "None" : "Lax",
+      secure: isProd,
       expires: new Date(0),
     });
 

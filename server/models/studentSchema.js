@@ -11,8 +11,8 @@ const studentSchema = new Schema({
     name: {
         type: String,
         required: true,
-        minLength: 5,
-        maxLength: 20
+        minLength: 2,
+        maxLength: 100
     },
     avatarSeed: {
         type: String,
@@ -57,12 +57,12 @@ const studentSchema = new Schema({
     semester: { type: Number, enum: [1,2,3,4,5,6,7,8], default: 1 },
     branch: { type: String, enum: ['CSE','ME'], default: 'CSE' },
     hostel: { type: Schema.Types.ObjectId, ref: 'Hostel', default: null },
-    room_no: { type: String, minLength: 3, maxLength: 6, default: "" },
+    room_no: { type: String, maxLength: 10, default: "" },
     mentor: { type: Schema.Types.ObjectId, ref: "mentor" },
-    fatherName: { type: String, minLength: 5, maxLength: 20 },
-    fatherContact: { type: Number, min: 1000000000, max: 9999999999 },
-    motherName: { type: String, minLength: 5, maxLength: 20 },
-    motherContact: { type: Number, min: 1000000000, max: 9999999999 },
+    fatherName: { type: String, maxLength: 100 },
+    fatherContact: { type: Number },
+    motherName: { type: String, maxLength: 100 },
+    motherContact: { type: Number },
     parentEmail: { type: String, trim: true, lowercase: true },
 
 
