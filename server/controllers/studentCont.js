@@ -135,15 +135,17 @@ const hostelDetails = async(req,res)=>{
 const shareAttendance = async (req, res) => {
     try {
         const id = req.result.id;
-        const { overallAttendance, attendanceDetails } = req.body;
+        const { overallAttendance, attendanceDetails, studentName: fetchedName, rollNumber: fetchedRoll } = req.body;
+        
+        console.log("shareAttendance payload:", { fetchedName, fetchedRoll });
 
         const student = await Student.findById(id);
         if (!student) return res.status(404).json({ success: false, message: "Student not found" });
         if (!student.mentor) return res.status(404).json({ success: false, message: "Mentor not assigned" });
 
         const mentorId = student.mentor;
-        const studentName = student.name;
-        const rollNumber = student.roll_no;
+        const studentName = fetchedName || student.name;
+        const rollNumber = fetchedRoll || student.roll_no;
         
         const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours from now
 
@@ -151,6 +153,8 @@ const shareAttendance = async (req, res) => {
         if (record) {
             record.overallAttendance = overallAttendance;
             record.attendanceDetails = attendanceDetails;
+            record.studentName = studentName;
+            record.rollNumber = rollNumber;
             record.sharedAt = Date.now();
             record.expiresAt = expiresAt;
             await record.save();

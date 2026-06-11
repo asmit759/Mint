@@ -339,7 +339,9 @@ export default function StudentAttendance() {
       const avg = overallAvg(attendanceData);
       await axiosClient.post("/studentFacility/shareAttendance", {
         overallAttendance: avg + "%",
-        attendanceDetails: attendanceData
+        attendanceDetails: attendanceData,
+        studentName: studentProfile?.name,
+        rollNumber: studentProfile?.rollNo
       }, { withCredentials: true });
       toast.success("Attendance shared with mentor!");
     } catch (err) {
@@ -394,7 +396,7 @@ export default function StudentAttendance() {
           className="bg-neutral-950 border border-neutral-800/80 rounded-2xl p-5 sm:p-6 mb-10 shadow-xl shadow-black/50"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-            <InputField label="Roll No." placeholder="e.g. 23052231" value={formData.userId} onChange={set("userId")} />
+            <InputField label="Roll No." placeholder="e.g. 2305XXXX" value={formData.userId} onChange={set("userId")} />
             <InputField label="Password" type="password" placeholder="••••••••" value={formData.password} onChange={set("password")} />
             <SelectField label="Academic Year" value={formData.year} onChange={set("year")} options={["2025-2026", "2024-2025", "2023-2024"]} />
             <SelectField label="Session" value={formData.session} onChange={set("session")} options={["Spring", "Autumn"]} />
