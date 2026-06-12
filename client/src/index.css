@@ -364,30 +364,26 @@ body {
 @keyframes mint-leave-glow {
   0%, 100% {
     box-shadow:
-      inset 0px 1px 1px rgba(255, 255, 255, 0.2),
-      inset 0px 2px 2px rgba(255, 255, 255, 0.15),
-      0px 0px 20px rgba(79, 209, 255, 0.08);
-    border-color: rgba(79, 209, 255, 0.15);
+      inset 0px 1px 1px rgba(255, 255, 255, 0.15),
+      0px 0px 20px rgba(107, 142, 35, 0.06);
+    border-color: rgba(107, 142, 35, 0.12);
   }
   50% {
     box-shadow:
-      inset 0px 1px 1px rgba(255, 255, 255, 0.2),
-      inset 0px 2px 2px rgba(255, 255, 255, 0.15),
-      0px 0px 30px rgba(79, 209, 255, 0.22);
-    border-color: rgba(79, 209, 255, 0.3);
+      inset 0px 1px 1px rgba(255, 255, 255, 0.15),
+      0px 0px 30px rgba(107, 142, 35, 0.1);
+    border-color: rgba(107, 142, 35, 0.18);
   }
 }
 
 .mint-leave-glass-panel {
-  background-color: rgba(20, 20, 20, 0.4);
-  border: solid 1px rgba(255, 255, 255, 0.2);
+  background-color: rgba(15, 18, 10, 0.55);
+  border: solid 1px rgba(107, 142, 35, 0.1);
   border-radius: 20px;
   box-shadow:
-    inset 0px 1px 1px rgba(255, 255, 255, 0.2),
-    inset 0px 2px 2px rgba(255, 255, 255, 0.15),
-    inset 0px 4px 4px rgba(255, 255, 255, 0.1),
-    inset 0px 8px 8px rgba(255, 255, 255, 0.05),
-    0px 12px 32px rgba(0, 0, 0, 0.5);
+    inset 0px 1px 1px rgba(255, 255, 255, 0.08),
+    0px 12px 40px rgba(0, 0, 0, 0.5),
+    0px 0px 40px rgba(107, 142, 35, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   transition: box-shadow 0.4s, border-color 0.4s;
@@ -395,8 +391,8 @@ body {
 
 .mint-leave-glass-panel:hover,
 .mint-leave-glass-panel:focus-within {
-  border-color: rgba(79, 209, 255, 0.25);
-  animation: mint-leave-glow 2.5s ease-in-out infinite;
+  border-color: rgba(107, 142, 35, 0.18);
+  animation: mint-leave-glow 3s ease-in-out infinite;
 }
 
 .mint-leave-glass-input {
@@ -416,10 +412,9 @@ body {
 }
 
 .mint-leave-glass-input:focus {
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.22);
   background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 
-    inset 0px 1px 1px rgba(255, 255, 255, 0.2),
-    inset 0px 2px 2px rgba(255, 255, 255, 0.15),
-    0px 0px 12px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0px 1px 1px rgba(255, 255, 255, 0.1),
+    0px 0px 8px rgba(255, 255, 255, 0.06);
 }
