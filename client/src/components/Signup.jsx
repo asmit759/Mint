@@ -7,18 +7,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { studRegister, mentorRegister } from '../store/authSlice';
 import AvatarPicker from './student/AvatarPicker';
 import Logo from '../assets/mintLogo.png';
-import BgImage from '../assets/loginpage_bg.gif';
-import GlowingButton from './smallComp/GlowingButton';
+import TreeImage from '../assets/tree.jpg';
 
 const Signup = () => {
   const [role, setRole] = useState('student');
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
   const [avatarSeed, setAvatarSeed] = useState('');
-  
+
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
   const password = watch('password', '');
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -71,164 +70,232 @@ const Signup = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-indigo-600 selection:text-white transition-colors duration-300 relative"
-      style={{ backgroundImage: `url(${BgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-    >
+    <div className="mint-signup-theme min-h-screen lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row relative z-10 w-full bg-[#050505] selection:bg-[#4fd1ff]/30 selection:text-[#4fd1ff]">
       
-      {/* Overlay to ensure readability */}
-      <div className="absolute inset-0 bg-black/40 z-0"></div>
+      {/* LEFT SECTION */}
+      <div className="w-full lg:w-[50%] md:w-[45%] h-[50vh] md:h-screen relative flex flex-col justify-between p-6 md:p-10 lg:p-12 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/5 bg-[#050505] mint-grid-bg">
+        {/* Subtle Static Background Gradient overlay to add premium depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c1322]/30 via-transparent to-[#050505] pointer-events-none" />
 
-      {/* Container */}
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full max-w-md bg-background/95 backdrop-blur-lg rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-border p-8 sm:p-10 relative z-10"
-      >
-        
-        {/* Header */}
-        <div className="flex flex-col items-center mb-8">
-          <img src={Logo} alt="MINT Logo" className="w-24 h-24 mb-3 drop-shadow-md" />
-          <h1 className="text-3xl font-bold text-text-primary tracking-tight font-poppins mb-1">MINT</h1>
-          <h2 className="text-xl font-semibold text-text-primary tracking-tight mt-2">Create an account</h2>
-          <p className="text-sm text-text-secondary mt-1">Join as a student or mentor</p>
-        </div>
-
-        {/* Role Selector */}
-        <div className="flex p-1 bg-surface border border-border rounded-xl mb-8 relative">
-          {['student', 'mentor'].map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setRole(tab)}
-              className="flex-1 relative py-2.5 text-sm font-medium z-10 outline-none"
-            >
-              {role === tab && (
-                <motion.div 
-                  layoutId="activeTabSignup" 
-                  className="absolute inset-0 bg-background rounded-lg shadow-sm border border-border" 
-                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                />
-              )}
-              <span className={`relative z-20 transition-colors duration-200 ${role === tab ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={role}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              {role === 'student' && (
-                <div className="flex justify-center mb-6">
-                  <AvatarPicker onSelectAvatar={setAvatarSeed} />
-                </div>
-              )}
-
-              {/* Full Name */}
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Full Name</label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200"
-                  {...register('name', { required: 'Name is required', minLength: { value: 2, message: 'Must be at least 2 characters' } })}
-                />
-                {errors.name && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.name.message}</p>}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">
-                  {role === 'student' ? 'KIIT Email' : 'Email Address'}
-                </label>
-                <input
-                  type="email"
-                  placeholder={role === 'student' ? '1234567@kiit.ac.in' : 'name@example.com'}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200"
-                  {...register('email', { required: 'Email is required' })}
-                />
-                {errors.email && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.email.message}</p>}
-              </div>
-
-              {/* Contact Number (Mentor Only) */}
-              {role === 'mentor' && (
-                <div>
-                  <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Contact Number</label>
-                  <input
-                    type="tel"
-                    placeholder="10-digit mobile number"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200"
-                    {...register('contactNumber', {
-                      required: 'Contact number is required',
-                      pattern: { value: /^[0-9]{10}$/, message: 'Must be a 10-digit number' },
-                    })}
-                  />
-                  {errors.contactNumber && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.contactNumber.message}</p>}
-                </div>
-              )}
-
-              {/* Password */}
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition duration-200"
-                  {...register('password', { required: 'Password is required' })}
-                />
-                {errors.password && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.password.message}</p>}
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Confirm Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition duration-200"
-                  {...register('confirmPassword', {
-                    required: 'Please confirm password',
-                    validate: (v) => v === password || 'Passwords do not match',
-                  })}
-                />
-                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.confirmPassword.message}</p>}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Submit Button */}
-          <div className={`w-full mt-4 flex justify-center ${loading ? 'opacity-70 pointer-events-none' : 'pointer-events-auto'}`}>
-             <GlowingButton text={loading ? 'Creating account...' : 'Create Account'} className="mt-2" />
+        {/* Top-Left Branding */}
+        <div className="relative z-10 flex flex-col gap-1.5 self-start">
+          <div className="flex items-center gap-3">
+            <img src={Logo} alt="MINT Logo" className="w-8 h-8 object-contain" />
+            <span className="text-xl font-bold tracking-wider text-white">MINT</span>
           </div>
-
-          {serverError && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-sm text-center mt-3 font-medium">
-              {serverError}
-            </motion.p>
-          )}
-        </form>
-
-        <div className="mt-8 text-center">
-          <p className="text-text-secondary text-sm">
-            Already have an account?{' '}
-            <Link to="/login" className="text-indigo-600 font-medium hover:underline underline-offset-4">
-              Sign in
-            </Link>
-          </p>
+          <span className="text-xs text-[#9ca3af] font-medium tracking-tight">
+            Growing minds through intelligent support.
+          </span>
         </div>
-      </motion.div>
+
+        {/* Hero Tree Image (Static) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4">
+          <img
+            src={TreeImage}
+            alt="Glowing Tree"
+            className="max-h-[60%] lg:max-h-[65%] w-auto object-contain"
+          />
+        </div>
+
+        {/* Bottom Hero Text - dynamic per role */}
+        <div className="relative z-10 max-w-md mt-auto pt-6 lg:pt-0">
+          {role === 'student' ? (
+            <>
+              <h2 className="text-3xl lg:text-4.5xl font-semibold tracking-tight leading-tight text-left">
+                <span className="text-[#9ca3af]">Begin your</span>
+                <br />
+                <span className="text-white">journey.</span>
+              </h2>
+              <p className="text-sm text-[#9ca3af]/90 font-medium leading-relaxed mt-4">
+                Join a community where technology and empathy work together to support your academic wellbeing.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-3xl lg:text-4.5xl font-semibold tracking-tight leading-tight text-left">
+                <span className="text-[#9ca3af]">Shape the</span>
+                <br />
+                <span className="text-white">next generation.</span>
+              </h2>
+              <p className="text-sm text-[#9ca3af]/90 font-medium leading-relaxed mt-4">
+                Register as a mentor and guide students with empathy, expertise, and AI-powered tools.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* RIGHT SECTION */}
+      <div className="w-full lg:w-[50%] md:w-[55%] h-auto md:h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-[#050505]">
+        {/* Soft background glow on the right too */}
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-[#4fd1ff]/5 blur-[120px] pointer-events-none" />
+
+        {/* Premium Glassmorphism Panel (Leave portal card style) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="mint-leave-glass-panel w-full max-w-[480px] lg:h-[88%] md:h-[92%] flex flex-col justify-between p-6 md:p-8 lg:p-10 relative overflow-hidden"
+        >
+          {/* Form container with vertical scroll custom bar for smaller screens */}
+          <div className="flex-1 overflow-y-auto pr-1 -mr-2 mint-custom-scrollbar space-y-5">
+            {/* Header */}
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-semibold text-white tracking-tight">
+                Create your account
+              </h1>
+              <p className="text-sm text-[#9ca3af] mt-1.5 font-medium">
+                Already have an account?{' '}
+                <Link to="/login" className="text-[#4fd1ff] hover:text-[#4fd1ff]/80 underline underline-offset-4 decoration-1 transition-colors duration-200">
+                  Sign in
+                </Link>
+              </p>
+            </div>
+
+            {/* Role Tab Selector */}
+            <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl relative">
+              {['student', 'mentor'].map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setRole(tab)}
+                  className="flex-1 relative py-2 text-xs font-semibold uppercase tracking-wider text-center focus:outline-none cursor-pointer z-10"
+                >
+                  {role === tab && (
+                    <motion.div
+                      layoutId="activeTabSelection"
+                      className="absolute inset-0 bg-white/10 border border-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.3)] rounded-lg"
+                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                    />
+                  )}
+                  <span className={`relative transition-colors duration-200 ${role === tab ? 'text-white' : 'text-[#9ca3af] hover:text-white'}`}>
+                    {tab}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Form Fields */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={role}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4"
+                >
+                  {role === 'student' && (
+                    <div className="w-full">
+                      <AvatarPicker onSelectAvatar={setAvatarSeed} />
+                    </div>
+                  )}
+
+                  {/* Username */}
+                  <div>
+                    <label className="block text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-1.5 ml-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. John Doe"
+                      className="mint-leave-glass-input px-4 py-2.5 text-sm"
+                      {...register('name', { required: 'Full name is required', minLength: { value: 2, message: 'Must be at least 2 characters' } })}
+                    />
+                    {errors.name && <p className="text-[#4fd1ff] text-xs mt-1 ml-1 font-semibold">{errors.name.message}</p>}
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-1.5 ml-1">
+                      {role === 'student' ? 'KIIT Email' : 'Email Address'}
+                    </label>
+                    <input
+                      type="email"
+                      placeholder={role === 'student' ? '1234567@kiit.ac.in' : 'name@example.com'}
+                      className="mint-leave-glass-input px-4 py-2.5 text-sm"
+                      {...register('email', { required: 'Email is required' })}
+                    />
+                    {errors.email && <p className="text-[#4fd1ff] text-xs mt-1 ml-1 font-semibold">{errors.email.message}</p>}
+                  </div>
+
+                  {/* Contact Number (Mentor Only) */}
+                  {role === 'mentor' && (
+                    <div>
+                      <label className="block text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-1.5 ml-1">
+                        Contact Number
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="10-digit mobile number"
+                        className="mint-leave-glass-input px-4 py-2.5 text-sm"
+                        {...register('contactNumber', {
+                          required: 'Contact number is required',
+                          pattern: { value: /^[0-9]{10}$/, message: 'Must be a 10-digit number' },
+                        })}
+                      />
+                      {errors.contactNumber && <p className="text-[#4fd1ff] text-xs mt-1 ml-1 font-semibold">{errors.contactNumber.message}</p>}
+                    </div>
+                  )}
+
+                  {/* Password */}
+                  <div>
+                    <label className="block text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-1.5 ml-1">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="••••••••"
+                      className="mint-leave-glass-input px-4 py-2.5 text-sm"
+                      {...register('password', { required: 'Password is required' })}
+                    />
+                    {errors.password && <p className="text-[#4fd1ff] text-xs mt-1 ml-1 font-semibold">{errors.password.message}</p>}
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div>
+                    <label className="block text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-1.5 ml-1">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="••••••••"
+                      className="mint-leave-glass-input px-4 py-2.5 text-sm"
+                      {...register('confirmPassword', {
+                        required: 'Please confirm password',
+                        validate: (v) => v === password || 'Passwords do not match',
+                      })}
+                    />
+                    {errors.confirmPassword && <p className="text-[#4fd1ff] text-xs mt-1 ml-1 font-semibold">{errors.confirmPassword.message}</p>}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Submit CTA Button */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="mint-btn-primary w-full py-3 px-4 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer focus:outline-none active:scale-95 disabled:opacity-50"
+                >
+                  {loading ? 'Creating Account...' : 'Create Account →'}
+                </button>
+              </div>
+
+              {serverError && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-[#4fd1ff] text-xs text-center font-bold mt-2"
+                >
+                  {serverError}
+                </motion.p>
+              )}
+            </form>
+          </div>
+        </motion.div>
+      </div>
 
       <ToastContainer position="top-center" autoClose={3000} theme="dark" transition={Bounce} />
     </div>
@@ -236,3 +303,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
