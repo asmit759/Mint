@@ -7,6 +7,7 @@ import Logo from '../assets/mintLogo.png';
 import TreeImage from '../assets/tree.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { studLogin, mentorLogin } from '../store/authSlice';
+import GlowingButton from './smallComp/GlowingButton';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -116,8 +117,9 @@ const Login = () => {
 
       {/* RIGHT SECTION */}
       <div className="w-full lg:w-[50%] md:w-[55%] h-auto md:h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-[#050505]">
-        {/* Soft background glow on the right too */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-[#4fd1ff]/5 blur-[120px] pointer-events-none" />
+        {/* Soft background glow — olive green to match tree image */}
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full blur-[110px] pointer-events-none" style={{background: 'rgba(107, 142, 35, 0.07)'}} />
+        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 rounded-full blur-[90px] pointer-events-none" style={{background: 'rgba(107, 142, 35, 0.04)'}} />
 
         {/* Premium Glassmorphism Panel (Leave portal card style) */}
         <motion.div
@@ -213,13 +215,12 @@ const Login = () => {
 
               {/* Submit CTA Button */}
               <div className="pt-2">
-                <button
+                <GlowingButton
                   type="submit"
+                  text={loading ? 'Signing In...' : 'Sign In'}
+                  activeText={loading ? 'Signing In...' : 'Welcome Back →'}
                   disabled={loading}
-                  className="mint-btn-primary w-full py-3 px-4 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer focus:outline-none active:scale-95 disabled:opacity-50"
-                >
-                  {loading ? 'Signing In...' : 'Sign In →'}
-                </button>
+                />
               </div>
 
               {serverError && (
