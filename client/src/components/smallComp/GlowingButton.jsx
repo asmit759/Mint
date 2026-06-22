@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const GlowingButton = ({ text, icon, onClick, activeText, className = "" }) => {
+const GlowingButton = ({ text, icon, onClick, activeText, className = "", type = "button", disabled = false }) => {
   return (
-    <StyledWrapper className={className} onClick={onClick}>
+    <StyledWrapper className={className} onClick={!disabled ? onClick : undefined} style={disabled ? { opacity: 0.5, pointerEvents: 'none' } : {}}>
       <div className="btn-wrapper w-full">
-        <button className="btn w-full">
+        <button className="btn w-full" type={type} disabled={disabled}>
           {icon && React.cloneElement(icon, { className: "btn-svg" })}
           <div className="txt-wrapper">
             <div className="txt-1">
