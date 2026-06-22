@@ -412,7 +412,7 @@ const getAttendance = async (req, res) => {
                 await frame.select('select:nth-of-type(1)', year);  
             } else {
                 const targetYear = year || '2025-2026';
-                const yearInput = await frame.$('#WD52');
+                const yearInput = await frame.$('#WD53');
                 if (yearInput) {
                     await yearInput.click();
                     await new Promise(r => setTimeout(r, 500)); 
@@ -436,7 +436,7 @@ const getAttendance = async (req, res) => {
             if (selectsCount >= 2) {
                 await frame.select('select:nth-of-type(2)', session);
             } else {
-                const sessionInput = await frame.$('#WD6F');
+                const sessionInput = await frame.$('#WD70');
                 if (sessionInput) {
                     await sessionInput.click();
                     await new Promise(r => setTimeout(r, 500)); 
@@ -455,28 +455,38 @@ const getAttendance = async (req, res) => {
         // Buffer to allow frame updates/reloads to start/stabilize
         await new Promise(r => setTimeout(r, 800));
 
-        // Step 3: Click submit/show to populate the table (Aggressive Search)
+        // Step 3: Click submit/show to populate the table (Extremely Aggressive Search)
         await executeWithFreshFrame(page, async (frame) => {
-            await frame.evaluate((sel) => {
-                let success = false;
-                const btns = Array.from(document.querySelectorAll(sel));
-                const sBtn = btns.find(b => {
-                    const txt = (b.innerText || b.value || b.title || "").toLowerCase();
-                    return txt === "submit" || txt === "show" || txt === "get" || txt === "view" || txt.includes("submit");
-                });
+            await frame.evaluate(() => {
+                // EXPLICIT CHECK: Try the specific ID identified for the submit div
+                const explicitBtn = document.querySelector('#WD7D');
+                if (explicitBtn) {
+                    explicitBtn.click();
+                    return;
+                }
+
+                const keywords = ['submit', 'show', 'get', 'view'];
                 
-                if (sBtn) {
-                    sBtn.click();
-                    success = true;
-                } else {
-                    const allLeaves = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => el.children.length === 0);
-                    const fallbackBtn = allLeaves.find(el => (el.innerText || '').trim().toLowerCase() === 'submit');
-                    if (fallbackBtn) {
-                        fallbackBtn.click();
-                        success = true;
+                // First try standard buttons/inputs and known SAP button classes
+                const standardBtns = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"], a.urBtnStd, div.lsButton'));
+                for (const btn of standardBtns) {
+                    const txt = (btn.innerText || btn.value || btn.title || "").trim().toLowerCase();
+                    if (keywords.includes(txt) || txt.includes("submit") || txt.includes("show")) {
+                        btn.click();
+                        return;
                     }
                 }
-            }, submitBtnSelector);
+
+                // Fallback: search ALL leaf nodes (spans, divs) for exact matching text
+                const allLeaves = Array.from(document.querySelectorAll('span, div, td, a')).filter(el => el.children.length === 0);
+                for (const el of allLeaves) {
+                    const txt = (el.innerText || '').trim().toLowerCase();
+                    if (keywords.includes(txt)) {
+                        el.click();
+                        return;
+                    }
+                }
+            });
         });
 
         // Step 4: Dynamically poll for loaded data, recovering from detached frames
